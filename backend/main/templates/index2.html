@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>個人</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="/static/css/template.css">
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <div class="container-fluid mt-5">
+                    <div class="d-sm-flex justify-content-between align-items-center mb-4 ">
+                        <h3 class="text-dark mb-0">個人資料</h3>
+                        <div>
+                            <button class="btn btn-primary btn-sm d-none d-sm-inline-block shadow" role="button">
+                                <ion-icon name="refresh-outline" class="text-white p-0" style="font-size:17px"
+                                    onclick="load_data()"></ion-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="card shadow border-start-primary py-2">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col me-2">
+                                            <div class="text-uppercase text-cadetblue fw-bold text-xs mb-1">
+                                                <span>上班時數</span>
+                                            </div>
+                                            <div class="text-dark fw-bold h5 mb-0"><span id="worktime_label">0 hr
+                                                    0m</span></div>
+                                        </div>
+                                        <div class="col-auto"><i class="fas fa-calendar fa-2x text-gray-300"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="card shadow border-start-success py-2">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col me-2">
+                                            <div class="text-uppercase text-success fw-bold text-xs mb-1">
+                                                <span>加班時數</span>
+                                            </div>
+                                            <div class="text-dark fw-bold h5 mb-0"><span id="workovertime_label">0 hr
+                                                    0m</span></div>
+                                        </div>
+                                        <div class="col-auto"><i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="card shadow border-start-info py-2">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col me-2">
+                                            <div class="text-uppercase text-info fw-bold text-xs mb-1"><span>工作天數</span>
+                                            </div>
+                                            <div class="text-dark fw-bold h5 mb-0"><span id="workday">0 天</span></div>
+                                        </div>
+                                        <div class="col-auto"><i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="card shadow border-start-warning py-2">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col me-2">
+                                            <div class="text-uppercase text-warning fw-bold text-xs mb-1">
+                                                <span>平均工作時數</span>
+                                            </div>
+                                            <div class="text-dark fw-bold h5 mb-0"><span id="time_per_label">0 hr 0
+                                                    m</span></div>
+                                        </div>
+                                        <div class="col-auto"><i class="fas fa-comments fa-2x text-gray-300"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-5 col-xl-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header d-flex justify-content-between align-items-center pt-2">
+                                    <h6 class="text-primary fw-bold m-0">個人資料</h6>
+                                    <div class="dropdown no-arrow"><button class="btn btn-link btn-sm dropdown-toggle"
+                                            aria-expanded="false" data-bs-toggle="dropdown" type="button"><i
+                                                class="fas fa-ellipsis-v text-gray-400"></i></button>
+                                        <div class="dropdown-menu shadow dropdown-menu-end animated--fade-in">
+                                            <p class="text-center dropdown-header">dropdown header:</p><a
+                                                class="dropdown-item" href="#">&nbsp;Action</a><a class="dropdown-item"
+                                                href="#">&nbsp;Another action</a>
+                                            <div class="dropdown-divider"></div><a class="dropdown-item"
+                                                href="#">&nbsp;Something else here</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body row justify-content-end px-4">
+                                    <table class="col-12 px-3">
+                                        <tbody style="width:100%">
+                                            <tr>
+                                                <th scope="col">姓名</th>
+                                                <td><input
+                                                        class="form-control border-1 border-white bg-white text-start"
+                                                        disabled id="name_label"></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="col">工作地點</th>
+                                                <td><input
+                                                        class="form-control border-1 border-white bg-white text-start"
+                                                        disabled id="place_label"></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="col">卡片ID</th>
+                                                <td><input
+                                                        class="form-control border-1 border-white bg-white text-start"
+                                                        disabled id="card_label"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <button class="btn btn-primary btn-sm d-none d-sm-inline-block mt-2 col-2"
+                                        style="margin-right: 10px" onclick='edit()'><i
+                                            class="fas fa-download fa-sm text-white-50 "></i>&nbsp;編輯&nbsp;</button>
+                                    <button
+                                        class="btn bg-cadetblue text-white   btn-sm d-none d-sm-inline-block mt-2 col-2"
+                                        onclick='save()'><i
+                                            class="fas fa-download fa-sm text-white-50"></i>&nbsp;儲存&nbsp;</button>
+                                </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col-4">
+                                    <a class="btn btn-primary btn-sm d-none d-sm-inline-block pt-3" role="button"
+                                        href="/" style="height:60px;width:100%;"><i
+                                            class="fas fa-download fa-sm text-white-50"></i>&nbsp;<span
+                                            style="font-size:20px">返回</span>&nbsp;</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 mb-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header pt-1 pb-1 ">
+                                    <ul class="nav nav-pills card-header-pills text-center" >
+                                        <li class="nav-item me-2 ">
+                                            <a class="nav-link" href="#"  id="last" style="width: 100px" onclick="load_data('last');">上月</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link " href="#" id="this" style="width: 100px" onclick="load_data('this');">本月</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="card-body flex-row"
+                                    style="overflow:scroll;max-height:500px;min-height:400px">
+                                    <table class="col-12">
+                                        <thead style="width:100%">
+                                            <th class="col-2">日期</th>
+                                            <th class="col-2">上班打卡</th>
+                                            <th class="col-2">加班打卡</th>
+                                            <th class="col-2">下班打卡</th>
+                                            <th class="col-2">上班時數</th>
+                                            <th class="col-2">加班時數</th>
+                                        </thead>
+                                        <tbody id="currentmonth_log">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <footer class="bg-white sticky-footer">
+                            <div class="container my-auto">
+                                <div class="text-center my-auto copyright"><span>Copyright © Timothychen & Timhu
+                                        2022</span></div>
+                            </div>
+                        </footer>
+                    </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i
+                            class="fas fa-angle-up"></i></a>
+                </div>
+
+                <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+                <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+                <script src="/static/js/script.min.js"></script>
+                <script src="/static/js/ajax_employee.js"></script>
+</body>
+</html>
