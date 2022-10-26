@@ -156,14 +156,6 @@ class staff(Resource):
             del log[month][day]
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log}})
             return {'msg':'log '+day+' delete!'}
-        
-    # def put(self):
-    #     self.parser.add_argument('name',type=str,location='form')
-    #     self.parser.add_argument('place',type=str,location='form')
-    #     args=self.parser.parse_args()
-    #     print(args)
-    #     db_model.collection.update_one({args['key']:args['value']},{'$set':{'name':args['name'],'place':args['place']}})
-    #     return {'msg':'data updated!'},200
 
 def get_date(date=None):
     '''return(month,date,time)'''
