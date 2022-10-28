@@ -1,2 +1,13 @@
 
 .DS_Store
+backend/bin/*
+backend/lib/*
+backend/include/*
+backend/pyvenv.cfg
+backend/main/__pycache__/routes.cpython-39.pyc
+backend/main/__pycache__/routes.cpython-38.pyc
+backend/main/__pycache__/models.cpython-39.pyc
+backend/main/__pycache__/models.cpython-38.pyc
+backend/main/__pycache__/__init__.cpython-39.pyc
+backend/main/__pycache__/__init__.cpython-38.pyc
+esp/.DS_Store
