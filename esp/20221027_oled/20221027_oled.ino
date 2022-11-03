@@ -21,4 +21,13 @@ void loop(void) {
     u8g2.print("你好世界");		// Chinese "Hello World" 
   } while ( u8g2.nextPage() );
   delay(1000);
+
+  u8g2.firstPage();
+  do {
+    u8g2.setCursor(0, 15);
+    u8g2.print("Hello World!222");
+    u8g2.setCursor(0, 40);
+    u8g2.print("你好世界");      // Chinese "Hello World" 
+  } while ( u8g2.nextPage() );
+  delay(1000);
 }

@@ -86,61 +86,65 @@ class staff(Resource):
         data=db_model.collection.find_one({args['key']:args['value']})
         err=[]
         print(data)
-        log=data['log']
-        work=data['work']
-        workover=data['workover']
-        
-        month,date,time=get_date(args['time'])
-        
-        work[month]=[0,0]
-        workover[month]=[0,0]
-        
-        if not month in log:
-            log[month]={}
-        
-        if not date in log[month]:#初始化
-            log[month][date]={'clockin':'0:0:0','workovertime':'0:0:0','clockout':'0:0:0','duration':[[0,0],[0,0]]}
-        if args['type'] in ['clockin','workovertime','clockout']:
-            log[month][date][args['type']]=time
+        print(args)
+        if data:
+            log=data['log']
+            work=data['work']
+            workover=data['workover']
+            
+            month,date,time=get_date(args['time'])
+            
+            work[month]=[0,0]
+            workover[month]=[0,0]
+            
+            if not month in log:
+                log[month]={}
+            
+            if not date in log[month]:#初始化
+                log[month][date]={'clockin':'0:0:0','workovertime':'0:0:0','clockout':'0:0:0','duration':[[0,0],[0,0]]}
+            if args['type'] in ['clockin','workovertime','clockout']:
+                log[month][date][args['type']]=time
 
-            d1=datetime.datetime.strptime(log[month][date]['clockin'],"%H:%M:%S")
-            d2=datetime.datetime.strptime(log[month][date]['workovertime'],"%H:%M:%S")
-            d3=datetime.datetime.strptime(log[month][date]['clockout'],"%H:%M:%S")
-            
-            if args['type']=='workovertime':
-                if log[month][date]['clockin']=='0:0:0':
-                    err.append('請先上班')
-                else:
-                    log[month][date]['duration'][0]=[(d2-d1).seconds//3600,((d2-d1).seconds//60)%60]
-            elif args['type']=='clockout':
-                if log[month][date]['clockin']=='0:0:0':
-                    err.append('請先上班')
-                elif log[month][date]['workovertime']=='0:0:0':
-                    log[month][date]['duration'][0]=[(d3-d1).seconds//3600,((d3-d1).seconds//60)%60]
-                    log[month][date]['duration'][1]=[0,0]
-                else:
-                    log[month][date]['duration'][1]=[(d3-d2).seconds//3600,((d3-d2).seconds//60)%60]
-                     
-            # work=[0,0]
-            # workover=[0,0]
-            print(1)
-            for i in log[month]:#counting all the working hours
-                print(i)
-                print(log[month][i]['duration'][0])
-                work[month][0]+=log[month][i]['duration'][0][0]
-                work[month][1]+=log[month][i]['duration'][0][1]
-                workover[month][0]+=log[month][i]['duration'][1][0]
-                workover[month][1]+=log[month][i]['duration'][1][1]
-                print(work)
-                if work[month][1]>=60:
-                    work[month][0]+=work[month][1]//60
-                    work[month][1]%=60
-                if workover[month][1]>=60:
-                    workover[month][0]+=workover[month][1]//60
-                    workover[month][1]%=60
-            
-        db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
-        return {'id':data['_id'],"type":args['type'],'log':log}
+                d1=datetime.datetime.strptime(log[month][date]['clockin'],"%H:%M:%S")
+                d2=datetime.datetime.strptime(log[month][date]['workovertime'],"%H:%M:%S")
+                d3=datetime.datetime.strptime(log[month][date]['clockout'],"%H:%M:%S")
+                
+                if args['type']=='workovertime':
+                    if log[month][date]['clockin']=='0:0:0':
+                        err.append('請先上班')
+                    else:
+                        log[month][date]['duration'][0]=[(d2-d1).seconds//3600,((d2-d1).seconds//60)%60]
+                elif args['type']=='clockout':
+                    if log[month][date]['clockin']=='0:0:0':
+                        err.append('請先上班')
+                    elif log[month][date]['workovertime']=='0:0:0':
+                        log[month][date]['duration'][0]=[(d3-d1).seconds//3600,((d3-d1).seconds//60)%60]
+                        log[month][date]['duration'][1]=[0,0]
+                    else:
+                        log[month][date]['duration'][1]=[(d3-d2).seconds//3600,((d3-d2).seconds//60)%60]
+                        
+                # work=[0,0]
+                # workover=[0,0]
+                print(1)
+                for i in log[month]:#counting all the working hours
+                    print(i)
+                    print(log[month][i]['duration'][0])
+                    work[month][0]+=log[month][i]['duration'][0][0]
+                    work[month][1]+=log[month][i]['duration'][0][1]
+                    workover[month][0]+=log[month][i]['duration'][1][0]
+                    workover[month][1]+=log[month][i]['duration'][1][1]
+                    print(work)
+                    if work[month][1]>=60:
+                        work[month][0]+=work[month][1]//60
+                        work[month][1]%=60
+                    if workover[month][1]>=60:
+                        workover[month][0]+=workover[month][1]//60
+                        workover[month][1]%=60
+                
+            db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
+            return data
+        else:
+            return 'didn\'t create'
     
 
         
