@@ -9,7 +9,7 @@
 #include <PCF8574.h>    //Include the HCPCF8574 library
 
 #define I2C_ADD 0x20      //I2C address of the PCF8574
-#define SERVER_IP "192.168.93.86:8000"
+#define SERVER_IP "https://tingfengtest.azurewebsites.net/"
 #define ntpServer "pool.ntp.org" //NTP伺服器
 #define utcOffset 28800          //UTC偏移量 (此為UTC+8的秒數，即：8*60*60)
 #define daylightOffset 0
