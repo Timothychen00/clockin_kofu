@@ -15,7 +15,8 @@ api.add_resource(staff,'/api/staff')
 app.secret_key = os.environ.get("SECRET") or os.urandom(24)
 @app.before_request
 def show():
-    print(request.headers,request.get_data().decode())
+    # print(request.headers,request.get_data().decode())
+    pass
 
 if __name__=="__main__":
     app.run(debug=True,port='8000')

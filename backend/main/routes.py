@@ -48,6 +48,8 @@ def logout():
 @app_route.route("/login/callback")
 def callback():
     request.base_url=request.base_url.replace('http','https')
+    request.url=request.url.replace('http','https')
+    print(request.url,request.base_url)
     google_provider_cfg = get_google_provider_cfg()
     token_endpoint = google_provider_cfg["token_endpoint"]
     # Get authorization code Google sent back to you
