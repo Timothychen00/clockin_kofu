@@ -7,15 +7,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app_route=Blueprint("app_route",__name__,static_folder="static",template_folder="templates")
-GOOGLE_DISCOVERY_URL = (
-    "https://accounts.google.com/.well-known/openid-configuration"
-)
+GOOGLE_DISCOVERY_URL = ("https://accounts.google.com/.well-known/openid-configuration")
 GOOGLE_CLIENT_ID=os.environ['GOOGLE_CLIENT_ID']
 GOOGLE_CLIENT_SECRET=os.environ['SECRET']
 
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 available_emails=['timothychenpc@gmail.com','tim20060112@gmail.com']
-
 
 @app_route.route("/")
 @login_required
@@ -63,7 +60,8 @@ def callback():
     print(userinfo_endpoint,'','')
     uri, headers, body = client.add_token(userinfo_endpoint)
     userinfo_response = requests.get(uri, headers=headers, data=body)
-# Parse the tokens!
+    
+    # Parse the tokens!
     print(userinfo_response.json())
     if userinfo_response.json().get("email_verified"):
         users_email = userinfo_response.json()["email"]
