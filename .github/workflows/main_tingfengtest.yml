@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'tingfengtest'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_AB9DE87224244C8FBC7B5D5B22B38DD2 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7AFCCD2A14734E448D876B451B85FC26 }}
