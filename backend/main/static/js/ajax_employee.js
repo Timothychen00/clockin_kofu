@@ -94,6 +94,6 @@ function save() {
     place_label.disabled = true;
     card_label.classList = 'form-control border-white bg-white text-start ';
     card_label.disabled = true;
-    fetch('http://127.0.0.1:8000/api/manage?' + new URLSearchParams({ "name": name_label.value, 'place': place_label.value, 'cardid': card_label.value, 'key': '_id', 'value': window.location.href.split('/')[3].split('#')[0] }), { method: 'PUT' })
+    fetch('/api/manage?' + new URLSearchParams({ "name": name_label.value, 'place': place_label.value, 'cardid': card_label.value, 'key': '_id', 'value': window.location.href.split('/')[3].split('#')[0] }), { method: 'PUT' })
         .then(response => (load_data()))
 }

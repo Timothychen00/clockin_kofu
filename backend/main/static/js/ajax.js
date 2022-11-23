@@ -1,6 +1,6 @@
 
 function load_data(month_type='this') {
-	fetch('http://127.0.0.1:8000/api/manage', { method: "GET",mode: 'no-cors' })
+	fetch('/api/manage', { method: "GET",mode: 'no-cors' })
 		.then((response) => {
 			// 這裡會得到一個 ReadableStream 的物件
 			// console.log(response);
