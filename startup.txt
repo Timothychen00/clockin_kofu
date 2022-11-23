@@ -1,1 +1,1 @@
-gunicorn --bind=0.0.0.0 --threads=3 --worker-connection=1000 --workers=3 backend/app:app
+gunicorn --bind=0.0.0.0 --threads=3 --worker-connection=1000 --workers=3 --chdir backend app:app
