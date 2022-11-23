@@ -9,15 +9,14 @@
 #include <PCF8574.h>    //Include the HCPCF8574 library
 
 #define I2C_ADD 0x20      //I2C address of the PCF8574
-
-PCF8574 Port(I2C_ADD); 
-
-#define SERVER_IP "192.168.7.86:8000"
+#define SERVER_IP "192.168.93.86:8000"
 #define ntpServer "pool.ntp.org" //NTP伺服器
 #define utcOffset 28800          //UTC偏移量 (此為UTC+8的秒數，即：8*60*60)
 #define daylightOffset 0
 #define RST_PIN         D0
 #define SS_PIN          D4  //就是模組上的SDA接腳
+#define imgWidth 128
+#define imgHeight 64  //這裡只用到48的高度，因為上方要放文字
 
 char formattedTime[9] = "00000000";
 char old_formattedTime[9] = "00000000";
@@ -33,12 +32,10 @@ String temp = "";
 String card_uid = "";
 int button[3]={0};
 
+PCF8574 Port(I2C_ADD); 
 ESP8266WiFiMulti wifiMulti;
 MFRC522 mfrc522;
 U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
-
-#define imgWidth 128
-#define imgHeight 64  //這裡只用到48的高度，因為上方要放文字
 
 static const unsigned char PROGMEM logo_bmp[] =
 { 
@@ -164,8 +161,9 @@ void setup() {
     Port.pinMode(0, INPUT_PULLUP);
     Port.pinMode(1, INPUT_PULLUP); 
     Port.pinMode(2, INPUT_PULLUP);
-    Port.pinMode(P4, OUTPUT);
+//    Port.pinMode(P4, OUTPUT);
     Port.begin();  
+    pinMode(10,OUTPUT);
     mfrc522.PCD_Init(SS_PIN, RST_PIN); // 初始化MFRC522卡
     mfrc522.PCD_DumpVersionToSerial();
 
@@ -194,9 +192,6 @@ void setup() {
     WiFi.setSleepMode(WIFI_NONE_SLEEP);
     WiFi.setAutoReconnect(true);
     WiFi.persistent(true);
-    Port.digitalWrite(P4,1);
-    delay(1000);
-    Port.digitalWrite(P4,0);
     Serial.println("------初始化完成-------");
 }
 
@@ -239,7 +234,7 @@ void loop() {
     }
 
     if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
-        Port.digitalWrite(P4,HIGH);
+        digitalWrite(10,HIGH);
     // 顯示卡片內容
     //get now time
         dump_byte_array(mfrc522.uid.uidByte, mfrc522.uid.size); // 讀取卡片+顯示16進制
@@ -259,7 +254,7 @@ void loop() {
         delay(200);
 //        
     }
-    Port.digitalWrite(P4,LOW);
+    digitalWrite(10,LOW);
     button[0]=!Port.digitalRead(0);
     button[1]=!Port.digitalRead(1);
     button[2]=!Port.digitalRead(2);
@@ -312,14 +307,12 @@ void send_request(String methods,String carduid,String type){//默認參數值�
         Serial.println(doc.as<String>());
         u8g2.setFontDirection(0);
         u8g2.firstPage();
-        do {
-            
+        do {  
             Serial.println(doc["name"].as<String>());
             u8g2.setCursor(15, 15);
             u8g2.print(doc["name"].as<String>());
             u8g2.setCursor(15, 30);
             u8g2.print(type);
-          
         } while ( u8g2.nextPage() );
         Serial.println(">>");
       }

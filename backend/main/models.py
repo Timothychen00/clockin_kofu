@@ -1,7 +1,5 @@
 import datetime
-import os
-
-import pymongo
+import os, pymongo, requests
 from dotenv import load_dotenv
 from flask_restful import Resource, reqparse
 
@@ -141,6 +139,14 @@ class staff(Resource):
                         workover[month][0]+=workover[month][1]//60
                         workover[month][1]%=60
                 
+                # 發送即時通知
+                dtype='上班打卡'
+                if args['type']=='clockout':
+                    dtype='下班打卡'
+                elif args['type']=='workovertime':
+                    dtype='加班加班'
+                send_notification(message='\n時間：'+str(time)+'\n姓名：'+data['name']+'\n'+dtype+'成功')
+                
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
             return data
         else:
@@ -174,4 +180,12 @@ def get_date(date=None):
         day=date
     month="-".join(day.split('-')[:-1])
     return (month,day,time)
+    
+def send_notification(message):
+    token = os.environ['LINE_TOKEN']
+    headers = { "Authorization": "Bearer " + token }
+    data = { 'message': message }
+    result=requests.post("https://notify-api.line.me/api/notify",
+        headers = headers, data = data)
+    print('notification send->',result.status_code)
     
