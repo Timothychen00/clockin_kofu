@@ -28,14 +28,14 @@ def personal(id):
 
 @app_route.route('/login')
 def login():
-    url='https://tingfengtest.azurewebsites.net/login'
-    # if '0' in request.base_url:
-    #     url=request.base_url
+   
+    request.base_url=request.base_url.replace('http','https')
+    print('base',request.base_url)
     google_provider_cfg = get_google_provider_cfg()
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
-        redirect_uri=url + "/callback",
+        redirect_uri=request.base_url + "/callback",
         scope=["openid", "email", "profile"],
     )
     return redirect(request_uri)
@@ -47,6 +47,7 @@ def logout():
 
 @app_route.route("/login/callback")
 def callback():
+    request.base_url=request.base_url.replace('http','https')
     google_provider_cfg = get_google_provider_cfg()
     token_endpoint = google_provider_cfg["token_endpoint"]
     # Get authorization code Google sent back to you
