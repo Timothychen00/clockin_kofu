@@ -14,8 +14,6 @@ GOOGLE_CLIENT_ID=os.environ['GOOGLE_CLIENT_ID']
 GOOGLE_CLIENT_SECRET=os.environ['SECRET']
 
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
-
-
 available_emails=['timothychenpc@gmail.com','tim20060112@gmail.com']
 
 
