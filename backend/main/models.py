@@ -24,6 +24,7 @@ class staff_manage(Resource):
     parser.add_argument('name',type=str,location=['values'])
     parser.add_argument('place',type=str,location=['values'])
     parser.add_argument('value',type=str,location=['values'])
+    parser.add_argument('jointime',type=str,location=['values'])
     parser.add_argument('key',type=str,location=['values'])
     parser.add_argument('cardid',type=str,location=['values'])
     
@@ -46,6 +47,7 @@ class staff_manage(Resource):
             '_id':str(db_model.next_id()),
             'name':args['name'],
             'cardid':args['cardid'],
+            'jointime':args['jointime'],
             'place':args['place'],
             'log':{},
             'work':{},
@@ -59,7 +61,7 @@ class staff_manage(Resource):
     def put(self):#進行（上班、下班、加班）的操作
         args=self.parser.parse_args()
         print(args)
-        db_model.collection.update_one({args['key']:args['value']},{'$set':{'name':args['name'],'place':args['place'],'cardid':args['cardid']}})
+        db_model.collection.update_one({args['key']:args['value']},{'$set':{'name':args['name'],'place':args['place'],'cardid':args['cardid'],'jointime':args['jointime']}})
     
     def delete(self):
         args=self.parser.parse_args()

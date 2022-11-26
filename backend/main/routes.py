@@ -25,8 +25,9 @@ def personal(id):
 
 @app_route.route('/login')
 def login():
-   
-    request.base_url=request.base_url.replace('http','https')
+    if '0' not in request.base_url:
+        request.base_url=request.base_url.replace('http','https')
+        
     print('base',request.base_url)
     google_provider_cfg = get_google_provider_cfg()
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
@@ -44,8 +45,10 @@ def logout():
 
 @app_route.route("/login/callback")
 def callback():
-    request.base_url=request.base_url.replace('http','https')
-    request.url=request.url.replace('http','https')
+    if '0' not in request.base_url:
+        request.base_url=request.base_url.replace('http','https')
+        request.url=request.url.replace('http','https')
+        
     print(request.url,request.base_url)
     google_provider_cfg = get_google_provider_cfg()
     token_endpoint = google_provider_cfg["token_endpoint"]

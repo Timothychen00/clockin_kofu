@@ -9,7 +9,7 @@
 #include <PCF8574.h>    //Include the HCPCF8574 library
 
 #define I2C_ADD 0x20      //I2C address of the PCF8574
-#define SERVER_IP "https://tingfengtest.azurewebsites.net/"
+#define SERVER_IP "https://tingfengtest.azurewebsites.net"
 #define ntpServer "pool.ntp.org" //NTP伺服器
 #define utcOffset 28800          //UTC偏移量 (此為UTC+8的秒數，即：8*60*60)
 #define daylightOffset 0
@@ -31,6 +31,7 @@ struct tm now;
 String temp = "";
 String card_uid = "";
 int button[3]={0};
+
 
 PCF8574 Port(I2C_ADD); 
 ESP8266WiFiMulti wifiMulti;
@@ -280,17 +281,19 @@ void loop() {
 void send_request(String methods,String carduid,String type){//默認參數值不能放在定義這邊
     int httpCode=0;
     DynamicJsonDocument doc(1024);
-    WiFiClient client;
-    HTTPClient http;
 
+    WiFiClientSecure client;
+    
+    HTTPClient http;
+    client.setInsecure();
     Serial.print("[HTTP] begin...\n");
     
     if(methods=="post"){
-        http.begin(client, "http://" SERVER_IP "/api/staff"); //HTTP
+        http.begin(client,  SERVER_IP "/api/staff"); //HTTP
         http.addHeader("Content-Type", "application/x-www-form-urlencoded");
         httpCode = http.POST(String("type=")+type+String("&key=cardid&value=")+carduid);
     }else{
-        http.begin(client, "http://" SERVER_IP "/api/manage"); //HTTP
+        http.begin(client,  SERVER_IP "/api/manage"); //HTTP
         httpCode = http.GET();
     }
 
@@ -299,7 +302,7 @@ void send_request(String methods,String carduid,String type){//默認參數值�
     if (httpCode > 0) {
       Serial.printf("[HTTP] POST... code: %d\n", httpCode);
 
-      if (httpCode == HTTP_CODE_OK) {
+      if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
         const String& payload = http.getString();
         Serial.println("received payload:\n<<");
         Serial.println(payload);

@@ -22,6 +22,8 @@ function load_data(month_type = 'this') {
             name_label.value = res[0]['name'];
             let place_label = document.getElementById('place_label');
             place_label.value = res[0]['place'];
+            let jointime_label = document.getElementById('jointime_label');
+            jointime_label.value = res[0]['jointime'];
             let card_label = document.getElementById('card_label');
             card_label.value = res[0]['cardid'];
             // console.log(res);
@@ -74,11 +76,14 @@ window.onload = load_data();
 function edit() {
     let name_label = document.getElementById('name_label');
     let place_label = document.getElementById('place_label');
+    let jointime_label = document.getElementById('jointime_label');
     let card_label = document.getElementById('card_label');
     name_label.classList = 'form-control border-black bg-white text-start';
     name_label.disabled = false;
     place_label.classList = 'form-control border-black bg-white text-start';
     place_label.disabled = false;
+    jointime_label.classList = 'form-control border-black bg-white text-start';
+    jointime_label.disabled = false;
     card_label.classList = 'form-control border-black bg-white text-start';
     card_label.disabled = false;
 
@@ -87,13 +92,16 @@ function edit() {
 function save() {
     let name_label = document.getElementById('name_label');
     let place_label = document.getElementById('place_label');
+    let jointime_label = document.getElementById('jointime_label');
     let card_label = document.getElementById('card_label');
     name_label.classList = 'form-control border-white bg-white text-start ';
     name_label.disabled = true;
     place_label.classList = 'form-control border-white bg-white text-start ';
     place_label.disabled = true;
+    jointime_label.classList = 'form-control border-white bg-white text-start ';
+    jointime_label.disabled = true;
     card_label.classList = 'form-control border-white bg-white text-start ';
     card_label.disabled = true;
-    fetch('/api/manage?' + new URLSearchParams({ "name": name_label.value, 'place': place_label.value, 'cardid': card_label.value, 'key': '_id', 'value': window.location.href.split('/')[3].split('#')[0] }), { method: 'PUT' })
+    fetch('/api/manage?' + new URLSearchParams({ "name": name_label.value, 'place': place_label.value,'jointime': jointime_label.value, 'cardid': card_label.value, 'key': '_id', 'value': window.location.href.split('/')[3].split('#')[0] }), { method: 'PUT' })
         .then(response => (load_data()))
 }
