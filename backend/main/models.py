@@ -154,9 +154,6 @@ class staff(Resource):
         else:
             return 'didn\'t create'
     
-
-        
-    
     def delete(self):#刪除記錄
         args=self.parser.parse_args()
         data=db_model.collection.find_one({args['key']:args['value']})

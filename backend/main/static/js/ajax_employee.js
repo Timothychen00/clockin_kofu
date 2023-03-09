@@ -3,14 +3,17 @@ function load_data(month_type = 'this') {
 
     var month = '';
     if (month_type == 'this') {
-        month = date.getFullYear() + "-" + (Number(date.getMonth()) + 1);
+        if (date.getMonth() == 0)
+            month = Number(date.getFullYear() - 1) + "-" + 12;
+        else
+            month = Number(date.getFullYear()) + "-" + String(date.getMonth()+1).padStart(2, '0');
         document.getElementById('this').classList.add('active');
         document.getElementById('last').classList.remove('active');
     } else {
         if (date.getMonth() == 0)
             month = Number(date.getFullYear() - 1) + "-" + 12;
         else
-            month = Number(date.getFullYear()) + "-" + String(date.getMonth()).padStart(2, '0');
+            month = Number(date.getFullYear()) + "-" + String(date.getMonth()+1).padStart(2, '0');
         document.getElementById('last').classList.add('active');
         document.getElementById('this').classList.remove('active');
     }
@@ -26,12 +29,13 @@ function load_data(month_type = 'this') {
             jointime_label.value = res[0]['jointime'];
             let card_label = document.getElementById('card_label');
             card_label.value = res[0]['cardid'];
-            // console.log(res);
-            // console.log(res[0]["log"][month]);
+            console.log(res);
+            console.log(res[0]["log"][month]);
             let keys ='';
+            console.log(month);
             if (month in res[0]['log'])
                 keys= Object.keys(res[0]["log"][month]);
-            // console.log(keys);
+            console.log(keys);
             currentmonth_log.innerHTML = '';
             let res_length = keys.length;
             if (res_length>0) {

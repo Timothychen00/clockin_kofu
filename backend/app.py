@@ -12,12 +12,12 @@ app.register_blueprint(app_route)
 api.add_resource(staff_manage,'/api/manage')
 api.add_resource(staff,'/api/staff')
 
-app.secret_key = os.environ.get("SECRET") or os.urandom(24)
+app.secret_key = 'os.environ.get("SECRET") or os.urandom(24)'
 @app.before_request
 def show():
     # print(request.headers,request.get_data().decode())
     pass
 
 if __name__=="__main__":
-    app.run(debug=True,port='8000')
+    app.run(debug=True,port='8000',host='0.0.0.0')
 
