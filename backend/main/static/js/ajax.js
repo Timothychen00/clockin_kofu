@@ -41,7 +41,10 @@ function inject_html(data,month_type='this') {
 
     var month = '';
     if (month_type == 'this') {
-        month = date.getFullYear() + "-" + (Number(date.getMonth()) + 1);
+        if (date.getMonth() == 0)
+            month = Number(date.getFullYear() - 1) + "-" + 12;
+        else
+            month = Number(date.getFullYear()) + "-" + String(date.getMonth()+1).padStart(2, '0');
         document.getElementById('this').classList.add('active');
         document.getElementById('last').classList.remove('active');
     } else {

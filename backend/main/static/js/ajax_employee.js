@@ -13,7 +13,7 @@ function load_data(month_type = 'this') {
         if (date.getMonth() == 0)
             month = Number(date.getFullYear() - 1) + "-" + 12;
         else
-            month = Number(date.getFullYear()) + "-" + String(date.getMonth()+1).padStart(2, '0');
+            month = Number(date.getFullYear()) + "-" + String(date.getMonth()).padStart(2, '0');
         document.getElementById('last').classList.add('active');
         document.getElementById('this').classList.remove('active');
     }
