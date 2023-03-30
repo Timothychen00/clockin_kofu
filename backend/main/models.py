@@ -31,13 +31,13 @@ class staff_manage(Resource):
     def get(self):
         args = self.parser.parse_args()
         filters={}
-        print('filters',filters)
+        # print('filters',filters)
         print(args['key'],args['value'])
         if args['key']:
             filters={args['key']:args['value']}
 
         results=list(db_model.collection.find(filters))
-        print(results)
+        # print(results)
         return results,200
 
     def post(self):
@@ -85,6 +85,7 @@ class staff(Resource):
         args=self.parser.parse_args()
         data=db_model.collection.find_one({args['key']:args['value']})
         err=[]
+        print('\033[93m','[EDIT-CLOCKING]','\033[0m')
         print(data)
         print(args)
         if data:

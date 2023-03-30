@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
@@ -9,6 +10,8 @@
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
     <link rel="stylesheet" href="/static/css/template.css">
+
+
 </head>
 
 <body id="page-top">
@@ -153,17 +156,64 @@
                                             class="fas fa-download fa-sm text-white-50"></i>&nbsp;<span
                                             style="font-size:20px">返回</span>&nbsp;</a>
                                 </div>
+                                <div class="col-4">
+                                    <button type="button" class="btn btn-secondary btn-sm d-none d-sm-inline-block pt-2"
+                                        style="height:60px;width:100%;" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal"><i
+                                            class="fas fa-download fa-sm text-white-50"></i>&nbsp;<span
+                                            style="font-size:20px">補打卡</span>&nbsp;</button>
+
+                                    <div class="modal fade" id="exampleModal" tabindex="-1"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">補打卡</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="exampleInputEmail1" class="form-label">日期</label>
+                                                        <input type="date" class="form-control" id="modal_date" aria-describedby="emailHelp">
+                                                      </div>
+                                                    <div class="mb-3">
+                                                        <label for="exampleInputEmail1" class="form-label">上班時間</label>
+                                                        <input type="time" class="form-control" id="modal_clockin_time" aria-describedby="emailHelp" value="08:00   ">
+                                                      </div>
+                                                      <div class="mb-3">
+                                                        <label for="exampleInputEmail1" class="form-label">加班時間</label>
+                                                        <input type="time" class="form-control" id="modal_workover_time" aria-describedby="emailHelp">
+                                                      </div>
+                                                      <div class="mb-3">
+                                                        <label for="exampleInputEmail1" class="form-label">下班時間</label>
+                                                        <input type="time" class="form-control" id="modal_clockout_time" aria-describedby="emailHelp">
+                                                      </div>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">取消</button>
+                                                    <button type="button" class="btn btn-primary" onclick="make_up()">送出</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
                         <div class="col-lg-8 mb-4">
                             <div class="card shadow mb-4">
                                 <div class="card-header pt-1 pb-1 ">
-                                    <ul class="nav nav-pills card-header-pills text-center" >
+                                    <ul class="nav nav-pills card-header-pills text-center">
                                         <li class="nav-item me-2 ">
-                                            <a class="nav-link" href="#"  id="last" style="width: 100px" onclick="load_data('last');">上月</a>
+                                            <a class="nav-link" href="#" id="last" style="width: 100px"
+                                                onclick="load_data('last');">上月</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link " href="#" id="this" style="width: 100px" onclick="load_data('this');">本月</a>
+                                            <a class="nav-link " href="#" id="this" style="width: 100px"
+                                                onclick="load_data('this');">本月</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -195,9 +245,21 @@
                             class="fas fa-angle-up"></i></a>
                 </div>
 
+
+
                 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
                 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
                 <script src="/static/js/script.min.js"></script>
                 <script src="/static/js/ajax_employee.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+                    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+                    crossorigin="anonymous">
+                    </script>
+
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+                    integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz"
+                    crossorigin="anonymous">
+                    </script>
 </body>
+
 </html>

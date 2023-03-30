@@ -1,3 +1,12 @@
+
+function hide_modal(id){
+    var modal=document.getElementById(id);
+    var modal_backdrop=document.getElementsByClassName('modal-backdrop')[0];
+    modal.classList.remove('show');
+    modal_backdrop.classList.remove('show');
+}
+
+
 function load_data(month_type = 'this') {
     let date = new Date();
 
@@ -6,7 +15,7 @@ function load_data(month_type = 'this') {
         if (date.getMonth() == 0)
             month = Number(date.getFullYear() - 1) + "-" + 12;
         else
-            month = Number(date.getFullYear()) + "-" + String(date.getMonth()+1).padStart(2, '0');
+            month = Number(date.getFullYear()) + "-" + String(date.getMonth() + 1).padStart(2, '0');
         document.getElementById('this').classList.add('active');
         document.getElementById('last').classList.remove('active');
     } else {
@@ -31,14 +40,14 @@ function load_data(month_type = 'this') {
             card_label.value = res[0]['cardid'];
             console.log(res);
             console.log(res[0]["log"][month]);
-            let keys ='';
+            let keys = '';
             console.log(month);
             if (month in res[0]['log'])
-                keys= Object.keys(res[0]["log"][month]);
+                keys = Object.keys(res[0]["log"][month]);
             console.log(keys);
             currentmonth_log.innerHTML = '';
             let res_length = keys.length;
-            if (res_length>0) {
+            if (res_length > 0) {
                 let logs = res[0]['log'][month];
                 // console.log('length');
                 // console.log(res_length  );
@@ -106,6 +115,36 @@ function save() {
     jointime_label.disabled = true;
     card_label.classList = 'form-control border-white bg-white text-start ';
     card_label.disabled = true;
-    fetch('/api/manage?' + new URLSearchParams({ "name": name_label.value, 'place': place_label.value,'jointime': jointime_label.value, 'cardid': card_label.value, 'key': '_id', 'value': window.location.href.split('/')[3].split('#')[0] }), { method: 'PUT' })
+    fetch('/api/manage?' + new URLSearchParams({ "name": name_label.value, 'place': place_label.value, 'jointime': jointime_label.value, 'cardid': card_label.value, 'key': '_id', 'value': window.location.href.split('/')[3].split('#')[0] }), { method: 'PUT' })
         .then(response => (load_data()))
+}
+function make_up() {
+    let time = new Array(3);
+    time[0] = document.getElementById('modal_clockin_time').value;
+    time[1] = document.getElementById('modal_workover_time').value;
+    time[2] = document.getElementById('modal_clockout_time').value;
+    let date_now = document.getElementById('modal_date').value;
+    let value = document.getElementById('card_label').value;
+    let types = ['clockin', 'workovertime', 'clockout'];
+
+    console.log(time);
+    for (let i in time) {
+        if (time[i]) {
+            time[i] = date_now + ' ' + time[i];
+            time[i] += ':0';
+        } else
+            time[i] = '0:0:0';
+    }
+
+    console.log(time);
+    fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[0] + '&type=' + types[0], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+        .then(() => {
+            fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[1] + '&type=' + types[1], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then(
+                () => {
+                    fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[2] + '&type=' + types[2], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+                    ).then(hide_modal('exampleModal'))
+                }
+            );
+        });
+    
 }
