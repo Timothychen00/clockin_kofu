@@ -329,20 +329,20 @@ void send_request(String methods,String carduid,String type){//默認參數值�
         u8g2.setFontDirection(0);
         u8g2.firstPage();
         do {  
-            Serial.println(doc["name"].as<String>());
+            
             u8g2.setCursor(15, 15);
-            u8g2.print(doc["name"].as<String>());
+            Serial.println("OK");
             u8g2.setCursor(15, 30);
-            u8g2.print(type);
+            u8g2.print(type+String(" OK!"));
         } while ( u8g2.nextPage() );
         Serial.println(">>");
         if (doc.as<String>()!="null"){
             digitalWrite(10,1);
-            delay(50);
+            delay(100);
             digitalWrite(10,0);
-            delay(50);\
-            digitalWrite(10,1);
             delay(50);
+            digitalWrite(10,1);
+            delay(100);
             digitalWrite(10,0);
             delay(50);
         }
