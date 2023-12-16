@@ -151,9 +151,9 @@ class staff(Resource):
                 send_notification(message='\n時間：'+str(time)+'\n姓名：'+data['name']+'\n'+dtype+'成功')
                 
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
-            return data
+            return 'OK'
         else:
-            return 'didn\'t create'
+            return 'Failed'
     
     def delete(self):#刪除記錄
         args=self.parser.parse_args()
