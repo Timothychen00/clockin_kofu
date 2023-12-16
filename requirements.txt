@@ -13,5 +13,4 @@ WTForms==2.3.3
 openpyxl
 six
 flask_restful
-requests
 oauthlib
