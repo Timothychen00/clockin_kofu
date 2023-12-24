@@ -154,7 +154,7 @@ class staff(Resource):
                     dtype='下班打卡'
                 elif args['type']=='workovertime':
                     dtype='加班加班'
-                send_notification(message='\n時間：'+str(time)+'\n姓名：'+data['name']+'\n'+data['cardid']+'\n'+dtype+'成功',mode='test')
+                send_notification(message='\n時間：'+str(time)+'\n姓名：'+data['name']+'\n'+data['cardid']+'\n'+dtype+'成功',mode=os.environ['MODE'])
                 
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
             return 'OK'
