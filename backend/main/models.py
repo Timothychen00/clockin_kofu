@@ -180,11 +180,12 @@ def get_date(date=None):
         date_object=datetime.datetime.now(tz=datetime.timezone(datetime.timedelta(hours=+8)))
         #按照打卡時間表進行處理
         print('[打卡]')
+        date=date_object.strftime("%Y-%m-%d %H:%M:%S")
     else:
         print('[補打卡]')
         send_notification('補打卡','test')
         
-        date=date_object.strftime("%Y-%m-%d %H:%M:%S")
+        
     if ' 'in date:
         date=datetime.datetime.strptime(date,"%Y-%m-%d %H:%M:%S")
         if date.minute<=10:
