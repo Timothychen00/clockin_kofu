@@ -72,8 +72,9 @@ class staff_manage(Resource):
     def delete(self):
         args=self.parser.parse_args()
         print(args)
+        data=db_model.collection.find_one({args['key']:args['value']})
         db_model.collection.delete_one({args['key']:args['value']})
-        send_notification(message='\nkey:'+args['key']+'\nvalue:'+args['value']+'\n刪除',mode='test')
+        send_notification(message='\n姓名：'+data['name']+'\n'+data['cardid']+'\n刪除成功',mode='test')
         
     
 class staff(Resource):
