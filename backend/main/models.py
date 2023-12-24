@@ -61,6 +61,7 @@ class staff_manage(Resource):
 
         print(data)
         db_model.collection.insert_one(data)
+        send_notification(message='\n姓名：'+data['name']+'\n'+data['cardid']+'\n加入成功',mode='test')
         return {'data':data,'msg':'data inserted!'},200
     
     def put(self):#進行（上班、下班、加班）的操作
@@ -72,6 +73,7 @@ class staff_manage(Resource):
         args=self.parser.parse_args()
         print(args)
         db_model.collection.delete_one({args['key']:args['value']})
+        send_notification(message='\nkey:'+args['key']+'\nvalue:'+args['value']+'\n刪除',mode='test')
         
     
 class staff(Resource):
@@ -210,7 +212,6 @@ def send_notification(message,mode='production'):
         token = os.environ['LINE_TOKEN']
     else:
         token=os.environ['TEST_LINE_TOKEN']
-        
     headers = { "Authorization": "Bearer " + token }
     data = { 'message': message }
     result=requests.post("https://notify-api.line.me/api/notify",
