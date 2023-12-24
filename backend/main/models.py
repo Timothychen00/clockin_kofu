@@ -2,6 +2,7 @@ import datetime
 import os, pymongo, requests
 from dotenv import load_dotenv
 from flask_restful import Resource, reqparse
+import pandas as pd
 
 load_dotenv()
 
@@ -16,6 +17,10 @@ class DB():
             return int(self.collection.find().sort("_id",pymongo.DESCENDING).limit(1)[0]['_id'])+1
         except:
             return 1
+    
+    def save(self):
+        df = pd.DataFrame(list(self.collection.find()))
+        df.to_csv('data.csv',index=False)
 db_model=DB()
 
 class staff_manage(Resource):
@@ -105,6 +110,7 @@ class staff(Resource):
                 log[month][date]={'clockin':'0:0:0','workovertime':'0:0:0','clockout':'0:0:0','duration':[[0,0],[0,0]]}
             if args['type'] in ['clockin','workovertime','clockout']:
                 log[month][date][args['type']]=time
+                print("當前時間:",time)
 
                 d1=datetime.datetime.strptime(log[month][date]['clockin'],"%H:%M:%S")
                 d2=datetime.datetime.strptime(log[month][date]['workovertime'],"%H:%M:%S")
@@ -148,7 +154,7 @@ class staff(Resource):
                     dtype='下班打卡'
                 elif args['type']=='workovertime':
                     dtype='加班加班'
-                send_notification(message='\n時間：'+str(time)+'\n姓名：'+data['name']+'\n'+dtype+'成功')
+                send_notification(message='\n時間：'+str(time)+'\n姓名：'+data['name']+'\n'+data['cardid']+'\n'+dtype+'成功',mode='production')
                 
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
             return 'OK'
@@ -171,8 +177,25 @@ def get_date(date=None):
     '''return(month,date,time)'''
     print(date)
     if not date:
-        date=datetime.datetime.now(tz=datetime.timezone(datetime.timedelta(hours=+8))).strftime("%Y-%m-%d %H:%M:%S")
+        date_object=datetime.datetime.now(tz=datetime.timezone(datetime.timedelta(hours=+8)))
+        #按照打卡時間表進行處理
+        print('[打卡]')
+    else:
+        print('[補打卡]')
+        send_notification('補打卡','test')
+        
+        date=date_object.strftime("%Y-%m-%d %H:%M:%S")
     if ' 'in date:
+        date=datetime.datetime.strptime(date,"%Y-%m-%d %H:%M:%S")
+        if date.minute<=10:
+            date=date.replace(minute=0)
+        elif date.minute>=20 and date.minute<=40:
+            date=date.replace(minute=30)
+        elif date.minute>=50:        
+            date=date.replace(minute=0)
+            date=date+datetime.timedelta(hours=1)
+        date=date.strftime("%Y-%m-%d %H:%M:%S")
+        
         time=date.split()[1]
         day=date.split()[0]
     else:
@@ -181,8 +204,12 @@ def get_date(date=None):
     month="-".join(day.split('-')[:-1])
     return (month,day,time)
     
-def send_notification(message):
-    token = os.environ['LINE_TOKEN']
+def send_notification(message,mode='production'):
+    if mode=='production':
+        token = os.environ['LINE_TOKEN']
+    else:
+        token=os.environ['TEST_LINE_TOKEN']
+        
     headers = { "Authorization": "Bearer " + token }
     data = { 'message': message }
     result=requests.post("https://notify-api.line.me/api/notify",

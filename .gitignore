@@ -13,3 +13,4 @@ backend/main/__pycache__/__init__.cpython-38.pyc
 esp/.DS_Store
 backend/.env
 backend/main/.env
+backend/data.csv
