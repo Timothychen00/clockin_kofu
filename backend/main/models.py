@@ -230,7 +230,7 @@ class staff(Resource):
 
             del log[month][day]
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log}})
-            send_notification(message='\n時間：'+'\n姓名：'+data['name']+'\n'+data['cardid']+'\n'+'刪除'+day+'打卡紀錄',mode=os.environ['MODE'])
+            send_notification(message='\n時間：'+'\n姓名：'+data['name']+'\n'+data['cardid']+'\n'+'刪除'+day+'打卡紀錄',mode='test')
             return {'msg':'log '+day+' delete!'}
 
 
