@@ -164,7 +164,8 @@ function delete_record() {
 
     fetch('/api/staff', { method: 'DELETE', body: "key=cardid&value=" + value + "&time=" + date_now, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
         .then(() => {
-            hide_modal('delete_record_modal')
+            hide_modal('delete_record_modal');
+            load_data();
         });
 
 }
