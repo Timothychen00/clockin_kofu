@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from flask_restful import Resource, reqparse
 import pandas as pd
 
+
 load_dotenv()
 
 class DB():
@@ -11,6 +12,14 @@ class DB():
         self.client=pymongo.MongoClient("mongodb+srv://admin:"+os.environ['DB_PASS']+"@cluster0.ee06dbd.mongodb.net/?retryWrites=true&w=majority",tls=True,tlsAllowInvalidCertificates=True)
         self.db=self.client.staff
         self.collection=self.db.clockin
+        self.today={
+            'date':'',
+            'clockin':[],
+            'workovertime':[],
+            'clockout':[],
+        }
+        # date
+        # 
         
     def next_id(self):#get next id
         try:
@@ -21,6 +30,8 @@ class DB():
     def save(self):
         df = pd.DataFrame(list(self.collection.find()))
         df.to_csv('data.csv',index=False)
+        
+    
 db_model=DB()
 
 class staff_manage(Resource):
@@ -101,7 +112,7 @@ class staff(Resource):
             work=data['work']
             workover=data['workover']
             
-            month,date,time=get_date(args['time'])
+            month,date,time=get_date(args['time'],'clockin')
             
             work[month]=[0,0]
             workover[month]=[0,0]
@@ -109,30 +120,60 @@ class staff(Resource):
             if not month in log:
                 log[month]={}
             
-            if not date in log[month]:#初始化
+            if not date in log[month]:#初始化 上班打卡
+                
+                if data['cardid'] in db_model.today['clockin']:
+                    send_notification(message='\n時間：'+str(time)+'\n姓名：'+data['name']+'\n'+data['cardid']+'\n'+'重複打卡 上班',mode='test')
+                    return '已經打卡'
+                
                 log[month][date]={'clockin':'0:0:0','workovertime':'0:0:0','clockout':'0:0:0','duration':[[0,0],[0,0]]}
+                
+                if db_model.today['date']!=get_date()[1]:#up date to today
+                    db_model.today['date']=get_date()[1]
+                    db_model.today['clockin']=[]
+                    db_model.today['workovertime']=[]
+                    db_model.today['clockout']=[]
+                else:
+                    db_model.today['clockin'].append(data['cardid'])
+                
+                
             if args['type'] in ['clockin','workovertime','clockout']:
-                log[month][date][args['type']]=time
+                if date not in log[month]:
+                    return "請先上班"
+                
+                if data['cardid'] not in db_model.today[args['type']]:
+                    log[month][date][args['type']]=time
                 print("當前時間:",time)
 
                 d1=datetime.datetime.strptime(log[month][date]['clockin'],"%H:%M:%S")
                 d2=datetime.datetime.strptime(log[month][date]['workovertime'],"%H:%M:%S")
                 d3=datetime.datetime.strptime(log[month][date]['clockout'],"%H:%M:%S")
                 
+                
+                #calculate working hours
                 if args['type']=='workovertime':
-                    if log[month][date]['clockin']=='0:0:0':
-                        err.append('請先上班')
+                    if data['cardid'] in db_model.today['workovertime']:
+                        send_notification(message='\n時間：'+str(time)+'\n姓名：'+data['name']+'\n'+data['cardid']+'\n'+'重複打卡 加班',mode='test')
+                        return '已經打卡'
+                    
                     else:
                         log[month][date]['duration'][0]=[(d2-d1).seconds//3600,((d2-d1).seconds//60)%60]
+                    
+                    db_model.today['workovertime'].append(data['cardid'])
+                    
                 elif args['type']=='clockout':
-                    if log[month][date]['clockin']=='0:0:0':
-                        err.append('請先上班')
+                    if data['cardid'] in db_model.today['clockout']:
+                        send_notification(message='\n時間：'+str(time)+'\n姓名：'+data['name']+'\n'+data['cardid']+'\n'+'重複打卡 下班',mode='test')
+                        return '已經打卡'
+                    
                     elif log[month][date]['workovertime']=='0:0:0':
                         log[month][date]['duration'][0]=[(d3-d1).seconds//3600,((d3-d1).seconds//60)%60]
                         log[month][date]['duration'][1]=[0,0]
                     else:
                         log[month][date]['duration'][1]=[(d3-d2).seconds//3600,((d3-d2).seconds//60)%60]
                         
+                    db_model.today['clockout'].append(data['cardid'])
+
                 # work=[0,0]
                 # workover=[0,0]
                 print(1)
@@ -165,19 +206,38 @@ class staff(Resource):
             return 'Failed'
     
     def delete(self):#刪除記錄
+        print('delete')
         args=self.parser.parse_args()
         data=db_model.collection.find_one({args['key']:args['value']})
         log=data['log']
         
-        month,day=get_date(args['time'])[0:2]
+        if args['time']:
+            month,day=get_date(args['time'])[0:2]
+            
+        else:
+            return "No time input!",413
         
+        print(month,day)
+        print(log)
+        print(log[month])
         if month in log:#初始化
+            if data['cardid'] in db_model.today['clockin']:
+                db_model.today['clockin'].remove(data['cardid'])
+            if data['cardid'] in db_model.today['workovertime']:
+                db_model.today['workovertime'].remove(data['cardid'])
+            if data['cardid'] in db_model.today['clockout']:
+                db_model.today['clockout'].remove(data['cardid'])
+
             del log[month][day]
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log}})
+            send_notification(message='\n時間：'+'\n姓名：'+data['name']+'\n'+data['cardid']+'\n'+'刪除'+day+'打卡紀錄',mode=os.environ['MODE'])
             return {'msg':'log '+day+' delete!'}
 
-def get_date(date=None):
-    '''return(month,date,time)'''
+
+def get_date(date=None,time_type=''):
+    '''return(month,date,time)
+        defualt type returns not modified date
+    '''
     print(date)
     if not date:
         date_object=datetime.datetime.now(tz=datetime.timezone(datetime.timedelta(hours=+8)))
@@ -188,16 +248,16 @@ def get_date(date=None):
         print('[補打卡]')
         send_notification('補打卡','test')
         
-        
     if ' 'in date:
         date=datetime.datetime.strptime(date,"%Y-%m-%d %H:%M:%S")
-        if date.minute<=10:
-            date=date.replace(minute=0)
-        elif date.minute>=20 and date.minute<=40:
-            date=date.replace(minute=30)
-        elif date.minute>=50:        
-            date=date.replace(minute=0)
-            date=date+datetime.timedelta(hours=1)
+        if time_type=='clockin':
+            if date.minute<=10:
+                date=date.replace(minute=0)
+            elif date.minute>=20 and date.minute<=40:
+                date=date.replace(minute=30)
+            elif date.minute>=50:        
+                date=date.replace(minute=0)
+                date=date+datetime.timedelta(hours=1)
         date=date.strftime("%Y-%m-%d %H:%M:%S")
         
         time=date.split()[1]
@@ -207,7 +267,7 @@ def get_date(date=None):
         day=date
     month="-".join(day.split('-')[:-1])
     return (month,day,time)
-    
+
 def send_notification(message,mode='production'):
     if mode=='production':
         token = os.environ['LINE_TOKEN']
