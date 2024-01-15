@@ -16,3 +16,4 @@ flask_restful
 requests==2.27.1
 oauthlib
 pandas==1.5.1
+icecream

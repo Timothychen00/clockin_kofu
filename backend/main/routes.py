@@ -14,6 +14,10 @@ GOOGLE_CLIENT_SECRET=os.environ['SECRET']
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 available_emails=['timothychenpc@gmail.com','tim20060112@gmail.com','dsseven777823@gmail.com']
 
+@app_route.before_request
+def show_begin():
+    print('request_start','-'*20)
+
 @app_route.route("/")
 @login_required
 def home():

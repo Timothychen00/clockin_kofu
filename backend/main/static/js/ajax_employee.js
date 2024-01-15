@@ -36,9 +36,9 @@ function load_data(month_type = 'this') {
             let card_label = document.getElementById('card_label');
             card_label.value = res[0]['cardid'];
             //補打卡重置
-            document.getElementById('modal_clockin_time').value='';
-            document.getElementById('modal_workover_time').value='';
-            document.getElementById('modal_clockout_time').value='';
+            document.getElementById('modal_clockin_time').value = '';
+            document.getElementById('modal_workover_time').value = '';
+            document.getElementById('modal_clockout_time').value = '';
 
 
             console.log(res);
@@ -123,7 +123,7 @@ function save() {
 }
 
 //補打卡
-function make_up() {
+async function make_up() {
     let time = new Array(3);
     time[0] = document.getElementById('modal_clockin_time').value;
     time[1] = document.getElementById('modal_workover_time').value;
@@ -141,20 +141,27 @@ function make_up() {
             time[i] = '0:0:0';
     }
 
-    console.log(time);
-    fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[0] + '&type=' + types[0], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-        .then(() => {
-            fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[1] + '&type=' + types[1], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then(
-                () => {
-                    fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[2] + '&type=' + types[2], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-                    ).then(() => {
-                        hide_modal('exampleModal');
-                        load_data();
-                    })
-                }
-            );
-        });
+    for (let i in time) {
+        if (time[i] != '0:0:0') {
+            await fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[i] + '&type=' + types[i], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+        }
+    }
 
+    hide_modal('exampleModal');
+    // console.log(time);
+    // fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[0] + '&type=' + types[0], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+    //     .then(() => {
+    //         fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[1] + '&type=' + types[1], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then(
+    //             () => {
+    //                 fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[2] + '&type=' + types[2], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+    //                 ).then(() => {
+    //                     hide_modal('exampleModal');
+    //                     load_data();
+    //                 })
+    //             }
+    //         );
+    //     });
+    load_data();
 }
 
 //補打卡
@@ -163,9 +170,7 @@ function delete_record() {
     let value = document.getElementById('card_label').value;
 
     fetch('/api/staff', { method: 'DELETE', body: "key=cardid&value=" + value + "&time=" + date_now, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-        .then(() => {
-            hide_modal('delete_record_modal');
-            load_data();
-        });
+        .then(()=>{load_data()});
+    hide_modal('delete_record_modal');
 
 }
