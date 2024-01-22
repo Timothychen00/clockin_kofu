@@ -1,7 +1,7 @@
 from flask import Flask,request
 from main.routes import app_route
 from flask_restful import Api,Resource
-from main.models import staff_manage,staff
+from main.api import staff_manage,staff
 import os
 from dotenv import load_dotenv
 load_dotenv()
