@@ -21,7 +21,7 @@
 <body style="overflow:hidden" class="pb-3">
     <div class="container-fluid vh-100">
         <div class="row  mt-3 px-2">
-            <div class="col-lg-2 col-3 text-center d-inline-flex align-items-center ">
+            <div class=" col-2 text-center d-inline-flex align-items-center ">
                  <ion-icon name="menu-outline" size="large" id="menu"
                     class="ms-3 me-4 icon-size d-none d-lg-inline px-3"></ion-icon>
                 <!-- <ion-icon size="large" name="water-outline" class="ms-lg-2 icon-size"></ion-icon> -->
@@ -29,27 +29,27 @@
                 <p style="user-select: none;word-break:keep-all;font-size:larger" class="pt-3 d-none d-lg-inline">包子七  
                 </p>
             </div>
-            <div class="form-floating col-2 d-inline-flex align-items-center">
-                <select class="form-select ps-3" id="key" aria-label="Floating label select example">
+            <div class="form-floating col-4 col-lg-2 d-inline-flex align-items-center">
+                <select class="form-select ps-3 pe-1" id="key" aria-label="Floating label select example" style="min-width:120px">
                     <option selected value="_id">ID</option>
                     <option value="name">姓名</option>
                     <option value="place">工作地點</option>
                 </select>
-                <label class="col-1 ms-3" for="floatingSelect">搜尋方式</label>
+                <label class="col-1 col-lg-2  ms-3" for="floatingSelect">搜尋方式</label>
             </div>
-            <div class="form-floating col-5 d-flex align-items-center ">
+            <div class="form-floating col-5 col-lg-4 d-flex align-items-center ">
                 <input type="text" class="form-control" id="value" placeholder="員工查詢">
-                <label for="員工查詢" class="ms-3 text-secondary">員工查詢</label>
+                <label for="員工查詢" class="ms-3 text-secondary">查詢</label>
             </div>
-            <div class="col p-0 d-inline-flex align-items-center">
+            <div class="col-1 p-0 d-inline-flex align-items-center">
                 <ion-icon size="large" class="search icon-size" name="search-outline" onclick="search()"></ion-icon>
             </div>
-            <div class="col d-inline-flex align-items-center add" data-bs-toggle="modal" data-bs-target="#exampleModal"
+            <div class="col d-inline-flex align-items-center add pt-2 pt-lg-0" data-bs-toggle="modal" data-bs-target="#exampleModal"
                 data-bs-whatever="@getbootstrap">
                 <ion-icon size="large" name="add-circle-outline"> </ion-icon>
                 <b>新增員工</b>
             </div>
-            <div class="col d-inline-flex justify-content-end align-items-center logout" onclick="location.href='/logout'">
+            <div class="col d-inline-flex justify-content-end align-items-center logout  pt-2 pt-lg-0" onclick="location.href='/logout'">
                 <ion-icon size="large" name="log-out-outline"></ion-icon>
                 <b class="d-none d-lg-inline">logout</b>
             </div>
@@ -98,7 +98,7 @@
         </div>
 
         <div class="row mt-3 ps-2 pe-lg-2 pe-0 " style="height: 85%;">
-            <div class="col-2 px-lg-3 px-0" id="dashboard">
+            <div class="col-2 px-lg-3 px-0 d-none d-md-block" id="dashboard">
                 <div class="function_button p-2 d-flex align-items-center justify-content-center shadow">
                     <ion-icon size="large" name="people-outline"></ion-icon>
                     <b id="word">員工管理</b>
