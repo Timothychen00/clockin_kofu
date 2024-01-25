@@ -19,7 +19,7 @@ def show_begin():
     print('request_start','-'*20)
 
 @app_route.route("/")
-# @login_required
+@login_required
 def home():
     return render_template("index.html")
 

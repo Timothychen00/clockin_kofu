@@ -18,7 +18,8 @@ const int blinkInterval = 2;
  
 
 #define I2C_ADD 0x20      //I2C address of the PCF8574
-#define SERVER_IP "https://kofuclockin.azurewebsites.net" 
+#define SERVER_IP "https://bao7clockinsys.azurewebsites.net/" 
+//https://bao7clockinsys.azurewebsites.net/
 #define ntpServer "pool.ntp.org" //NTP伺服器
 #define utcOffset 28800          //UTC偏移量 (此為UTC+8的秒數，即：8*60*60)
 #define daylightOffset 0
@@ -34,6 +35,7 @@ short minutes = 0;
 short day = -1;
 short clockInNum = 0;
 int last_millis = 0;
+int card_uid_timestamp=0;
 int last_display=0;
 int last_button[3]={0};//clockin clockout overtime
 struct tm now;
@@ -157,8 +159,10 @@ void dump_byte_array(byte *buffer, byte bufferSize) {
   for (byte i = 0; i < bufferSize; i++) {
     temp += String(buffer[i], HEX);
   }
-  if (!temp.equals(""))
+  if (!temp.equals("")){
     card_uid = temp;
+    card_uid_timestamp=millis();
+  }
   Serial.println();
 }
 
@@ -232,6 +236,9 @@ void loop() {
         getLocalTime(&now);
         last_millis = millis();
     }
+    if (millis()- card_uid_timestamp >30000){
+        card_uid="";  
+    }
     hours = now.tm_hour;
     minutes = now.tm_min;
     day = now.tm_wday;
@@ -248,6 +255,7 @@ void loop() {
             u8g2.print(formattedTime);
           } while ( u8g2.nextPage() );
         last_display=millis();
+
         strcpy(old_formattedTime,formattedTime);
     }
 
@@ -347,6 +355,7 @@ void send_request(String methods,String carduid,String type){//默認參數值�
             delay(50);
         }
       }
+      card_uid = "";
     } else {
       Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
     }
