@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Example</title>
+</head>
+<body>
+
+<div id="app">
+    <h1>{{ function_name }}</h1>
+    <button @click="handle_click('newData')">Change Data</button>
+</div>
+
+<script src="https://unpkg.com/vue@3"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                function_name: 'data'
+            };
+        },
+        methods: {
+            handle_click(type) {
+                console.log(type);
+                this.function_name = type;
+                console.log(this.function_name);
+            }
+        }
+    });
+
+    app.mount('#app');
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous">
+</script>
+</body>
+</html>

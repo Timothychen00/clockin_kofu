@@ -7,6 +7,7 @@
     <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <!-- Bootstrap CSS v5.2.0-beta1 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
         integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
@@ -15,7 +16,7 @@
         integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous">
         </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-
+    
 </head>
 
 <body style="overflow:hidden" class="pb-3">
@@ -98,56 +99,37 @@
                 </div>
             </div>
         </div>
-
+        
 
         <div class="row mt-3 ps-2 pe-lg-2 pe-0 " style="height: 85%;">
             <div class="col-2 px-lg-3 px-0 d-none d-md-block" id="dashboard">
-                <div class="function_button p-2 d-flex align-items-center justify-content-center shadow"
-                    onclick="handle_mode('data')">
+                <div class="function_button p-2 d-flex align-items-center justify-content-center shadow" @click="handle_click('data')">
                     <ion-icon size="large" name="people-outline"></ion-icon>
                     <b id="word">員工管理</b>
                 </div>
-                <div class="function_button p-2 mt-3 d-flex align-items-center justify-content-center shadow"
-                    onclick="handle_mode('contact')">
+                <div class="function_button p-2 mt-3 d-flex align-items-center justify-content-center shadow" @click="handle_click('calculate')">
+                    <ion-icon size="large" name="bookmark-outline"></ion-icon>
+                    <b id="word-2">薪資試算</b>
+                </div>
+                <div class="function_button p-2 mt-3 d-flex align-items-center justify-content-center shadow" @click="handle_click('contact')">
                     <ion-icon size="large" name="bookmark-outline"></ion-icon>
                     <b id="word-3">客服</b>
                 </div>
             </div>
 
-            <div id="data" class="col card px-0 shadow " style="height:100%;border-radius:0.9rem">
+            <div v-show="function_name='data'" class="col card px-0 shadow " style="height:100%;border-radius:0.9rem">
                 <div class="card-header py-1" style="background-color: #f8f9fc;position:sticky">
                     <ul class="nav nav-pills card-header-pills text-center">
-                        <li class="nav-item me-2 mt-1">
+                        <li class="nav-item me-2 ">
                             <a class="nav-link" href="#" id="last" style="width: 100px"
-                                onclick="load_data(month_type='last');">上月</a>
+                                onclick="load_data('last');">上月</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link mt-1" href="#" id="this" style="width: 100px"
-                                onclick="load_data(month_type='this');">本月</a>
-                        </li>
-
-
-                        </li>
-                        <li class="nav-item mx-2 ms-auto">
-                            <button class="nav-link active" id="setting_button" style="width: 50px;height:45px;"
-                                data-bs-toggle="modal" data-bs-target="#exampleModalsalary" onclick="setting()"><ion-icon
-                                    name="cog-outline" class="element-rotate" id="setting_icon"
-                                    style="font-size:28px;margin-left:-5px"></ion-icon></button>
-
-                            <!-- Modal -->
-
-
-                        </li>
-
-                        <li class="nav-item mx-2">
-                            <a class="nav-link" href="#" id="salary" style="width: 50px;height:45px;padding-top:.6rem"
-                                onclick="salary()"><ion-icon name="cash-outline"
-                                    style="font-size: 28px;margin-left:-5px"></ion-icon></a>
-
+                            <a class="nav-link " href="#" id="this" style="width: 100px"
+                                onclick="load_data('this');">本月</a>
                         </li>
                     </ul>
                 </div>
-
                 <div class="div card-body" style="overflow:scroll;">
                     <table class=" table text-start ">
                         <thead style="width: 100%;position:sticky !important;">
@@ -157,7 +139,46 @@
                                 <th scope="col" style="min-height:100px!important;">工作地點</th>
                                 <th scope="col" style="min-height:100px!important;">上班時數</th>
                                 <th scope="col" style="min-height:100px!important;">加班時數</th>
-                                <th scope="col" id="delete_title">刪除</th>
+                                
+                                <th scope="col">刪除</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users" style="word-break:keep-all;max-height:550px!important;overflow-y:scroll">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div  class="col card px-0 shadow " style="height:100%;border-radius:0.9rem">
+                <div class="card-header py-1" style="background-color: #f8f9fc;position:sticky">
+
+                </div>
+                <div class="div card-body" style="overflow:scroll;">
+                
+                </div>
+            </div>
+            <div  class="col card px-0 shadow " style="height:100%;border-radius:0.9rem">
+                <div class="card-header py-1" style="background-color: #f8f9fc;position:sticky">
+                    <ul class="nav nav-pills card-header-pills text-center">
+                        <li class="nav-item me-2 ">
+                            <a class="nav-link" href="#" id="last" style="width: 100px"
+                                onclick="load_data('last');">上月</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="#" id="this" style="width: 100px"
+                                onclick="load_data('this');">本月</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="div card-body" style="overflow:scroll;">
+                    <table class=" table text-start ">
+                        <thead style="width: 100%;position:sticky !important;">
+                            <tr>
+                                <th scope="col">_id</th>
+                                <th scope="col" style="min-height:100px!important;">名稱</th>
+                                <th scope="col" style="min-height:100px!important;">工作地點</th>
+                                <th scope="col" style="min-height:100px!important;">上班時數</th>
+                                <th scope="col" style="min-height:100px!important;">加班時數</th>
+                                <th scope="col">刪除</th>
                             </tr>
                         </thead>
                         <tbody id="users" style="word-break:keep-all;max-height:550px!important;overflow-y:scroll">
@@ -167,16 +188,6 @@
             </div>
 
         </div>
-        <div id="contact" class="col card px-0 shadow visually-hidden " style="height:100%;border-radius:0.9rem">
-            <div class="card-header py-1" style="background-color: #f8f9fc;position:sticky">
-
-            </div>
-            <div class="div card-body" style="overflow:scroll;">
-
-            </div>
-        </div>
-
-    </div>
     </div>
     <script src="/static/js/vue_control.js"></script>
     <!-- Bootstrap JavaScript Libraries -->
@@ -187,38 +198,6 @@
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script src="/static/js/slide.js"></script>
     <script src="/static/js/ajax.js"></script>
-    <div class="modal fade" id="exampleModalsalary" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">薪資試算｜設定</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="col-form-label" for="name">單位薪資（元）</label>
-                        <input class="form-control" id="unitpay" name="unitpay" type="text" value="">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="col-form-label" for="address">計薪單位（分鐘）</label>
-                        <input class="form-control" id="duration" name="duration" placeholder="計薪一次的時間(分鐘)" type="number"
-                            min="15" max="120" step="5" value="">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="col-form-label" for="address">計薪門檻(分鐘)</label>
-                        <input class="form-control" id="bias" name="bias" placeholder="計薪一次的門檻(分鐘)" type="number"
-                            min="5" max="60" step="5" value="">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
-                    <button type="button" class="btn btn-primary" onclick="salary_save()">保存</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>

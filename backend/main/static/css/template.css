@@ -1,12 +1,13 @@
 @import url(https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&display=swap);
-.middle_border{
+
+.middle_border {
     border-radius: 0.8rem;
     outline-style: solid;
     outline-width: 1px;
     height: inherit;
 }
 
-.function_button{
+.function_button {
     background-color: cadetblue;
     color: white;
     border-radius: 0.8rem;
@@ -15,103 +16,121 @@
     transition: all .3s;
 }
 
-.function_button:hover{
+.function_button:hover {
     scale: 1.05;
 }
-.icon-size{
+
+.icon-size {
     width: 60px;
 }
 
-.search:hover{
-    color:rgb(0, 149, 255);
-    scale: 1.2;
-}
-.search{
-    transition: all .2s;
-}
-
-.add{
-    transition: all .2s;
-}
-.add:hover{
-    color:rgb(16, 180, 41);
+.search:hover {
+    color: rgb(0, 149, 255);
     scale: 1.2;
 }
 
-#menu:hover{
-    scale: 1.05;   
+.search {
+    transition: all .2s;
+}
+
+.add {
+    transition: all .2s;
+}
+
+.add:hover {
+    color: rgb(16, 180, 41);
+    scale: 1.2;
+}
+
+#menu:hover {
+    scale: 1.05;
     /* border: .75px solid black; */
     background: rgba(224, 224, 224, 0.36);
-    
+
 }
-#menu{
+
+#menu {
     transition: all .2s;
-    border-radius: 0.8rem; 
+    border-radius: 0.8rem;
     height: 50px;
     width: 90px;
 }
-#dashboard{
+
+#dashboard {
     transition: width .3s;
 }
 
-.logout{
+.logout {
     transition: all .2s;
 }
 
-.logout:hover{
-    color:rgb(255, 183, 0);
+.logout:hover {
+    color: rgb(255, 183, 0);
     scale: 1.05;
 }
 
-.btn-outline-secondary{
+.btn-outline-secondary {
     outline: 0px !important;
     opacity: 100%;
     background-color: white;
 }
-.btn-outline-secondary:hover{
+
+.btn-outline-secondary:hover {
     background-color: #6c757d;
 }
 
-.btn{
+.btn {
     opacity: 100%;
 }
 
-.text-cadetblue{
+.text-cadetblue {
     color: cadetblue !important;
 }
 
-.btn-green{
+.btn-green {
     background-color: rgb(70, 174, 93);
 }
-.bg-cadetblue{
-    background-color: cadetblue!important;
+
+.bg-cadetblue {
+    background-color: cadetblue !important;
 }
 
-.nav-item a{
+.nav-item a {
     text-decoration: none;
     color: #858796;
 }
-.nav-item a:hover{
+
+.nav-item a:hover {
     text-decoration: none;
     color: #858796;
 }
-.nav-item a:active{
+
+.nav-item a:active {
     text-decoration: none;
     color: #858796;
 }
-.nav-link:active{
-    background-color: #4e73df!important;
-    color: white;
-}
-.nav-link:hover{
-    background-color: #4e73df!important;
-    color: white!important;
-}
-.nav-link:focus{
-    background-color: #4e73df!important;
+
+.nav-link:active {
+    background-color: #4e73df !important;
     color: white;
 }
 
-.active{
-    background-color: #4e73df!important;
+.nav-link:hover {
+    background-color: #4e73df !important;
+    color: white !important;
+}
+
+.nav-link:focus {
+    background-color: #4e73df !important;
+    color: white;
+}
+
+.active {
+    background-color: #4e73df !important;
+}
+
+
+.element-rotate {
+    rotate: 360deg;
+    transition: rotate 2s;
 }

@@ -1,14 +1,26 @@
 
-function load_data(month_type='this') {
-	fetch('/api/manage', { method: "GET",mode: 'no-cors' })
+async function load_data(show_salary, month_type = 'this') {
+	console.log('load', show_salary)
+	await fetch('/api/settings', { method: "GET", mode: 'no-cors' })
 		.then((response) => {
 			// 這裡會得到一個 ReadableStream 的物件
 			// console.log(response);
 			return response.json();// 可以透過 blob(), json(), text() 轉成可用的資訊
-		}).then((jsonData) => (inject_html(jsonData,month_type)))//講資料植入html
+		}).then((jsonData) => {window.salary_data=jsonData})//講資料植入html
 		.catch((err) => {
 			console.log('錯誤:', err);
 		});
+
+	fetch('/api/manage', { method: "GET", mode: 'no-cors' })
+		.then((response) => {
+			// 這裡會得到一個 ReadableStream 的物件
+			// console.log(response);
+			return response.json();// 可以透過 blob(), json(), text() 轉成可用的資訊
+		}).then((jsonData) => (inject_html(jsonData, month_type, show_salary)))//講資料植入html
+		.catch((err) => {
+			console.log('錯誤:', err);
+		});
+
 }
 window.onload = load_data();
 
@@ -21,7 +33,7 @@ function delete_user(id) {
 }
 
 function insert_user() {
-	fetch('/api/manage', { method: 'POST', body: 'name=' + document.getElementById('name').value + '&place=' + document.getElementById('place').value+'&jointime=' + document.getElementById('jointime').value + '&cardid=' + document.getElementById('cardid').value, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+	fetch('/api/manage', { method: 'POST', body: 'name=' + document.getElementById('name').value + '&place=' + document.getElementById('place').value + '&jointime=' + document.getElementById('jointime').value + '&cardid=' + document.getElementById('cardid').value, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
 		.then(() => { let users = document.getElementById('users'); users.innerHTML = ''; load_data() });
 
 }
@@ -34,24 +46,24 @@ function search() {
 		.then(res => (inject_html(res)))
 }
 
-function inject_html(data,month_type='this') {
+function inject_html(data, month_type = 'this', show_salary = 'false') {
 	let users = document.getElementById('users');
 	let date = new Date();
 	users.innerHTML = '';
 
-    var month = '';
-    if (month_type == 'this') {
-		month = Number(date.getFullYear()) + "-" + String(date.getMonth()+1).padStart(2, '0');
-        document.getElementById('this').classList.add('active');
-        document.getElementById('last').classList.remove('active');
-    } else {
-        if (date.getMonth() == 0)
-            month = Number(date.getFullYear() - 1) + "-" + 12;
-        else
-            month = Number(date.getFullYear()) + "-" + String(date.getMonth()).padStart(2, '0');
-        document.getElementById('last').classList.add('active');
-        document.getElementById('this').classList.remove('active');
-    }
+	var month = '';
+	if (month_type == 'this') {
+		month = Number(date.getFullYear()) + "-" + String(date.getMonth() + 1).padStart(2, '0');
+		document.getElementById('this').classList.add('active');
+		document.getElementById('last').classList.remove('active');
+	} else {
+		if (date.getMonth() == 0)
+			month = Number(date.getFullYear() - 1) + "-" + 12;
+		else
+			month = Number(date.getFullYear()) + "-" + String(date.getMonth()).padStart(2, '0');
+		document.getElementById('last').classList.add('active');
+		document.getElementById('this').classList.remove('active');
+	}
 	console.log(month);
 
 
@@ -64,8 +76,21 @@ function inject_html(data,month_type='this') {
 			workover = data[i]['workover'][month];
 		}
 		console.log(data[i].length)
-		// work=jsonData[i].work;
-		users.innerHTML += "<tr><td>" + data[i]['_id'] + "</td><td><a href='/" + data[i]['_id'] + "'>" + data[i]["name"] + "</a></td><td>" + data[i]["place"] + "</td><td>" + work[0] + "  hr  " + work[1] + " m  " + "</td><td>" + workover[0] + "  hr  " + workover[1] + " m" + '</td>\
+		// work=jsonData[i].work
+
+		//計算薪資時數
+		salary_perhour = window.salary_data['unitpay'];
+		salary_times=Math.floor((work[0]*60+work[1])/window.salary_data['duration']);
+		if (salary_times*window.salary_data['duration']>=window.salary_data['bias'])
+			salary_times += 1;
+		salary_data_html = '';
+		if (show_salary == 'true')
+		salary_data_html = "<td>" + salary_perhour * salary_times+ '</td>';
+		console.log(salary_times)
+
+
+
+		users.innerHTML += "<tr><td>" + data[i]['_id'] + "</td><td><a href='/" + data[i]['_id'] + "'>" + data[i]["name"] + "</a></td><td>" + data[i]["place"] + "</td><td>" + work[0] + "  hr  " + work[1] + " m  " + "</td><td>" + workover[0] + "  hr  " + workover[1] + " m" + '</td>' + salary_data_html + '\
 		<td>\
 		<button type="button" class="btn btn-danger" data-bs-toggle="modal"\
 			data-bs-target="#exampleModal'+ data[i]['_id'] + '">刪除</button>\

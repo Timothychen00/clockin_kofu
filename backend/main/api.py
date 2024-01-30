@@ -177,7 +177,25 @@ class staff(Resource):
             return {'msg':'log '+day+' delete!'}
 
 
-
-
-
-    
+class settings(Resource):
+    parser=reqparse.RequestParser()
+    parser.add_argument('unitpay',type=int,location=['values'])
+    parser.add_argument('duration',type=int,location=['values'])
+    parser.add_argument('bias',type=int,location=['values'])
+    def get(self):
+        args=self.parser.parse_args()
+        result=db_model.db.settings.find_one({'type':'settings'})
+        if result:
+            return result['data']
+    def put(self):
+        args=self.parser.parse_args()
+        result=db_model.db.settings.find_one({'type':'settings'})
+        if args['unitpay']:
+            result['data']['unitpay']=args['unitpay']
+        if args['duration']: 
+            result['data']['duration']=args['duration']
+        if args['bias']:    
+            result['data']['bias']=args['bias']
+        print(result)
+        db_model.db.settings.update_one({"type":'settings'},{'$set':{'data':result['data']}})
+        return 'OK'

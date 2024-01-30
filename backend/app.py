@@ -1,7 +1,7 @@
 from flask import Flask,request
 from main.routes import app_route
 from flask_restful import Api,Resource
-from main.api import staff_manage,staff
+from main.api import staff_manage,staff,settings
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -11,6 +11,7 @@ api = Api(app)
 app.register_blueprint(app_route)
 api.add_resource(staff_manage,'/api/manage')
 api.add_resource(staff,'/api/staff')
+api.add_resource(settings,'/api/settings')
 
 app.secret_key = 'os.environ.get("SECRET") or os.urandom(24)'
 @app.before_request
