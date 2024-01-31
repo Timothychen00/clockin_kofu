@@ -1,6 +1,6 @@
 
-async function load_data(show_salary, month_type = 'this') {
-	console.log('load', show_salary)
+async function load_data( month_type = 'this') {
+	console.log('load')
 	await fetch('/api/settings', { method: "GET", mode: 'no-cors' })
 		.then((response) => {
 			// 這裡會得到一個 ReadableStream 的物件
@@ -16,7 +16,7 @@ async function load_data(show_salary, month_type = 'this') {
 			// 這裡會得到一個 ReadableStream 的物件
 			// console.log(response);
 			return response.json();// 可以透過 blob(), json(), text() 轉成可用的資訊
-		}).then((jsonData) => (inject_html(jsonData, month_type, show_salary)))//講資料植入html
+		}).then((jsonData) => (inject_html(jsonData, month_type)))//講資料植入html
 		.catch((err) => {
 			console.log('錯誤:', err);
 		});
@@ -46,7 +46,8 @@ function search() {
 		.then(res => (inject_html(res)))
 }
 
-function inject_html(data, month_type = 'this', show_salary = 'false') {
+function inject_html(data, month_type = 'this') {
+	console.log('inject',data,month_type);
 	let users = document.getElementById('users');
 	let date = new Date();
 	users.innerHTML = '';
@@ -84,7 +85,7 @@ function inject_html(data, month_type = 'this', show_salary = 'false') {
 		if (salary_times*window.salary_data['duration']>=window.salary_data['bias'])
 			salary_times += 1;
 		salary_data_html = '';
-		if (show_salary == 'true')
+		if(document.getElementById('salary').classList.contains('active'))
 		salary_data_html = "<td>" + salary_perhour * salary_times+ '</td>';
 		console.log(salary_times)
 

@@ -20,7 +20,9 @@ function salary(){
         button.classList.remove('active');
         button.blur();
         document.getElementById('salary_title').remove();
-        load_data(show_salary='false');
+        month_type=document.getElementById('last').classList.contains('active')?month_type='last':month_type='this';
+        console.log('here',month_type);
+        load_data(month_type=month_type);
     }else{
         button.classList.add('active');
         delete_title=document.getElementById('delete_title');
@@ -30,7 +32,9 @@ function salary(){
         salary_title.setAttribute('style', 'min-height:100px!important;');
         salary_title.setAttribute('id', 'salary_title');
         delete_title.before(salary_title)
-        load_data(show_salary='true');
+        month_type=document.getElementById('last').classList.contains('active')?month_type='last':month_type='this';
+        console.log('here',month_type);
+        load_data(month_type=month_type);
 
     }
 }
