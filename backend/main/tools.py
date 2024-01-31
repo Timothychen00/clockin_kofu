@@ -33,10 +33,13 @@ def get_date(date=None,time_type=''):
         if time_type=='clockin':
             if date.minute<=10:
                 date=date.replace(minute=0)
+                date=date.replace(second=0)
             elif date.minute>=20 and date.minute<=40:
                 date=date.replace(minute=30)
+                date=date.replace(second=0)
             elif date.minute>=50:        
                 date=date.replace(minute=0)
+                date=date.replace(second=0)
                 date=date+datetime.timedelta(hours=1)
         date=date.strftime("%Y-%m-%d %H:%M:%S")
         
