@@ -48,7 +48,7 @@ def get_date(date=None,time_type=''):
     month="-".join(day.split('-')[:-1])
     return (month,day,time)
 
-def msg_gen(data,text):
+def msg_gen(data,text,target_time=''):
     '''generate message
         args for present args variables
         text for text message
@@ -56,7 +56,7 @@ def msg_gen(data,text):
     message=f"""
 姓名：{data['name']}
 卡片ID:{data['cardid']}
-時間戳：{get_date()[1]} {get_date()[2]}
+時間戳：{get_date()[1]} {get_date()[2]} | {target_time}
 ==========
 {text}
 """

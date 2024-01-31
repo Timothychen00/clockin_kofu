@@ -64,11 +64,13 @@ class Today_Manage():
         ic("today reset")
         # pass
         
-    def add(self,type,cardid):
+    def add(self,type,cardid,date):
         self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
         data=result[0]['data']
         ic(cardid)
+        if date!=get_date()[1]:# only control today
+            return True
         if (cardid not in data[type]) and cardid!=' ': 
             data[type].append(cardid)
             ic(data)
@@ -77,16 +79,17 @@ class Today_Manage():
         else:
             return 'Already clocked'
     
-    def remove(self,cardid):
+    def remove(self,cardid,date):
         self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
         data=result[0]['data']
         
-        for i in ['clockin','workovertime','clockout']:
-            if cardid in data[i]:
-                data[i].remove(cardid)
-                self.dbp.update_one({'type':'today_manage'},{'$set':{'data':data}})
-                ic(cardid+'removed from today_manage')
-        return True
+        if date==get_date()[1]:# only control today
+            for i in ['clockin','workovertime','clockout']:
+                if cardid in data[i]:
+                    data[i].remove(cardid)
+                    self.dbp.update_one({'type':'today_manage'},{'$set':{'data':data}})
+                    ic(cardid+'removed from today_manage')
+            return True
         
 today_manage=Today_Manage()

@@ -24,6 +24,7 @@ def home():
     return render_template("index.html")
 
 @app_route.route("/<id>")
+@login_required
 def personal(id):
     return render_template("index2.html")
 
@@ -43,6 +44,7 @@ def login():
     return redirect(request_uri)
 
 @app_route.route('/logout')
+@login_required
 def logout():
     session.clear()
     return redirect('/')

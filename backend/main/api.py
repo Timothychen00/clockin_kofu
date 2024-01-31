@@ -95,8 +95,8 @@ class staff(Resource):
                 
             if args['type'] in ['clockin','workovertime','clockout']:
                 
-                if ic(today_manage.add(args['type'],data['cardid']))=='Already clocked':
-                    send_notification(ic(msg_gen(data,'重複打卡 '+args['type'])),'test')
+                if ic(today_manage.add(args['type'],data['cardid'],date))=='Already clocked':
+                    send_notification(ic(msg_gen(data,'重複打卡 '+args['type'],args['time'])),'test')
                     return '已經打卡'
                 else:
                     log[month][date][args['type']]=time#紀錄打卡時間
@@ -146,7 +146,7 @@ class staff(Resource):
                     dtype='下班打卡'
                 elif args['type']=='workovertime':
                     dtype='加班加班'
-                send_notification(ic(msg_gen(data,dtype+'成功')),mode=os.environ['MODE'])
+                send_notification(ic(msg_gen(data,dtype+'成功',args['time'])),mode=os.environ['MODE'])
                 
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
             return 'OK'
@@ -173,7 +173,7 @@ class staff(Resource):
 
             del log[month][day]
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log}})
-            send_notification(ic(msg_gen(data,'刪除'+day+'打卡記錄')),mode='test')
+            send_notification(ic(msg_gen(data,'刪除'+day+'打卡記錄',args['time'])),mode='test')
             return {'msg':'log '+day+' delete!'}
 
 
