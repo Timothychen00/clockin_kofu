@@ -127,12 +127,12 @@ class staff(Resource):
                 # work=[0,0]
                 # workover=[0,0]
                 for i in log[month]:#counting all the working hours
-                    ic(log[month][i]['duration'][0])
+                    # ic(log[month][i]['duration'][0])
                     work[month][0]+=log[month][i]['duration'][0][0]
                     work[month][1]+=log[month][i]['duration'][0][1]
                     workover[month][0]+=log[month][i]['duration'][1][0]
                     workover[month][1]+=log[month][i]['duration'][1][1]
-                    ic(work)
+                    # ic(work)
                     if work[month][1]>=60:
                         work[month][0]+=work[month][1]//60
                         work[month][1]%=60
@@ -169,7 +169,7 @@ class staff(Resource):
         ic(log)
         ic(log[month])
         if month in log:#初始化
-            today_manage.remove(data['cardid'])
+            today_manage.remove(data['cardid'],day)
 
             del log[month][day]
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log}})
