@@ -140,14 +140,14 @@ async function make_up() {
         } else
             time[i] = '0:0:0';
     }
-
+    hide_modal('exampleModal');
     for (let i in time) {
         if (time[i] != '0:0:0') {
             await fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[i] + '&type=' + types[i], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
         }
     }
 
-    hide_modal('exampleModal');
+    
     // console.log(time);
     // fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[0] + '&type=' + types[0], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
     //     .then(() => {
@@ -168,9 +168,9 @@ async function make_up() {
 function delete_record() {
     let date_now = document.getElementById('modal_date_delete').value;
     let value = document.getElementById('card_label').value;
-
+    hide_modal('delete_record_modal');
     fetch('/api/staff', { method: 'DELETE', body: "key=cardid&value=" + value + "&time=" + date_now, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
         .then(()=>{load_data()});
-    hide_modal('delete_record_modal');
+    
 
 }
