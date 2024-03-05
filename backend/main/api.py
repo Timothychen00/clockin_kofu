@@ -71,6 +71,9 @@ class staff(Resource):
         ic('[post]')
         ic(args)
         data=db_model.collection.find_one({args['key']:args['value']})
+    #暫時倒流
+        if args['type']=='workovertime':
+            args['type']='clockin'
         err=[]
         print('\033[93m','[EDIT-CLOCKING]','\033[0m')
         print(data)

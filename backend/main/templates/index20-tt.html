@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html lang="en" class="light-style layout-menu-fixed layout-compact" dir="ltr" data-theme="theme-default"
+	data-assets-path="/static/" data-template="vertical-menu-template-free">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+	<title>包子七 | 員工管理</title>
+
+	<!-- Favicon -->
+	<link rel="icon" type="image/x-icon" href="/static/img/favicon/favicon.ico" />
+
+	<!-- Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+		rel="stylesheet" />
+
+	<link rel="stylesheet" href="/static/vendor/fonts/boxicons.css" />
+
+	<!-- Core CSS -->
+	<link rel="stylesheet" href="/static/vendor/css/core.css" class="template-customizer-core-css" />
+	<link rel="stylesheet" href="/static/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+	<link rel="stylesheet" href="/static/css/demo.css" />
+
+	<!-- Vendors CSS -->
+	<link rel="stylesheet" href="/static/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+	<link rel="stylesheet" href="/static/vendor/libs/apex-charts/apex-charts.css" />
+
+	<!-- Helpers -->
+	<script src="/static/vendor/js/helpers.js"></script>
+
+	<script src="/static/js/lib/config.js"></script>
+</head>
+
+<body>
+	<!-- Layout wrapper -->
+	<div class="layout-wrapper layout-content-navbar" id="app">
+		<div class="layout-container">
+			<!-- Menu -->
+			<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+				<div class="app-brand demo">
+					<a href="index.html" class="app-brand-link">
+						<img src="/static/favicon.png" alt="" srcset="" style="height:50px;width:75px">
+						<p style="user-select: none;word-break:keep-all;font-size:larger;font-weight:800;color:black" class="pt-3 d-none d-lg-inline ps-2">包子七</p>
+					</a>
+
+					<a href="javascript:void(0);"
+						class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+						<i class="bx bx-chevron-left bx-sm align-middle"></i>
+					</a>
+				</div>
+
+				<div class="menu-inner-shadow"></div>
+
+				<ul class="menu-inner py-1">
+					<!-- Dashboards -->
+					<li class="menu-item active open">
+						<a href="javascript:void(0);" class="menu-link menu-toggle">
+							<!-- <div data-i18n="Dashboards">Dashboards</div> -->
+							<ion-icon size="" name="people-outline" class="pe-3" style="font-size: 25px;"></ion-icon><b id="word">員工管理</b>
+						</a>
+						<ul class="menu-sub">
+							<li class="menu-item">
+								<a href="#" target="_blank" class="menu-link">
+									<div data-i18n="CRM">CRM</div>
+								</a>
+							</li>
+							<li class="menu-item active">
+								<a href="#" class="menu-link">
+									<div data-i18n="Analytics">Analytics</div>
+								</a>
+							</li>
+							<li class="menu-item">
+								<a href="#" target="_blank" class="menu-link">
+									<div data-i18n="eCommerce">eCommerce</div>
+								</a>
+							</li>
+							<li class="menu-item">
+								<a href="#" target="_blank" class="menu-link">
+									<div data-i18n="Logistics">Logistics</div>
+								</a>
+							</li>
+						</ul>
+					</li>
+
+				</ul>
+			</aside>
+			<!-- / Menu -->
+
+			<!-- Layout container -->
+			<div class="layout-page">
+				<!-- Navbar -->
+
+				<nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+					id="layout-navbar">
+					<div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+						<a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+							<i class="bx bx-menu bx-sm"></i>
+						</a>
+					</div>
+
+					<div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+						<!-- Search -->
+						<div class="navbar-nav align-items-center">
+							<div class="nav-item d-flex align-items-center">
+								<i class="bx bx-search fs-4 lh-0"></i>
+								<input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2"
+									placeholder="Search..." aria-label="Search..." />
+							</div>
+						</div>
+						<!-- /Search -->
+
+						<ul class="navbar-nav flex-row align-items-center ms-auto">
+
+							<!-- User -->
+							<li class="nav-item navbar-dropdown dropdown-user dropdown">
+								<a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
+									data-bs-toggle="dropdown">
+									<div class="avatar avatar-online">
+										<img src="/static/img/avatars/1.png" alt
+											class="w-px-40 h-auto rounded-circle" />
+									</div>
+								</a>
+								<ul class="dropdown-menu dropdown-menu-end">
+									<li>
+										<a class="dropdown-item" href="#">
+											<div class="d-flex">
+												<div class="flex-shrink-0 me-3">
+													<div class="avatar avatar-online">
+														<img src="/static/img/avatars/1.png" alt
+															class="w-px-40 h-auto rounded-circle" />
+													</div>
+												</div>
+												<div class="flex-grow-1">
+													<span class="fw-medium d-block">John Doe</span>
+													<small class="text-muted">Admin</small>
+												</div>
+											</div>
+										</a>
+									</li>
+									<li>
+										<div class="dropdown-divider"></div>
+									</li>
+									<li>
+										<a class="dropdown-item" href="#">
+											<i class="bx bx-user me-2"></i>
+											<span class="align-middle">My Profile</span>
+										</a>
+									</li>
+									<li>
+										<a class="dropdown-item" href="#">
+											<i class="bx bx-cog me-2"></i>
+											<span class="align-middle">Settings</span>
+										</a>
+									</li>
+									<li>
+										<a class="dropdown-item" href="#">
+											<span class="d-flex align-items-center align-middle">
+												<i class="flex-shrink-0 bx bx-credit-card me-2"></i>
+												<span class="flex-grow-1 align-middle ms-1">Billing</span>
+												<span
+													class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
+											</span>
+										</a>
+									</li>
+									<li>
+										<div class="dropdown-divider"></div>
+									</li>
+									<li>
+										<a class="dropdown-item" href="javascript:void(0);">
+											<i class="bx bx-power-off me-2"></i>
+											<span class="align-middle">Log Out</span>
+										</a>
+									</li>
+								</ul>
+							</li>
+							<!--/ User -->
+						</ul>
+					</div>
+				</nav>
+
+				<!-- / Navbar -->
+				<div class="content-wrapper p-4">
+					<div id="data" class="col card shadow " style="height:100%;border-radius:0.9rem">
+						<div class="card-header py-1" style="background-color: #f8f9fc;position:sticky">
+							<ul class="nav nav-pills card-header-pills text-center">
+								<li class="nav-item me-2 mt-1">
+									<a class="nav-link" href="#" id="last" style="width: 100px"
+										onclick="load_data('last');">上月</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link mt-1" href="#" id="this" style="width: 100px"
+										onclick="load_data('this');">本月</a>
+								</li>
+
+
+								</li>
+								<li class="nav-item mx-2 ms-auto">
+									<button class="nav-link active" id="setting_button" style="width: 50px;height:45px;"
+										data-bs-toggle="modal" data-bs-target="#exampleModalsalary"
+										onclick="setting()"><ion-icon name="cog-outline" class="element-rotate"
+											id="setting_icon"
+											style="font-size:28px;margin-left:-5px"></ion-icon></button>
+
+									<!-- Modal -->
+
+
+								</li>
+
+								<li class="nav-item mx-2">
+									<a class="nav-link" href="#" id="salary"
+										style="width: 50px;height:45px;padding-top:.6rem" onclick="salary()"><ion-icon
+											name="cash-outline" style="font-size: 28px;margin-left:-5px"></ion-icon></a>
+
+								</li>
+							</ul>
+						</div>
+
+						<div class="div card-body" style="overflow:scroll;">
+							<table class=" table text-start ">
+								<thead style="width: 100%;position:sticky !important;">
+									<tr>
+										<th scope="col">_id</th>
+										<th scope="col" style="min-height:100px!important;">名稱</th>
+										<th scope="col" style="min-height:100px!important;">工作地點</th>
+										<th scope="col" style="min-height:100px!important;">上班時數</th>
+										<th scope="col" style="min-height:100px!important;">加班時數</th>
+										<th scope="col" id="delete_title">刪除</th>
+									</tr>
+								</thead>
+								<tbody id="users"
+									style="word-break:keep-all;max-height:550px!important;overflow-y:scroll">
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- / Layout page -->
+		</div>
+
+		<!-- Overlay -->
+		<div class="layout-overlay layout-menu-toggle"></div>
+	</div>
+
+	<div class="modal fade" id="exampleModalsalary" tabindex="-1" aria-labelledby="exampleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">薪資試算｜設定</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="col-form-label" for="name">單位薪資（元）</label>
+						<input class="form-control" id="unitpay" name="unitpay" type="text" value="">
+					</div>
+
+					<div class="mb-3">
+						<label class="col-form-label" for="address">計薪單位（分鐘）</label>
+						<input class="form-control" id="duration" name="duration" placeholder="計薪一次的時間(分鐘)"
+							type="number" min="15" max="120" step="5" value="">
+					</div>
+
+					<div class="mb-3">
+						<label class="col-form-label" for="address">計薪門檻(分鐘)</label>
+						<input class="form-control" id="bias" name="bias" placeholder="計薪一次的門檻(分鐘)" type="number"
+							min="5" max="60" step="5" value="">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+					<button type="button" class="btn btn-primary" onclick="salary_save()">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="/static/js/salary.js"></script>
+	<script src="/static/js/vue_control.js"></script>
+	<script src="/static/vendor/libs/jquery/jquery.js"></script>
+	<script src="/static/vendor/libs/popper/popper.js"></script>
+	<script src="/static/vendor/js/bootstrap.js"></script>
+	<script src="/static/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+	<script src="/static/vendor/js/menu.js"></script>
+
+	<!-- endbuild -->
+
+	<!-- Vendors JS -->
+	<script src="/static/vendor/libs/apex-charts/apexcharts.js"></script>
+
+	<!-- Main JS -->
+	<script src="/static/js/lib/main.js"></script>
+
+	<!-- Page JS -->
+	<script src="/static/js/lib/dashboards-analytics.js"></script>
+
+	<!-- Place this tag in your head or just before your close body tag. -->
+	<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+		integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous">
+		</script>
+	<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+	<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+	<script src="/static/js/slide.js"></script>
+	<script src="/static/js/ajax.js"></script>
+</body>
+
+</html>

@@ -91,7 +91,7 @@ function inject_html(data, month_type = 'this') {
 
 
 
-		users.innerHTML += "<tr><td>" + data[i]['_id'] + "</td><td><a href='/" + data[i]['_id'] + "'>" + data[i]["name"] + "</a></td><td>" + data[i]["place"] + "</td><td>" + work[0] + "  hr  " + work[1] + " m  " + "</td><td>" + workover[0] + "  hr  " + workover[1] + " m" + '</td>' + salary_data_html + '\
+		users.innerHTML += "<tr><td>" + data[i]['_id'] + "</td><td><a href='/" + data[i]['_id'] + "'>" + data[i]["name"] + "</a></td><td class='place'>" + data[i]["place"] + "</td><td>" + work[0] + "  hr  " + work[1] + " m  " + "</td><td>" + workover[0] + "  hr  " + workover[1] + " m" + '</td>' + salary_data_html + '\
 		<td>\
 		<button type="button" class="btn btn-danger" data-bs-toggle="modal"\
 			data-bs-target="#exampleModal'+ data[i]['_id'] + '">刪除</button>\
@@ -119,3 +119,4 @@ function inject_html(data, month_type = 'this') {
 		</td></tr>';
 	}
 }
+

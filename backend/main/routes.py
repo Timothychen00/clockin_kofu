@@ -23,6 +23,11 @@ def show_begin():
 def home():
     return render_template("index.html")
 
+@app_route.route("/test")
+@login_required
+def test():
+    return render_template("index20-tt.html")
+
 @app_route.route("/<id>")
 @login_required
 def personal(id):
