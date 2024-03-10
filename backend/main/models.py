@@ -1,10 +1,8 @@
-import datetime
-import os, pymongo, requests
+import os, pymongo
 from dotenv import load_dotenv
-from flask_restful import Resource, reqparse
 import pandas as pd
 from icecream import ic
-from main.tools import send_notification,get_date,msg_gen
+from main.tools import get_date
 
 
 load_dotenv()

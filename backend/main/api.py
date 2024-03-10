@@ -1,4 +1,8 @@
-from main.models import *
+from main.models import db_model,today_manage
+from flask_restful import Resource, reqparse
+from icecream import ic
+from main.tools import get_date,send_notification,msg_gen
+import datetime
 class staff_manage(Resource):
     #define argument parser
     parser=reqparse.RequestParser()
@@ -89,10 +93,10 @@ class staff(Resource):
             work[month]=[0,0]
             workover[month]=[0,0]
             
-            if not month in log:
+            if month not in log:
                 log[month]={}
             
-            if not date in log[month]:#初始化
+            if date not in log[month]:#初始化
                 
                 log[month][date]={'clockin':'0:0:0','workovertime':'0:0:0','clockout':'0:0:0','duration':[[0,0],[0,0]]}
                 
@@ -127,15 +131,14 @@ class staff(Resource):
                             log[month][date]['duration'][1]=[0,0]
                         else:
                             log[month][date]['duration'][1]=[(d3-d2).seconds//3600,((d3-d2).seconds//60)%60]
-                # work=[0,0]
-                # workover=[0,0]
+
                 for i in log[month]:#counting all the working hours
-                    # ic(log[month][i]['duration'][0])
+
                     work[month][0]+=log[month][i]['duration'][0][0]
                     work[month][1]+=log[month][i]['duration'][0][1]
                     workover[month][0]+=log[month][i]['duration'][1][0]
                     workover[month][1]+=log[month][i]['duration'][1][1]
-                    # ic(work)
+
                     if work[month][1]>=60:
                         work[month][0]+=work[month][1]//60
                         work[month][1]%=60
@@ -186,7 +189,6 @@ class settings(Resource):
     parser.add_argument('duration',type=int,location=['values'])
     parser.add_argument('bias',type=int,location=['values'])
     def get(self):
-        args=self.parser.parse_args()
         result=db_model.db.settings.find_one({'type':'settings'})
         if result:
             return result['data']
