@@ -9,8 +9,8 @@ load_dotenv()
 
 class DB():
     def __init__(self):
-        # self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
-        self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
+        self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
+        # self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
         self.db=self.client.staff
         self.collection=self.db.clockin
 
