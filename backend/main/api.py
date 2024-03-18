@@ -1,8 +1,8 @@
 from main.models import db_model,today_manage
 from flask_restful import Resource, reqparse
 from icecream import ic
-import os
-from main.tools import get_date,send_notification,msg_gen
+import os,sys
+from main.tools import get_date,send_notification,msg_gen,debug_info
 import datetime
 class staff_manage(Resource):
     #define argument parser
@@ -81,12 +81,22 @@ class staff(Resource):
             
             if args['connection_mode']=='buttonless':
                 ic('configing connection_mode into buttonless')
-                if today_manage.check_inside(args['cardid'],'clockin')==False:
+                now_time=datetime.datetime.strptime(get_date(None,'clockin')[2],"%H:%M:%S")
+                if today_manage.check_inside(args['value'],'clockin')==False:
                     ic('set mode to clockin')
                     args['type']='clockin'
-                elif today_manage.check_inside(args['cardid'],'clockout')==False:
+                    
+                elif today_manage.check_inside(args['value'],'clockout')==False:
                     ic('set mode to clockout')
-                    args['type']='clockout'
+                    clockin_time=datetime.datetime.strptime(today_manage.check_inside(args['value'],'clockin'),"%H:%M:%S")
+                    if now_time-clockin_time>datetime.timedelta(minutes=60):
+                        args['type']='clockout'
+                    else:
+                        ic('60分鐘內重複打卡clockin->clockout')
+                        return "already done!"
+                else:
+                    ic('60分鐘內重複打卡clockout->clockout')
+                    return "already done!"
                     
             
         #暫時倒流
@@ -109,6 +119,7 @@ class staff(Resource):
                 
                 if month not in log:
                     log[month]={}
+                    ic('new month')
                 
                 if date not in log[month]:#初始化
                     
@@ -173,9 +184,7 @@ class staff(Resource):
             else:
                 return 'Failed'
         except Exception as e:
-            ic('----[ERROR]----')
-            ic(e)
-            ic('----[ERROR]----')
+            debug_info(e)
             return 'Failed'
             
     
@@ -212,6 +221,9 @@ class settings(Resource):
         result=db_model.db.settings.find_one({'type':'settings'})
         if result:
             return result['data']
+        else:
+            db_model.db.settings.insert_one({'type':'settings','data':{'unitpay':90,'duration':30,'bias':15}})
+            
     def put(self):
         args=self.parser.parse_args()
         result=db_model.db.settings.find_one({'type':'settings'})

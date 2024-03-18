@@ -90,13 +90,13 @@ function inject_html(data, month_type = 'this') {
 	for (let i = 0; i < data.length; i++) {
 		let work = [0, 0];
 		let workover = [0, 0];
-		// console.log(month in data[i].work);
+
 		if (month in data[i].work) {
 			work = data[i]['work'][month];
 			workover = data[i]['workover'][month];
 		}
 		console.log(data[i].length)
-		// work=jsonData[i].work
+
 
 		//計算薪資時數
 		let salary_perhour = window.salary_data['unitpay'];
