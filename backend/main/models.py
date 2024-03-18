@@ -9,7 +9,7 @@ load_dotenv()
 
 class DB():
     def __init__(self):
-        self.client=pymongo.MongoClient("mongodb+srv://admin:"+os.environ['DB_PASS']+"@cluster0.ee06dbd.mongodb.net/?retryWrites=true&w=majority",tls=True,tlsAllowInvalidCertificates=True)
+        self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
         self.db=self.client.staff
         self.collection=self.db.clockin
 
@@ -61,6 +61,16 @@ class Today_Manage():
             self.dbp.update_one({'type':'today_manage'},{'$set':{'data':data}})
         ic("today reset")
         # pass
+        
+    def check_inside(self,cardid,mode):
+        '''check if the cardid is inside the today_manage
+        '''
+        result=self.dbp.find({'type':'today_manage'})
+        data=result[0]['data']
+        if cardid in data[mode]:
+            return True
+        else:
+            return False
         
     def add(self,type,cardid,date):
         self.check_out_of_date()

@@ -28,6 +28,7 @@ const int blinkInterval = 2;
 #define imgWidth 128
 #define imgHeight 64  //這裡只用到48的高度，因為上方要放文字
 
+
 char formattedTime[9] = "00000000";
 char old_formattedTime[9] = "00000000";
 short hours = 0;
@@ -42,6 +43,8 @@ struct tm now;
 String temp = "";
 String card_uid = "";
 int button[3]={0};
+
+char connection_mode[]="buttonless";
 
 
 PCF8574 Port(I2C_ADD); 
@@ -171,12 +174,18 @@ void setup() {
     
     Serial.begin(115200);
     SPI.begin();//初始化SPI總線
-          
-    Port.pinMode(0, INPUT_PULLUP);
-    Port.pinMode(1, INPUT_PULLUP); 
-    Port.pinMode(2, INPUT_PULLUP);
-//    Port.pinMode(P4, OUTPUT);
-    Port.begin();  
+
+    //button
+    Serial.println(connection_mode);
+    Serial.println(connection_mode=="buttonless");
+    if(connection_mode!="buttonless"){
+        Port.pinMode(0, INPUT_PULLUP);
+        Port.pinMode(1, INPUT_PULLUP); 
+        Port.pinMode(2, INPUT_PULLUP);
+        Port.begin(); 
+    }
+   
+     
     pinMode(10,OUTPUT);
     mfrc522.PCD_Init(SS_PIN, RST_PIN); // 初始化MFRC522卡
     mfrc522.PCD_DumpVersionToSerial();
@@ -278,27 +287,33 @@ void loop() {
         
         mfrc522.PICC_HaltA();  // 卡片進入停止模式
         delay(200);
+        
+        send_request("post",card_uid,"");
 //        
     }
     digitalWrite(10,LOW);
-    button[0]=!Port.digitalRead(0);
-    button[1]=!Port.digitalRead(1);
-    button[2]=!Port.digitalRead(2);
-    
-    for(int i=0;i<3;i++){
-        if(button[i] && millis()-last_button[i]>500){
-            String type="";
-            Serial.println("waiting for type input");
-            switch(i){
-                case 0:
-                    type="clockin";break;
-                case 1:
-                    type="clockout";break;
-                case 2:
-                    type="workovertime";break;
+
+
+    if(connection_mode=="button"){//only button mode sent here
+        button[0]=!Port.digitalRead(0);
+        button[1]=!Port.digitalRead(1);
+        button[2]=!Port.digitalRead(2);
+        
+        for(int i=0;i<3;i++){
+            if(button[i] && millis()-last_button[i]>500){
+                String type="";
+                Serial.println("waiting for type input");
+                switch(i){
+                    case 0:
+                        type="clockin";break;
+                    case 1:
+                        type="clockout";break;
+                    case 2:
+                        type="workovertime";break;
+                }
+                send_request("post",card_uid,type);
+                last_button[i]=millis();
             }
-            send_request("post",card_uid,type);
-            last_button[i]=millis();
         }
     }
 }
@@ -316,7 +331,13 @@ void send_request(String methods,String carduid,String type){//默認參數值�
     if(methods=="post"){
         http.begin(client,  SERVER_IP "/api/staff"); //HTTP
         http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-        httpCode = http.POST(String("type=")+type+String("&key=cardid&value=")+carduid);
+
+        
+        if(connection_mode=="buttonless")
+            httpCode = http.POST(String("connection_mode=buttonless")+String("&key=cardid&value=")+carduid);
+        else
+            httpCode = http.POST(String("type=")+type+String("&key=cardid&value=")+carduid);
+        
     }else{
         http.begin(client,  SERVER_IP "/api/manage"); //HTTP
         httpCode = http.GET();

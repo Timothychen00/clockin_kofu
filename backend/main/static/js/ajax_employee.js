@@ -1,7 +1,7 @@
 
 function hide_modal(id) {
-    var modal = document.getElementById(id);
-    var modal_backdrop = document.getElementsByClassName('modal-backdrop')[0];
+    let modal = document.getElementById(id);
+    let modal_backdrop = document.getElementsByClassName('modal-backdrop')[0];
     modal.classList.remove('show');
     modal_backdrop.classList.remove('show');
 }
@@ -10,7 +10,7 @@ function hide_modal(id) {
 function load_data(month_type = 'this') {
     let date = new Date();
 
-    var month = '';
+    let month = '';
     if (month_type == 'this') {
         month = Number(date.getFullYear()) + "-" + String(date.getMonth() + 1).padStart(2, '0');
         document.getElementById('this').classList.add('active');
