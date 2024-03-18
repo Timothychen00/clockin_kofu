@@ -146,21 +146,6 @@ async function make_up() {
             await fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[i] + '&type=' + types[i], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
         }
     }
-
-    
-    // console.log(time);
-    // fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[0] + '&type=' + types[0], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-    //     .then(() => {
-    //         fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[1] + '&type=' + types[1], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then(
-    //             () => {
-    //                 fetch('/api/staff', { method: 'POST', body: "key=cardid&value=" + value + "&time=" + time[2] + '&type=' + types[2], headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-    //                 ).then(() => {
-    //                     hide_modal('exampleModal');
-    //                     load_data();
-    //                 })
-    //             }
-    //         );
-    //     });
     load_data();
 }
 

@@ -1,7 +1,7 @@
 
 const app = Vue.createApp({
     data: () => {
-        return { message: 'Hello Vue!' }
+        return { place: 'Hello Vue!' }
     },
     methods: {
         calculate() {

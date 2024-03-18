@@ -27,8 +27,8 @@ window.onload = load_data();
 function delete_user(id) {
 	fetch('/api/manage', { method: 'DELETE', body: "key=_id&value=" + id, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
 		.then(() => { let users = document.getElementById('users'); users.innerHTML = ''; load_data() });
-	let modalEl = document.getElementById('exampleModal' + id);
-	let mymodal = bootstrap.Modal.getInstance(modalEl);
+	const modalEl = document.getElementById('exampleModal' + id);
+	const mymodal = bootstrap.Modal.getInstance(modalEl);
 	mymodal.hide();
 }
 
@@ -38,9 +38,23 @@ function insert_user() {
 
 }
 
+function filter(data,category,filter_func){
+
+
+}
+
+function get_place_list(data){
+	let place_list=new Array();
+	for (let i in data){
+		if (!place_list.includes(data[i]['place']) && data[i]['place'])
+			place_list.push(data[i]['place']);
+	}
+	return place_list;
+}
+
 function search() {
-	key = document.getElementById('key').value;
-	value = document.getElementById('value').value;
+	let key = document.getElementById('key').value;
+	let value = document.getElementById('value').value;
 	fetch('api/manage?' + new URLSearchParams({ 'key': key, 'value': value }), {})
 		.then((response) => (response.json()))
 		.then(res => (inject_html(res)))
@@ -48,7 +62,12 @@ function search() {
 
 function inject_html(data, month_type = 'this') {
 	console.log('inject',data,month_type);
-	let users = document.getElementById('users');
+
+	// let place_list=get_place_list(data);
+	// console.log(place_list);
+	// data=filter(data,"place",(a)=>(a=="台北"));
+
+	const users = document.getElementById('users');
 	let date = new Date();
 	users.innerHTML = '';
 
@@ -69,8 +88,8 @@ function inject_html(data, month_type = 'this') {
 
 
 	for (let i = 0; i < data.length; i++) {
-		work = [0, 0];
-		workover = [0, 0];
+		let work = [0, 0];
+		let workover = [0, 0];
 		// console.log(month in data[i].work);
 		if (month in data[i].work) {
 			work = data[i]['work'][month];
