@@ -44,7 +44,7 @@ String temp = "";
 String card_uid = "";
 int button[3]={0};
 
-char connection_mode[]="buttonless";
+String connection_mode="buttonless";
 
 
 PCF8574 Port(I2C_ADD); 
@@ -176,8 +176,7 @@ void setup() {
     SPI.begin();//初始化SPI總線
 
     //button
-    Serial.println(connection_mode);
-    Serial.println(connection_mode=="buttonless");
+
     if(connection_mode!="buttonless"){
         Port.pinMode(0, INPUT_PULLUP);
         Port.pinMode(1, INPUT_PULLUP); 
@@ -187,6 +186,7 @@ void setup() {
    
      
     pinMode(10,OUTPUT);
+    digitalWrite(10,HIGH);
     mfrc522.PCD_Init(SS_PIN, RST_PIN); // 初始化MFRC522卡
     mfrc522.PCD_DumpVersionToSerial();
 
@@ -224,6 +224,9 @@ void setup() {
     WiFi.setAutoReconnect(true);
     WiFi.persistent(true);
     Serial.println("------初始化完成-------");
+    Serial.println(connection_mode);
+    Serial.println(connection_mode=="buttonless");
+    
 }
 
 void loop() {
@@ -269,7 +272,7 @@ void loop() {
     }
 
     if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
-        digitalWrite(10,HIGH);
+        digitalWrite(10,LOW);
     // 顯示卡片內容
     //get now time
         dump_byte_array(mfrc522.uid.uidByte, mfrc522.uid.size); // 讀取卡片+顯示16進制
@@ -291,7 +294,7 @@ void loop() {
         send_request("post",card_uid,"");
 //        
     }
-    digitalWrite(10,LOW);
+    digitalWrite(10,HIGH);
 
 
     if(connection_mode=="button"){//only button mode sent here
