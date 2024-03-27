@@ -126,7 +126,10 @@ class staff(Resource):
                     log[month][date]={'clockin':'0:0:0','workovertime':'0:0:0','clockout':'0:0:0','duration':[[0,0],[0,0]]}
                     
                 if args['type'] in ['clockin','workovertime','clockout']:
-                    
+                    ic('111111:')
+                    ic(args['type'])
+                    ic(data['cardid'])
+                    ic(date)
                     if ic(today_manage.add(args['type'],data['cardid'],date))=='Already clocked':
                         send_notification(ic(msg_gen(data,'重複打卡 '+args['type'],args['time'])),'test')
                         return '已經打卡'
