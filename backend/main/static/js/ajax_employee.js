@@ -1,7 +1,7 @@
 
 function hide_modal(id) {
-    var modal = document.getElementById(id);
-    var modal_backdrop = document.getElementsByClassName('modal-backdrop')[0];
+    let modal = document.getElementById(id);
+    let modal_backdrop = document.getElementsByClassName('modal-backdrop')[0];
     modal.classList.remove('show');
     modal_backdrop.classList.remove('show');
 }
@@ -10,7 +10,7 @@ function hide_modal(id) {
 function load_data(month_type = 'this') {
     let date = new Date();
 
-    var month = '';
+    let month = '';
     if (month_type == 'this') {
         month = Number(date.getFullYear()) + "-" + String(date.getMonth() + 1).padStart(2, '0');
         document.getElementById('this').classList.add('active');
@@ -52,13 +52,7 @@ function load_data(month_type = 'this') {
             let res_length = keys.length;
             if (res_length > 0) {
                 let logs = res[0]['log'][month];
-                // console.log('length');
-                // console.log(res_length  );
-                // console.log('logs')
-                // console.log(logs);
-                // console.log('keys')
-                // console.log(keys);
-                // console.log('key'+keys[0]);
+
                 let currentmonth_log = document.getElementById('currentmonth_log');
                 let workday = document.getElementById('workday');
                 let worktime = res[0]['work'][month];
@@ -71,12 +65,12 @@ function load_data(month_type = 'this') {
 
                 let total_time = worktime[0] * 60 + worktime[1] + workovertime[0] * 60 + workovertime[1];
                 let time_per = total_time / res_length;
-                // console.log(total_time);
+
                 let time_per_label = document.getElementById('time_per_label');
                 time_per_label.innerText = Math.floor(time_per / 60) + ' hr ' + Math.floor(time_per % 60) + ' m';
                 //generating html 
                 for (let log = 0; log < res_length; log++) {
-                    // console.log(logs[keys[log]]);
+
                     currentmonth_log.innerHTML += '\
                 <tr style="height:20px" class="align-text-top">\
                 <td>'+ keys[log] + '</td><td>' + logs[keys[log]]['clockin'] + '</td><td>' + logs[keys[log]]['workovertime'] + '</td><td>' + logs[keys[log]]['clockout'] + '</td><td>' + logs[keys[log]]['duration'][0][0] + ' hr ' + logs[keys[log]]['duration'][0][1] + ' m</td><td>' + logs[keys[log]]['duration'][1][0] + ' hr ' + logs[keys[log]]['duration'][1][1] + ' m</td></tr>\

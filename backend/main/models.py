@@ -9,7 +9,8 @@ load_dotenv()
 
 class DB():
     def __init__(self):
-        self.client=pymongo.MongoClient("mongodb+srv://admin:"+os.environ['DB_PASS']+"@cluster0.ee06dbd.mongodb.net/?retryWrites=true&w=majority",tls=True,tlsAllowInvalidCertificates=True)
+        self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
+        # self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
         self.db=self.client.staff
         self.collection=self.db.clockin
 
@@ -49,9 +50,9 @@ class Today_Manage():
         result=self.dbp.find({'type':'today_manage'})
         data={
             'date':get_date()[1],#get now date
-            'clockin':[],
-            'workovertime':[],
-            'clockout':[],
+            'clockin':{},
+            'workovertime':{},
+            'clockout':{},
         }
         if result.count()==0:
             ic('today建立')
@@ -62,15 +63,35 @@ class Today_Manage():
         ic("today reset")
         # pass
         
+    def check_inside(self,cardid,mode):
+        '''check if the cardid is inside the today_manage
+        '''
+        result=self.dbp.find({'type':'today_manage'})
+        if result.count()==0:
+            self.reset()
+            result=self.dbp.find({'type':'today_manage'})
+        data=result[0]['data']
+        if cardid in data[mode]:
+            return data[mode][cardid]
+        else:
+            return False
+        
     def add(self,type,cardid,date):
         self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
+        if result.count()==0:
+            self.reset()
+            result=self.dbp.find({'type':'today_manage'})
         data=result[0]['data']
+        
         ic(cardid)
+        
+        
         if date!=get_date()[1]:# only control today
             return True
         if (cardid not in data[type]) and cardid!=' ': 
-            data[type].append(cardid)
+            data[type][cardid]=get_date(None,'clockin')[2]
+            ic('add',cardid,data[type][cardid])
             ic(data)
             self.dbp.update_one({'type':'today_manage'},{'$set':{'data':data}})
             return True
@@ -80,12 +101,16 @@ class Today_Manage():
     def remove(self,cardid,date):
         self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
+        if result.count()==0:
+            self.reset()
+            result=self.dbp.find({'type':'today_manage'})
+        data=result[0]['data']
         data=result[0]['data']
         
         if date==get_date()[1]:# only control today
             for i in ['clockin','workovertime','clockout']:
                 if cardid in data[i]:
-                    data[i].remove(cardid)
+                    data[i].pop(cardid)
                     self.dbp.update_one({'type':'today_manage'},{'$set':{'data':data}})
                     ic(cardid+'removed from today_manage')
             return True

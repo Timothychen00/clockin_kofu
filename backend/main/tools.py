@@ -1,5 +1,6 @@
-import os,requests,datetime
+import os,requests,datetime,sys
 from icecream import ic
+
 
 def send_notification(message,mode='test'):
     if mode=='production':
@@ -64,3 +65,11 @@ def msg_gen(data,text,target_time=''):
 {text}
 """
     return message
+
+def debug_info(e):
+    ic('----[ERROR]----')
+    ic(e)
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+    ic(exc_type, fname, exc_tb.tb_lineno)
+    ic('----[ERROR]----')

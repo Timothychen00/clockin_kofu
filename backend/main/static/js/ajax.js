@@ -22,7 +22,7 @@ async function load_data( month_type = 'this') {
 		});
 
 }
-window.onload = load_data();
+window.onload = load_data;
 
 function delete_user(id) {
 	fetch('/api/manage', { method: 'DELETE', body: "key=_id&value=" + id, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
@@ -71,7 +71,7 @@ function inject_html(data, month_type = 'this') {
 	let date = new Date();
 	users.innerHTML = '';
 
-	var month = '';
+	let month = '';
 	if (month_type == 'this') {
 		month = Number(date.getFullYear()) + "-" + String(date.getMonth() + 1).padStart(2, '0');
 		document.getElementById('this').classList.add('active');
@@ -90,17 +90,17 @@ function inject_html(data, month_type = 'this') {
 	for (let i = 0; i < data.length; i++) {
 		let work = [0, 0];
 		let workover = [0, 0];
-		// console.log(month in data[i].work);
+
 		if (month in data[i].work) {
 			work = data[i]['work'][month];
 			workover = data[i]['workover'][month];
 		}
 		console.log(data[i].length)
-		// work=jsonData[i].work
+
 
 		//計算薪資時數
-		salary_perhour = window.salary_data['unitpay'];
-		salary_times=Math.floor((work[0]*60+work[1])/window.salary_data['duration']);
+		let salary_perhour = window.salary_data['unitpay'];
+		let salary_times=Math.floor((work[0]*60+work[1])/window.salary_data['duration']);
 		if (salary_times*window.salary_data['duration']>=window.salary_data['bias'])
 			salary_times += 1;
 		salary_data_html = '';
