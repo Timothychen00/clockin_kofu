@@ -9,7 +9,7 @@ load_dotenv()
 
 class DB():
     def __init__(self):
-        if os.environ['MODE']=='test':
+        if os.environ['DB_MODE']=='test':
             try:
                 self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
             except:
