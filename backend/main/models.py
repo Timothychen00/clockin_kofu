@@ -9,7 +9,18 @@ load_dotenv()
 
 class DB():
     def __init__(self):
-        self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
+        if os.environ['MODE']=='test':
+            try:
+                self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
+            except:
+                print('【本地】測試伺服器連線失敗 local failed')
+        else:
+            try:
+                self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
+            except:
+                print('【雲端】伺服器連線失敗 cloud failed')
+        
+        
         # self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
         self.db=self.client.staff
         self.collection=self.db.clockin
@@ -66,10 +77,11 @@ class Today_Manage():
     def check_inside(self,cardid,mode):
         '''check if the cardid is inside the today_manage
         '''
+        self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
-        if result.count()==0:
-            self.reset()
-            result=self.dbp.find({'type':'today_manage'})
+        # if result.count()==0:
+        #     self.reset()
+        #     result=self.dbp.find({'type':'today_manage'})
         data=result[0]['data']
         if cardid in data[mode]:
             return data[mode][cardid]
@@ -79,9 +91,9 @@ class Today_Manage():
     def add(self,type,cardid,date):
         self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
-        if result.count()==0:
-            self.reset()
-            result=self.dbp.find({'type':'today_manage'})
+        # if result.count()==0:
+        #     self.reset()
+        #     result=self.dbp.find({'type':'today_manage'})
         data=result[0]['data']
         
         ic(cardid)
@@ -101,9 +113,9 @@ class Today_Manage():
     def remove(self,cardid,date):
         self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
-        if result.count()==0:
-            self.reset()
-            result=self.dbp.find({'type':'today_manage'})
+        # if result.count()==0:
+        #     self.reset()
+        #     result=self.dbp.find({'type':'today_manage'})
         data=result[0]['data']
         data=result[0]['data']
         

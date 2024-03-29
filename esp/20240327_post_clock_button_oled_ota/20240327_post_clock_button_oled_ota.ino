@@ -374,8 +374,11 @@ void send_request(String methods,String carduid,String type){//默認參數值�
             u8g2.setCursor(15, 15);
             Serial.println("OK");
             u8g2.setCursor(15, 30);
-            u8g2.print(type+String(" OK!"));
+            u8g2.print(doc.as<String>());
+            
+            
         } while ( u8g2.nextPage() );
+        delay(1000);
         Serial.println(">>");
         if (doc.as<String>()!="null"){
             digitalWrite(10,1);
@@ -401,6 +404,7 @@ void send_request(String methods,String carduid,String type){//默認參數值�
             u8g2.setCursor(15, 30);
             u8g2.print(type+String(" Try Again!"));
         } while ( u8g2.nextPage() );
+        delay(1000);
         Serial.println(">>");
         if (doc.as<String>()!="null"){
             digitalWrite(10,1);
