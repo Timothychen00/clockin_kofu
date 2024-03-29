@@ -66,4 +66,4 @@ jobs:
         with:
           app-name: 'bao7clockinsys'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_AB5A0B8474924760A88F639800FC2A83 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1ECC028F038A44B199DCBDF689FE2973 }}
