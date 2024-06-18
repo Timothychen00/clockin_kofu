@@ -1,7 +1,10 @@
-import os, pymongo
+import os
+import pymongo
+
 from dotenv import load_dotenv
 import pandas as pd
 from icecream import ic
+
 from main.tools import get_date
 
 

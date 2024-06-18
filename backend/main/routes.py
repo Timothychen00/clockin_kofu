@@ -1,9 +1,17 @@
+import os
+import json
 
-from flask import Blueprint,render_template,redirect,request,session
-import requests,os,json
-from main.decorators import login_required
+import requests
+from flask import Blueprint
+from flask import render_template
+from flask import redirect
+from flask import request
+from flask import session
 from oauthlib.oauth2 import WebApplicationClient
 from dotenv import load_dotenv
+
+from main.decorators import login_required
+
 load_dotenv()
 
 app_route=Blueprint("app_route",__name__,static_folder="static",template_folder="templates")

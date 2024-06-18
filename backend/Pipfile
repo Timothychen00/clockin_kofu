@@ -1,0 +1,31 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+gunicorn = "==20.1.0"
+markupsafe = "==2.1.0"
+jinja2 = "==3.0.3"
+itsdangerous = "==2.1.0"
+werkzeug = "==2.0.3"
+flask = "==2.0.3"
+python-dotenv = "*"
+line-bot-sdk = "==2.0.1"
+pymongo = {extras = ["srv"], version = "==3.12.0"}
+flask-apscheduler = "==1.12.3"
+flask-wtf = "==0.15.1"
+wtforms = "==2.3.3"
+openpyxl = "*"
+six = "*"
+flask-restful = "*"
+requests = "==2.27.1"
+oauthlib = "*"
+icecream = "*"
+numpy = "*"
+pandas = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"

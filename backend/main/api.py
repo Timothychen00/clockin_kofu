@@ -1,9 +1,17 @@
-from main.models import db_model,today_manage
+import os
+import sys
+import datetime
+
 from flask_restful import Resource, reqparse
 from icecream import ic
-import os,sys
-from main.tools import get_date,send_notification,msg_gen,debug_info
-import datetime
+
+from main.tools import get_date
+from main.tools import send_notification
+from main.tools import msg_gen
+from main.tools import debug_info
+from main.models import db_model
+from main.models import today_manage
+
 class staff_manage(Resource):
     #define argument parser
     parser=reqparse.RequestParser()

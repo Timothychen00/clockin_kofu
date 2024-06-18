@@ -1,9 +1,15 @@
-from flask import Flask,request
-from main.routes import app_route
-from flask_restful import Api,Resource
-from main.api import staff_manage,staff,settings
 import os
+
+from flask import Flask,request
+from flask_restful import Api
+from falsk_restful import Resource
 from dotenv import load_dotenv
+
+from main.api import staff_manage
+from main.api import staff
+from main.api import settings
+from main.routes import app_route
+
 load_dotenv()
 
 class CustomFlask(Flask):

@@ -8,7 +8,7 @@ struct CONFIG {
   bool ExtendIO = false; //PCF8574
   bool RFID = true;
   bool buttonless = true;
-  String  Display_type = ""; //u8g2 or M5 Display
+  String  Display_type = "m5"; //u8g2 or M5 Display
   int rfid_type = RFID_TYPE;
 
   String board = "esp32";
@@ -46,7 +46,8 @@ struct CONFIG {
 // #include <PCF8574.h>    //Include the HCPCF8574 library
 // 闪烁时间间隔(秒)
 #define I2C_ADD 0x20      //I2C address of the PCF8574
-#define SERVER_IP "https://bao7clockinsys.azurewebsites.net/"
+//#define SERVER_IP "https://bao7clockinsys.azurewebsites.net/"
+#define SERVER_IP "http://192.168.0.18:8000/"
 #define ntpServer "pool.ntp.org" //NTP伺服器
 #define utcOffset 28800          //UTC偏移量 (此為UTC+8的秒數，即：8*60*60)
 #define daylightOffset 0
@@ -111,17 +112,15 @@ bool getLocalTime(struct tm * info, uint32_t ms = 5000)
 void send_request(String methods = "get", String carduid = "", String type = "clockin");
 void dump_byte_array(byte *buffer, byte bufferSize);//rfid gen uid string func
 void multi_wifi_setup();
-void display_unit(String type, String data1, String data2 = " ");
-void display_unit_setup(String type);
+void display_unit(String data1, String data2 = " ");
+void display_unit_setup();
 void OTA_setup();
 void time_setup();
 void output_configuration();
 void sound();
 
-
-
 void setup() {
-    display_unit_setup("m5");
+    display_unit_setup();
     Serial.begin(115200);
     SPI.begin();//初始化SPI總線
     #if RFID_TYPE==RFID_TYPE_mfrc522
@@ -140,6 +139,7 @@ void setup() {
     Serial.println(connection_mode);
     Serial.println(connection_mode == "buttonless");
     
+    
     M5Dial.Display.clear();
     //button
 //    if (connection_mode != "buttonless") {
@@ -149,11 +149,8 @@ void setup() {
 //    // Port.begin();
 //    }
     //buzzer_configuration
-    // pinMode(10,OUTPUT);
+     pinMode(G3,OUTPUT);
     // digitalWrite(10,LOW);
-//    output_configuration();
-//    Serial.println(LINE.getVersion());
-    
     
     LINE.setToken(LINE_TOKEN);
     // 先換行再顯示
@@ -202,32 +199,29 @@ void loop() {
     
     //rfid detecting
     if (M5Dial.Rfid.PICC_IsNewCardPresent() && M5Dial.Rfid.PICC_ReadCardSerial()) {
-        // digitalWrite(10,HIGH);
-        M5Dial.Speaker.tone(8000, 50);
-        
+//         digitalWrite(G3,HIGH);
+//        M5Dial.Speaker.tone(2000, 1000);
+        tone(G3,3000,1000);
         uint8_t piccType = M5Dial.Rfid.PICC_GetType(M5Dial.Rfid.uid.sak);
         // 顯示卡片內容
         //get now time
         dump_byte_array(M5Dial.Rfid.uid.uidByte, M5Dial.Rfid.uid.size); // 讀取卡片+顯示16進制
         Serial.print(F("Card UID:"));
         Serial.println(card_uid);
-        display_unit("m5","card id:",card_uid);
-        
-        //        display_unit("u8g2","cardid",card_uid);
+        display_unit("card id:",card_uid);
         
         M5Dial.Rfid.PICC_HaltA();  // 卡片進入停止模式
-        delay(200);
+        delay(1000);
         
         send_request("post", card_uid, "");
     }
-    // digitalWrite(10,LOW);
+//     digitalWrite(G3,LOW);
 
     
-    if (connection_mode == "button") { //only button mode sent here
+    if (_config.Display_type.equals("button")) { //only button mode sent here
         // button[0]=!Port.digitalRead(0);
         // button[1]=!Port.digitalRead(1);
         // button[2]=!Port.digitalRead(2);
-    
         
         
         for (int i = 0; i < 3; i++) {
@@ -364,13 +358,13 @@ void multi_wifi_setup() {
     Serial.println(WiFi.SSID());
 }
 
-void display_unit(String type, String data1, String data2) {
-    if (type.equals("m5"))//#這邊可能有bug
+void display_unit(String data1, String data2) {
+    if (_config.Display_type.equals("m5"))//#這邊可能有bug
     {
         M5Dial.Display.clear();
         M5Dial.Display.setTextSize(1);
-        M5Dial.Display.drawString(data1, M5Dial.Display.width() / 2, M5Dial.Display.height() / 2);
-        M5Dial.Display.drawString(data2, M5Dial.Display.width() / 2, M5Dial.Display.height() / 2+30);
+        M5Dial.Display.drawString(data1, M5Dial.Display.width() / 2, M5Dial.Display.height() / 2-30);
+        M5Dial.Display.drawString(data2, M5Dial.Display.width() / 2, M5Dial.Display.height() / 2+10);
 
     }
 
@@ -405,8 +399,8 @@ void display_unit(String type, String data1, String data2) {
 //    }
 //}
 
-void display_unit_setup(String type) {
-    if (type.equals("u8g2")) {
+void display_unit_setup() {
+    if (_config.Display_type.equals("u8g2")) {
         u8g2.begin();
         u8g2.enableUTF8Print();        // enable UTF8 support for the Arduino print() function
         u8g2.setFont(u8g2_font_tenstamps_mf);
@@ -450,7 +444,4 @@ void time_setup(){
 }
 void output_configuration(){
     //
-}
-void sound(){
-     M5Dial.Speaker.tone(8000, 20);
 }

@@ -1,6 +1,9 @@
-import os,requests,datetime,sys
-from icecream import ic
+import os
+import datetime
+import sys
 
+import requests
+from icecream import ic
 
 def send_notification(message,mode='test'):
     if mode=='production':
