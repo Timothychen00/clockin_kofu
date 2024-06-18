@@ -139,7 +139,6 @@ void setup() {
     Serial.println(connection_mode);
     Serial.println(connection_mode == "buttonless");
     
-    
     M5Dial.Display.clear();
     //button
 //    if (connection_mode != "buttonless") {
