@@ -12,8 +12,6 @@ from dotenv import load_dotenv
 
 from main.decorators import login_required
 
-load_dotenv()
-
 app_route=Blueprint("app_route",__name__,static_folder="static",template_folder="templates")
 GOOGLE_DISCOVERY_URL = ("https://accounts.google.com/.well-known/openid-configuration")
 GOOGLE_CLIENT_ID=os.environ['GOOGLE_CLIENT_ID']
@@ -29,7 +27,7 @@ def show_begin():
 @app_route.route("/")
 @login_required
 def home():
-    return render_template("index.html")
+    return render_template("index.html",WEBSITE_NAME=os.environ['WEBSITE_NAME'])
 
 @app_route.route("/test")
 @login_required

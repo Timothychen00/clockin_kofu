@@ -4,24 +4,25 @@ import pymongo
 from dotenv import load_dotenv
 import pandas as pd
 from icecream import ic
+from termcolor import colored
 
 from main.tools import get_date
 
-
-load_dotenv()
-
 class DB():
     def __init__(self):
+        print(os.environ['DB_MODE'])
         if os.environ['DB_MODE']=='test':
             try:
                 self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
+                print(colored('【本地】測試伺服器連線成功 local success','green'))
             except:
-                print('【本地】測試伺服器連線失敗 local failed')
+                print(colored('【本地】測試伺服器連線失敗 local failed','red'))
         else:
             try:
                 self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
+                print(colored('【雲端】測試伺服器連線成功 local success','green'))
             except:
-                print('【雲端】伺服器連線失敗 cloud failed')
+                print(colored('【雲端】伺服器連線失敗 cloud failed','red'))
         
         
         # self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])

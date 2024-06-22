@@ -21,10 +21,8 @@ six = "*"
 flask-restful = "*"
 requests = "==2.27.1"
 oauthlib = "*"
+pandas = "==1.5.1"
 icecream = "*"
-numpy = "*"
-pandas = "*"
-termcolor = "*"
 
 [dev-packages]
 
