@@ -5,7 +5,7 @@ from flask_restful import Api
 from flask_restful import Resource
 from dotenv import load_dotenv
 from termcolor import colored
-path=f"main/{(os.environ['ENV_TYPE'] or '')}.env"
+path=f"main/{os.environ.get('ENV_TYPE','')}.env"
 print(colored("\n[Using ENV]->>>>>"+path+'\n',"green"))
 load_dotenv(path)
 

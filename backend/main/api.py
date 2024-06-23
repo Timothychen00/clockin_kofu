@@ -4,6 +4,7 @@ import datetime
 
 from flask_restful import Resource, reqparse
 from icecream import ic
+from termcolor import colored
 
 from main.tools import get_date
 from main.tools import send_notification
@@ -193,7 +194,8 @@ class staff(Resource):
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
             return 'OK'
         else:
-            return 'Failed'
+            print(colored("Card Not Found!",'red'))
+            return 'Not Found'
         # except Exception as e:
         #     debug_info(e)
         #     return 'Failed'
