@@ -46,8 +46,8 @@ struct CONFIG {
 // #include <PCF8574.h>    //Include the HCPCF8574 library
 // 闪烁时间间隔(秒)
 #define I2C_ADD 0x20      //I2C address of the PCF8574
-//#define SERVER_IP "https://bao7clockinsys.azurewebsites.net/"
-#define SERVER_IP "http://192.168.0.18:8000/"
+//#define SERVER_IP "https://bao7clockinsys.azurewebsites.net"
+#define SERVER_IP "http://192.168.0.18:8000"
 #define ntpServer "pool.ntp.org" //NTP伺服器
 #define utcOffset 28800          //UTC偏移量 (此為UTC+8的秒數，即：8*60*60)
 #define daylightOffset 0
@@ -248,10 +248,10 @@ void send_request(String methods, String carduid, String type) { //默認參數�
   int httpCode = 0;
   DynamicJsonDocument doc(1024);
 
-  WiFiClientSecure client;
-
+//  WiFiClientSecure client;
+  WiFiClient client;
   HTTPClient http;
-  client.setInsecure();
+//  client.setInsecure();
   Serial.print("[HTTP] begin...\n");
   int timestart = millis();
   http.setTimeout(5000);
@@ -304,6 +304,10 @@ void send_request(String methods, String carduid, String type) { //默認參數�
         // delay(50);
       }
     } else {
+      const String& payload = http.getString();
+        Serial.println(payload);    
+      deserializeJson(doc, payload);
+      Serial.println(doc.as<String>());
       Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
 
       Serial.println("ERRRR");

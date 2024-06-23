@@ -83,9 +83,10 @@ class Today_Manage():
         '''
         self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
-        # if result.count()==0:
-        #     self.reset()
-        #     result=self.dbp.find({'type':'today_manage'})
+        print("count:",result.count())
+        if result.count()==0:
+            self.reset()
+            result=self.dbp.find({'type':'today_manage'})
         data=result[0]['data']
         if cardid in data[mode]:
             return data[mode][cardid]
