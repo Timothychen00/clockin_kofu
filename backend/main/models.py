@@ -1,6 +1,7 @@
 import os
 import pymongo
 import ssl
+import certifi
 
 from dotenv import load_dotenv
 import pandas as pd
@@ -20,7 +21,7 @@ class DB():
             except Exception as e:
                 print(colored('【本地】測試伺服器連線失敗 local failed','red'))
         else:
-            self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
+            self.client=pymongo.MongoClient(os.environ['DB_STRING'],tlsCAFile=certifi.where())
             try:
                 self.client.admin.command('ping')
                 print(colored('【雲端】測試伺服器連線成功 remote success','green'))
