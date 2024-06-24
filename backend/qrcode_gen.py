@@ -7,7 +7,7 @@ qr = qrcode.QRCode(
     box_size=8,
     border=1
 )
-qr.add_data('https://friedclockin.azurewebsites.net/preview/a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e')   # 要轉換成 QRCode 的文字
+qr.add_data('https://friedclockin.azurewebsites.net/preview/c4ca4238a0b923820dcc509a6f75849b')   # 要轉換成 QRCode 的文字
 qr.make(fit=True)          # 根據參數製作為 QRCode 物件
 
 img = qr.make_image(image_factory=StyledPilImage, module_drawer=RoundedModuleDrawer())      # 產生 QRCode 圖片

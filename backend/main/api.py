@@ -12,6 +12,7 @@ from main.tools import msg_gen
 from main.tools import debug_info
 from main.models import db_model
 from main.models import today_manage
+from main.tools import hasher
 
 class staff_manage(Resource):
     #define argument parser
@@ -38,9 +39,10 @@ class staff_manage(Resource):
     def post(self):
         args=self.parser.parse_args()
         print(args)
+        next_id=str(db_model.next_id())
         data={
-            '_id':str(db_model.next_id()),
-            'hash_id':'',
+            '_id':next_id,
+            'hash_id':hasher(next_id),
             'name':args['name'],
             'cardid':args['cardid'],
             'jointime':args['jointime'],
@@ -52,7 +54,12 @@ class staff_manage(Resource):
 
         print(data)
         db_model.collection.insert_one(data)
+        
+        #gen qrcode
+        
+        
         send_notification(ic(msg_gen(data,'加入成功')),mode='test')
+        
         
         return {'data':data,'msg':'data inserted!'},200
     
