@@ -20,7 +20,7 @@ class DB():
             except Exception as e:
                 print(colored('【本地】測試伺服器連線失敗 local failed','red'))
         else:
-            self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True,ssl_cert_reqs=ssl.CERT_NONE)
+            self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
             try:
                 self.client.admin.command('ping')
                 print(colored('【雲端】測試伺服器連線成功 remote success','green'))

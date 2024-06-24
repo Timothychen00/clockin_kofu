@@ -21,7 +21,6 @@ struct CONFIG {
     #include <WiFi.h>
     #include <WiFiMulti.h>
     #include <HTTPClient.h>
-    //#include <WiFiClient.h>
 #else
     #include <ESP8266WiFi.h>
     #include <ESP8266WiFiMulti.h>
@@ -287,11 +286,22 @@ void send_request(String methods, String carduid, String type) { //默認參數�
 
       M5Dial.Display.clear();
       M5Dial.Display.drawString(doc.as<String>(), M5Dial.Display.width() / 2, M5Dial.Display.height() / 2);
-
-
-      //        display_unit("u8g2","OK",doc.as<String>());
-
-      delay(1000);
+      
+      display.setTextSize(2);
+      display.drawString("Report:", display.width() / 2-30, display.height() / 2-100);
+      display.drawPngUrl( host+"/static/"+name+".png"
+                                , 0    // X position
+                                , 0    // Y position
+                                , display.width()  // Width
+                                , display.height() // Height
+                                , 0    // X offset
+                                , 0    // Y offset
+                                , 0.5  // X magnification(default = 1.0 , 0 = fitsize , -1 = follow the Y magni)
+                                , 0.5  // Y magnification(default = 1.0 , 0 = fitsize , -1 = follow the X magni)
+                                , datum_t::middle_center
+                              );
+                          
+      delay(5000);
       Serial.println(">>");
       if (doc.as<String>() != "null") {
         // digitalWrite(10,1);

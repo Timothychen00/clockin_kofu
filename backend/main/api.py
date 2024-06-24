@@ -13,6 +13,7 @@ from main.tools import debug_info
 from main.models import db_model
 from main.models import today_manage
 from main.tools import hasher
+from main.tools import qrcode_generator
 
 class staff_manage(Resource):
     #define argument parser
@@ -40,9 +41,10 @@ class staff_manage(Resource):
         args=self.parser.parse_args()
         print(args)
         next_id=str(db_model.next_id())
+        hasher_id=hasher(next_id)
         data={
             '_id':next_id,
-            'hash_id':hasher(next_id),
+            'hash_id':hasher_id,
             'name':args['name'],
             'cardid':args['cardid'],
             'jointime':args['jointime'],
@@ -56,8 +58,7 @@ class staff_manage(Resource):
         db_model.collection.insert_one(data)
         
         #gen qrcode
-        
-        
+        qrcode_generator(hasher_id)
         send_notification(ic(msg_gen(data,'加入成功')),mode='test')
         
         
