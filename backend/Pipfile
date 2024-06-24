@@ -9,7 +9,7 @@ markupsafe = "==2.1.0"
 jinja2 = "==3.0.3"
 itsdangerous = "==2.1.0"
 werkzeug = "==2.0.3"
-flask = "==2.0.3"
+flask = "*"
 python-dotenv = "==1.0.1"
 line-bot-sdk = "==2.0.1"
 flask-apscheduler = "==1.12.3"
@@ -49,8 +49,9 @@ tzdata = "==2024.1"
 tzlocal = "==5.2"
 urllib3 = "==1.26.18"
 yarl = "==1.9.4"
+qrcode = {extras = ["pil"], version = "*"}
 
 [dev-packages]
 
 [requires]
-python_version = "3.11"
+python_version = "3.10"

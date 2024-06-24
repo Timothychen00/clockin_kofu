@@ -40,6 +40,7 @@ class staff_manage(Resource):
         print(args)
         data={
             '_id':str(db_model.next_id()),
+            'hash_id':
             'name':args['name'],
             'cardid':args['cardid'],
             'jointime':args['jointime'],

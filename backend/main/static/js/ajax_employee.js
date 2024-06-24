@@ -23,10 +23,19 @@ function load_data(month_type = 'this') {
         document.getElementById('last').classList.add('active');
         document.getElementById('this').classList.remove('active');
     }
+    
+    const para_obj={
+        'key': '_id', 'value': window.location.href.split('/')[window.location.href.split('/').length-1].split('#')[0] 
+    }
+    if(window.location.href.includes("preview")){
+        para_obj.key='hash_key';
+    } 
+    console.log("para_obj",para_obj);
 
     fetch("/api/manage?" + new URLSearchParams({ 'key': '_id', 'value': window.location.href.split('/')[3].split('#')[0] }), { method: 'GET' })
         .then(res => (res.json()))
         .then((res) => {
+            console.log(res);
             let name_label = document.getElementById('name_label');
             name_label.value = res[0]['name'];
             let place_label = document.getElementById('place_label');
@@ -41,7 +50,7 @@ function load_data(month_type = 'this') {
             document.getElementById('modal_clockout_time').value = '';
 
 
-            console.log(res);
+            
             console.log(res[0]["log"][month]);
             let keys = '';
             console.log(month);

@@ -12,17 +12,19 @@ class DB():
     def __init__(self):
         print(os.environ['DB_MODE'])
         if os.environ['DB_MODE']=='test':
+            self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
             try:
-                self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
+                self.client.admin.command('ping')
                 print(colored('【本地】測試伺服器連線成功 local success','green'))
-            except:
+            except Exception as e:
                 print(colored('【本地】測試伺服器連線失敗 local failed','red'))
         else:
+            self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
             try:
-                self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
-                print(colored('【雲端】測試伺服器連線成功 local success','green'))
-            except:
-                print(colored('【雲端】伺服器連線失敗 cloud failed','red'))
+                self.client.admin.command('ping')
+                print(colored('【本地】測試伺服器連線成功 local success','green'))
+            except Exception as e:
+                print(colored('【本地】測試伺服器連線失敗 local failed','red'))
         
         
         # self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])

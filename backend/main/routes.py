@@ -39,6 +39,10 @@ def test():
 def personal(id):
     return render_template("index2.html")
 
+@app_route.route("/preview/<id>")
+def personal_preview(id):#沒有管理權限
+    return render_template("index2.html")
+
 @app_route.route('/login')
 def login():
     if '0' not in request.base_url:
@@ -91,3 +95,7 @@ def callback():
 
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
+
+@app_route.route("/tools/probe")
+def probe():
+    return "StillAlive"
