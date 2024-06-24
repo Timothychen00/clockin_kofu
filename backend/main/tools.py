@@ -1,6 +1,7 @@
 import os
 import datetime
 import sys
+import hashlib
 
 import requests
 from icecream import ic
@@ -76,3 +77,10 @@ def debug_info(e):
     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     ic(exc_type, fname, exc_tb.tb_lineno)
     ic('----[ERROR]----')
+    
+def hasher(data):
+    hashed_data=hashlib.md5()
+    hashed_data.update(data.encode())#convert string to byte
+    digested=hashed_data.hexdigest()
+    print(digested)
+    return digested
