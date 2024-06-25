@@ -15,7 +15,6 @@ from main.api import settings
 from main.routes import app_route
 
 
-
 class CustomFlask(Flask):
     jinja_options = Flask.jinja_options.copy()
   #   jinja_options.update(dict(

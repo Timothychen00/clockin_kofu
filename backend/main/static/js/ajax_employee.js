@@ -28,7 +28,7 @@ function load_data(month_type = 'this') {
         'key': '_id', 'value': window.location.href.split('/')[window.location.href.split('/').length-1].split('#')[0] 
     }
     if(window.location.href.includes("preview")){
-        para_obj.key='hash_key';
+        para_obj.key='hash_id';
     } 
     console.log("para_obj",para_obj);
 

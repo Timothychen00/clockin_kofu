@@ -287,13 +287,13 @@ void send_request(String methods, String carduid, String type) { //默認參數�
       M5Dial.Display.clear();
       M5Dial.Display.drawString(doc.as<String>(), M5Dial.Display.width() / 2, M5Dial.Display.height() / 2);
       
-      display.setTextSize(2);
-      display.drawString("Report:", display.width() / 2-30, display.height() / 2-100);
-      display.drawPngUrl( host+"/static/"+name+".png"
+      M5Dial.Display.setTextSize(2);
+      M5Dial.Display.drawString("Report:", display.width() / 2-30, display.height() / 2-100);
+      M5Dial.Display.drawPngUrl( host+"/static/"+name+".png"
                                 , 0    // X position
                                 , 0    // Y position
-                                , display.width()  // Width
-                                , display.height() // Height
+                                , M5Dial.Display.width()  // Width
+                                , M5Dial.Display.height() // Height
                                 , 0    // X offset
                                 , 0    // Y offset
                                 , 0.5  // X magnification(default = 1.0 , 0 = fitsize , -1 = follow the Y magni)

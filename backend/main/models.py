@@ -45,8 +45,6 @@ class DB():
     def save(self):
         df = pd.DataFrame(list(self.collection.find()))
         df.to_csv('data.csv',index=False)
-        
-        
     
 db_model=DB()
 
