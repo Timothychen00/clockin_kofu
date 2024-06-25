@@ -288,8 +288,8 @@ void send_request(String methods, String carduid, String type) { //默認參數�
       M5Dial.Display.drawString(doc.as<String>(), M5Dial.Display.width() / 2, M5Dial.Display.height() / 2);
       
       M5Dial.Display.setTextSize(2);
-      M5Dial.Display.drawString("Report:", display.width() / 2-30, display.height() / 2-100);
-      M5Dial.Display.drawPngUrl( host+"/static/"+name+".png"
+      M5Dial.Display.drawString("Report:", M5Dial.Display.width() / 2-30, M5Dial.Display.height() / 2-100);
+      M5Dial.Display.drawPngUrl( SERVER_IP "/static/"+name+".png"
                                 , 0    // X position
                                 , 0    // Y position
                                 , M5Dial.Display.width()  // Width

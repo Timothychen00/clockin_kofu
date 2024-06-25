@@ -1,6 +1,5 @@
 import os
 import pymongo
-import ssl
 import certifi
 
 from dotenv import load_dotenv

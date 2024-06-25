@@ -32,7 +32,7 @@ function load_data(month_type = 'this') {
     } 
     console.log("para_obj",para_obj);
 
-    fetch("/api/manage?" + new URLSearchParams({ 'key': '_id', 'value': window.location.href.split('/')[3].split('#')[0] }), { method: 'GET' })
+    fetch("/api/manage?" + new URLSearchParams(para_obj), { method: 'GET' })
         .then(res => (res.json()))
         .then((res) => {
             console.log(res);
