@@ -132,5 +132,5 @@ class Today_Manage():
                     self.dbp.update_one({'type':'today_manage'},{'$set':{'data':data}})
                     ic(cardid+'removed from today_manage')
             return True
-        
+
 today_manage=Today_Manage()
