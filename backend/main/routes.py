@@ -1,10 +1,16 @@
+import os
+import json
 
-from flask import Blueprint,render_template,redirect,request,session
-import requests,os,json
-from main.decorators import login_required
+import requests
+from flask import Blueprint
+from flask import render_template
+from flask import redirect
+from flask import request
+from flask import session
 from oauthlib.oauth2 import WebApplicationClient
 from dotenv import load_dotenv
-load_dotenv()
+
+from main.decorators import login_required
 
 app_route=Blueprint("app_route",__name__,static_folder="static",template_folder="templates")
 GOOGLE_DISCOVERY_URL = ("https://accounts.google.com/.well-known/openid-configuration")
@@ -21,7 +27,7 @@ def show_begin():
 @app_route.route("/")
 @login_required
 def home():
-    return render_template("index.html")
+    return render_template("index.html",WEBSITE_NAME=os.environ['WEBSITE_NAME'])
 
 @app_route.route("/test")
 @login_required
@@ -32,6 +38,10 @@ def test():
 @login_required
 def personal(id):
     return render_template("index2.html")
+
+@app_route.route("/preview/<id>")
+def personal_preview(id):#沒有管理權限
+    return render_template("index2.html",preview=True)
 
 @app_route.route('/login')
 def login():
@@ -85,3 +95,7 @@ def callback():
 
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
+
+@app_route.route("/tools/probe")
+def probe():
+    return "StillAlive"

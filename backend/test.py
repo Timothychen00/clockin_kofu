@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-import pymongo,os
+import pymongo
+import os
+import json
+
 from dotenv import load_dotenv
 load_dotenv()
-import json
+
 
 
 client=pymongo.MongoClient("mongodb+srv://admin:"+os.environ['DB_PASS']+"@cluster0.ee06dbd.mongodb.net/?retryWrites=true&w=majority",tls=True,tlsAllowInvalidCertificates=True)

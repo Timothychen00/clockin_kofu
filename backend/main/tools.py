@@ -1,6 +1,13 @@
-import os,requests,datetime,sys
-from icecream import ic
+import os
+import datetime
+import sys
+import hashlib
 
+import qrcode
+from qrcode.image.styledpil import StyledPilImage
+from qrcode.image.styles.moduledrawers import RoundedModuleDrawer
+import requests
+from icecream import ic
 
 def send_notification(message,mode='test'):
     if mode=='production':
@@ -73,3 +80,24 @@ def debug_info(e):
     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     ic(exc_type, fname, exc_tb.tb_lineno)
     ic('----[ERROR]----')
+    
+def hasher(data):
+    hashed_data=hashlib.md5()
+    hashed_data.update(data.encode())#convert string to byte
+    digested=hashed_data.hexdigest()
+    print(digested)
+    return digested
+
+def qrcode_generator(data):
+    qr = qrcode.QRCode(
+        version=2,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=8,
+        border=1
+    )
+    qr.add_data(f'https://friedclockin.azurewebsites.net/preview/{data}')   # 要轉換成 QRCode 的文字
+    qr.make(fit=True)          # 根據參數製作為 QRCode 物件
+
+    img = qr.make_image(image_factory=StyledPilImage, module_drawer=RoundedModuleDrawer())      # 產生 QRCode 圖片
+    # img.show()                 # 顯示圖片 ( Colab 不適用 )
+    img.save(f'main/static/{data}.png')     # 儲存圖片

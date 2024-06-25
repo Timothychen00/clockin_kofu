@@ -1,9 +1,20 @@
-from main.models import db_model,today_manage
+import os
+import sys
+import datetime
+
 from flask_restful import Resource, reqparse
 from icecream import ic
-import os,sys
-from main.tools import get_date,send_notification,msg_gen,debug_info
-import datetime
+from termcolor import colored
+
+from main.tools import get_date
+from main.tools import send_notification
+from main.tools import msg_gen
+from main.tools import debug_info
+from main.models import db_model
+from main.models import today_manage
+from main.tools import hasher
+from main.tools import qrcode_generator
+
 class staff_manage(Resource):
     #define argument parser
     parser=reqparse.RequestParser()
@@ -29,8 +40,11 @@ class staff_manage(Resource):
     def post(self):
         args=self.parser.parse_args()
         print(args)
+        next_id=str(db_model.next_id())
+        hasher_id=hasher(next_id)
         data={
-            '_id':str(db_model.next_id()),
+            '_id':next_id,
+            'hash_id':hasher_id,
             'name':args['name'],
             'cardid':args['cardid'],
             'jointime':args['jointime'],
@@ -42,7 +56,11 @@ class staff_manage(Resource):
 
         print(data)
         db_model.collection.insert_one(data)
+        
+        #gen qrcode
+        qrcode_generator(hasher_id)
         send_notification(ic(msg_gen(data,'加入成功')),mode='test')
+        
         
         return {'data':data,'msg':'data inserted!'},200
     
@@ -183,9 +201,10 @@ class staff(Resource):
                 send_notification(ic(msg_gen(data,dtype+'成功',args['time'])),mode=os.environ['MODE'])
                 
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
-            return 'OK'
+            return f'OK,{data["hash_id"]}'
         else:
-            return 'Failed'
+            print(colored("Card Not Found!",'red'))
+            return 'Not Found'
         # except Exception as e:
         #     debug_info(e)
         #     return 'Failed'

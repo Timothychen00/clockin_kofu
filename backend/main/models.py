@@ -1,24 +1,31 @@
-import os, pymongo
+import os
+import pymongo
+import certifi
+
 from dotenv import load_dotenv
 import pandas as pd
 from icecream import ic
+from termcolor import colored
+
 from main.tools import get_date
-
-
-load_dotenv()
 
 class DB():
     def __init__(self):
+        print(os.environ['DB_MODE'])
         if os.environ['DB_MODE']=='test':
+            self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
             try:
-                self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
-            except:
-                print('【本地】測試伺服器連線失敗 local failed')
+                self.client.admin.command('ping')
+                print(colored('【本地】測試伺服器連線成功 local success','green'))
+            except Exception as e:
+                print(colored('【本地】測試伺服器連線失敗 local failed','red'))
         else:
+            self.client=pymongo.MongoClient(os.environ['DB_STRING'],tlsCAFile=certifi.where())
             try:
-                self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
-            except:
-                print('【雲端】伺服器連線失敗 cloud failed')
+                self.client.admin.command('ping')
+                print(colored('【雲端】測試伺服器連線成功 remote success','green'))
+            except Exception as e:
+                print(colored('【雲端】測試伺服器連線失敗 remote failed','red'))
         
         
         # self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
@@ -37,8 +44,6 @@ class DB():
     def save(self):
         df = pd.DataFrame(list(self.collection.find()))
         df.to_csv('data.csv',index=False)
-        
-        
     
 db_model=DB()
 
@@ -79,9 +84,10 @@ class Today_Manage():
         '''
         self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
-        # if result.count()==0:
-        #     self.reset()
-        #     result=self.dbp.find({'type':'today_manage'})
+        print("count:",result.count())
+        if result.count()==0:
+            self.reset()
+            result=self.dbp.find({'type':'today_manage'})
         data=result[0]['data']
         if cardid in data[mode]:
             return data[mode][cardid]

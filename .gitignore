@@ -14,3 +14,4 @@ esp/.DS_Store
 backend/.env
 backend/main/.env
 backend/data.csv
+backend/main/*.env
