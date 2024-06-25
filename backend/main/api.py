@@ -201,7 +201,7 @@ class staff(Resource):
                 send_notification(ic(msg_gen(data,dtype+'成功',args['time'])),mode=os.environ['MODE'])
                 
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
-            return 'OK',""
+            return f'OK,{data["hash_id"]}'
         else:
             print(colored("Card Not Found!",'red'))
             return 'Not Found'
