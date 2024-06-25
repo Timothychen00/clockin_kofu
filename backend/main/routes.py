@@ -41,7 +41,7 @@ def personal(id):
 
 @app_route.route("/preview/<id>")
 def personal_preview(id):#沒有管理權限
-    return render_template("index2.html")
+    return render_template("index2.html",preview=True)
 
 @app_route.route('/login')
 def login():
