@@ -111,10 +111,10 @@ class staff(Resource):
                     args['type']='clockout'
                 else:
                     ic('60分鐘內重複打卡clockin->clockout')
-                    return "already done!"
+                    return f"already done!,{data.get('hash_id',' ')}" 
             else:
                 ic('60分鐘內重複打卡clockout->clockout')
-                return "already done!"
+                return f"already done!,{data.get('hash_id',' ')}" 
                 
         
     #暫時倒流
@@ -150,7 +150,7 @@ class staff(Resource):
                 ic(date)
                 if ic(today_manage.add(args['type'],data['cardid'],date))=='Already clocked':
                     send_notification(ic(msg_gen(data,'重複打卡 '+args['type'],args['time'])),'test')
-                    return '已經打卡'
+                    return f"already done!,{data.get('hash_id',' ')}" 
                 else:
                     log[month][date][args['type']]=time#紀錄打卡時間
                 
@@ -201,7 +201,7 @@ class staff(Resource):
                 send_notification(ic(msg_gen(data,dtype+'成功',args['time'])),mode=os.environ['MODE'])
                 
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
-            return f'OK,{data["hash_id"]}'
+            return f'OK,{data.get("hash_id"," ")}'
         else:
             print(colored("Card Not Found!",'red'))
             return 'Not Found'

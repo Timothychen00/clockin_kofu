@@ -31,7 +31,6 @@ class DB():
         # self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
         self.db=self.client.staff
         self.collection=self.db.clockin
-
         # date
         # 
         
@@ -54,8 +53,10 @@ class Today_Manage():
     def check_out_of_date(self):
         '''check if the date is out of date
         '''
-        result=self.dbp.find({'type':'today_manage'})
-        if result.count()!=0:
+        result=list(self.dbp.find({'type':'today_manage'}))# mongodb>4 deprecates the cursor.count()
+        doc_count=len(result)
+        print("est:::::",doc_count)
+        if doc_count!=0:
             data=result[0]['data']
             if data['date']!=get_date()[1]:
                 ic("out of date")
@@ -63,14 +64,15 @@ class Today_Manage():
         
         
     def reset(self):
-        result=self.dbp.find({'type':'today_manage'})
+        result=list(self.dbp.find({'type':'today_manage'}))
+        doc_count=len(result)
         data={
             'date':get_date()[1],#get now date
             'clockin':{},
             'workovertime':{},
             'clockout':{},
         }
-        if result.count()==0:
+        if doc_count==0:
             ic('today建立')
             self.dbp.insert_one({'type':'today_manage','data':data})
         else:
@@ -83,11 +85,12 @@ class Today_Manage():
         '''check if the cardid is inside the today_manage
         '''
         self.check_out_of_date()
-        result=self.dbp.find({'type':'today_manage'})
-        print("count:",result.count())
-        if result.count()==0:
+        result=list(self.dbp.find({'type':'today_manage'}))
+        doc_count=len(result)
+        print("count:",doc_count)
+        if doc_count==0:
             self.reset()
-            result=self.dbp.find({'type':'today_manage'})
+            result=list(self.dbp.find({'type':'today_manage'}))
         data=result[0]['data']
         if cardid in data[mode]:
             return data[mode][cardid]

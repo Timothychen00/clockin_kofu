@@ -48,13 +48,12 @@ function load_data(month_type = 'this') {
             let preview_link=document.getElementById('preview-hash');
             preview_link.href+= res[0]['hash_id'];
 
-            //補打卡重置
-            document.getElementById('modal_clockin_time').value = '';
-            document.getElementById('modal_workover_time').value = '';
-            document.getElementById('modal_clockout_time').value = '';
-
-
-            
+            // //補打卡重置
+            if (para_obj.key!="hash_id"){
+                document.getElementById('modal_clockin_time').value = '';
+                document.getElementById('modal_workover_time').value = '';
+                document.getElementById('modal_clockout_time').value = '';
+            }
             console.log(res[0]["log"][month]);
             let keys = '';
             console.log(month);

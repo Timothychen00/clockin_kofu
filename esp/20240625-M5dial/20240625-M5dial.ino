@@ -1,7 +1,9 @@
 // config struct
+//fonts https://github.com/m5stack/M5GFX/tree/master/src/lgfx/Fonts/Custom
+
 #define RFID_TYPE_mfrc522 0
 #define RFID_TYPE_m5 1
-#define RFID_TYPE RFID_TYPE_m5 
+#define RFID_TYPE RFID_TYPE_m5
 
 struct CONFIG {
   bool Display = true;
@@ -18,13 +20,13 @@ struct CONFIG {
 } _config;
 
 #ifdef ESP32
-    #include <WiFi.h>
-    #include <WiFiMulti.h>
-    #include <HTTPClient.h>
+#include <WiFi.h>
+#include <WiFiMulti.h>
+#include <HTTPClient.h>
 #else
-    #include <ESP8266WiFi.h>
-    #include <ESP8266WiFiMulti.h>
-    #include <ESP8266HTTPClient.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266WiFiMulti.h>
+#include <ESP8266HTTPClient.h>
 #endif
 
 #define ARDUINOJSON_ENABLE_PROGMEM 0
@@ -38,7 +40,7 @@ struct CONFIG {
 #include "M5Dial.h"
 #include "data.h"
 #if RFID_TYPE==RFID_TYPE_mfrc522
-    #include <MFRC522.h>
+#include <MFRC522.h>
 #endif
 #include <TridentTD_LineNotify.h>
 
@@ -46,7 +48,7 @@ struct CONFIG {
 // 闪烁时间间隔(秒)
 #define I2C_ADD 0x20      //I2C address of the PCF8574
 //#define SERVER_IP "https://bao7clockinsys.azurewebsites.net"
-#define SERVER_IP "http://192.168.0.18:8000"
+#define SERVER_IP "http://10.0.0.239:8000/"
 #define ntpServer "pool.ntp.org" //NTP伺服器
 #define utcOffset 28800          //UTC偏移量 (此為UTC+8的秒數，即：8*60*60)
 #define daylightOffset 0
@@ -124,14 +126,14 @@ void setup() {
     Serial.begin(115200);
     SPI.begin();//初始化SPI總線
     #if RFID_TYPE==RFID_TYPE_mfrc522
-      mfrc522.PCD_Init(SS_PIN, RST_PIN); // 初始化MFRC522卡
-      mfrc522.PCD_DumpVersionToSerial();
+        mfrc522.PCD_Init(SS_PIN, RST_PIN); // 初始化MFRC522卡
+        mfrc522.PCD_DumpVersionToSerial();
     #endif
     
     multi_wifi_setup();//wifi configuration
     time_setup();
     OTA_setup();//ota configuration
-
+    
     // WiFi.setSleepMode(WIFI_NONE_SLEEP);
     WiFi.setAutoReconnect(true);
     WiFi.persistent(true);
@@ -141,14 +143,14 @@ void setup() {
     
     M5Dial.Display.clear();
     //button
-//    if (connection_mode != "buttonless") {
-//    // Port.pinMode(0, INPUT_PULLUP);
-//    // Port.pinMode(1, INPUT_PULLUP);
-//    // Port.pinMode(2, INPUT_PULLUP);
-//    // Port.begin();
-//    }
+    //    if (connection_mode != "buttonless") {
+    //    // Port.pinMode(0, INPUT_PULLUP);
+    //    // Port.pinMode(1, INPUT_PULLUP);
+    //    // Port.pinMode(2, INPUT_PULLUP);
+    //    // Port.begin();
+    //    }
     //buzzer_configuration
-     pinMode(G3,OUTPUT);
+    pinMode(G3, OUTPUT);
     // digitalWrite(10,LOW);
     
     LINE.setToken(LINE_TOKEN);
@@ -157,193 +159,209 @@ void setup() {
 }
 
 void loop() {
-    ArduinoOTA.handle();
-    //debug aera
-    if (Serial.available()) {
-        char inputchar = Serial.read();
-        switch (inputchar) {
-            case 'g'://get method test
-            Serial.println("sending a get request"); send_request("get"); break;
-            case 'p'://post method test
-            Serial.println("sending a post request"); send_request("post"); break;
-        }
+  ArduinoOTA.handle();
+  //debug aera
+  if (Serial.available()) {
+    char inputchar = Serial.read();
+    switch (inputchar) {
+      case 'g'://get method test
+        Serial.println("sending a get request"); send_request("get"); break;
+      case 'p'://post method test
+        Serial.println("sending a post request"); send_request("post"); break;
     }
+  }
 
-    //update time
-    if (millis() - last_millis > 5000)
-    {
-        getLocalTime(&now);
-        last_millis = millis();
-    }
-    if (millis() - card_uid_timestamp > 30000) {
-        card_uid = "";
-    }
-    hours = now.tm_hour;
-    minutes = now.tm_min;
-    day = now.tm_wday;
-    sprintf(formattedTime, "%02d:%02d", hours, minutes);
-    
-    //get_tim
-    //output time to lcd
-    if (strcmp(formattedTime, old_formattedTime) != 0)
-    {
-        //        display_unit("u8g2",formattedTime);
-        M5Dial.Display.clear();
-        M5Dial.Display.setTextSize(2);
-        M5Dial.Display.drawString(String(formattedTime), M5Dial.Display.width() / 2, M5Dial.Display.height() / 2);
-        
-        last_display = millis();
-        strcpy(old_formattedTime, formattedTime);
-    }
-    
-    //rfid detecting
-    if (M5Dial.Rfid.PICC_IsNewCardPresent() && M5Dial.Rfid.PICC_ReadCardSerial()) {
-//         digitalWrite(G3,HIGH);
-//        M5Dial.Speaker.tone(2000, 1000);
-//        tone(G3,3000,1000);
-        uint8_t piccType = M5Dial.Rfid.PICC_GetType(M5Dial.Rfid.uid.sak);
-        // 顯示卡片內容
-        //get now time
-        dump_byte_array(M5Dial.Rfid.uid.uidByte, M5Dial.Rfid.uid.size); // 讀取卡片+顯示16進制
-        Serial.print(F("Card UID:"));
-        Serial.println(card_uid);
-        display_unit("card id:",card_uid);
-        
-        M5Dial.Rfid.PICC_HaltA();  // 卡片進入停止模式
-        delay(1000);
-        
-        send_request("post", card_uid, "");
-    }
-//     digitalWrite(G3,LOW);
+  //update time
+  if (millis() - last_millis > 5000)
+  {
+    getLocalTime(&now);
+    last_millis = millis();
+  }
+  if (millis() - card_uid_timestamp > 30000) {
+    card_uid = "";
+  }
+  hours = now.tm_hour;
+  minutes = now.tm_min;
+  day = now.tm_wday;
+  sprintf(formattedTime, "%02d:%02d", hours, minutes);
 
-    
-    if (_config.Display_type.equals("button")) { //only button mode sent here
-        // button[0]=!Port.digitalRead(0);
-        // button[1]=!Port.digitalRead(1);
-        // button[2]=!Port.digitalRead(2);
-        
-        
-        for (int i = 0; i < 3; i++) {
-          if (button[i] && millis() - last_button[i] > 500) {
-            String type = "";
-            Serial.println("waiting for type input");
-            switch (i) {
-              case 0:
-                type = "clockin"; break;
-              case 1:
-                type = "clockout"; break;
-              case 2:
-                type = "workovertime"; break;
-            }
-            send_request("post", card_uid, type);
-            last_button[i] = millis();
-          }
-        }
+  //get_tim
+  //output time to lcd
+  if (strcmp(formattedTime, old_formattedTime) != 0)
+  {
+    //        display_unit("u8g2",formattedTime);
+    M5Dial.Display.clear();
+    M5Dial.Display.setTextSize(2);
+    M5Dial.Display.drawString(String(formattedTime), M5Dial.Display.width() / 2, M5Dial.Display.height() / 2);
+
+    //wifi information
+    M5Dial.Display.setTextSize(1);
+    M5Dial.Display.setTextFont(&fonts::Orbitron_Light_24);
+    if (wifiMulti.run() == WL_CONNECTED) {
+      M5Dial.Display.setTextColor(GREEN);
+      M5Dial.Display.drawString(String(WiFi.SSID()), M5Dial.Display.width() / 2, M5Dial.Display.height() / 2 + 50);
+    } else {
+      M5Dial.Display.setTextColor(RED);
+      M5Dial.Display.drawString("No WiFi", M5Dial.Display.width() / 2, M5Dial.Display.height() / 2 + 50);
     }
+    M5Dial.Display.setTextColor(WHITE);
+    M5Dial.Display.setTextFont(&fonts::Orbitron_Light_32);
+
+
+    last_display = millis();
+    strcpy(old_formattedTime, formattedTime);
+  }
+
+  //rfid detecting
+  if (M5Dial.Rfid.PICC_IsNewCardPresent() && M5Dial.Rfid.PICC_ReadCardSerial()) {
+    //         digitalWrite(G3,HIGH);
+    //        M5Dial.Speaker.tone(2000, 1000);
+
+    //        tone(G3,3000,1000);
+    uint8_t piccType = M5Dial.Rfid.PICC_GetType(M5Dial.Rfid.uid.sak);
+    // 顯示卡片內容
+    //get now time
+    dump_byte_array(M5Dial.Rfid.uid.uidByte, M5Dial.Rfid.uid.size); // 讀取卡片+顯示16進制
+    Serial.print(F("Card UID:"));
+    Serial.println(card_uid);
+    display_unit("card id:", card_uid);
+
+    M5Dial.Rfid.PICC_HaltA();  // 卡片進入停止模式
+    delay(1000);
+
+    send_request("post", card_uid, "");
+  }
+  //     digitalWrite(G3,LOW);
+
+
+  if (_config.Display_type.equals("button")) { //only button mode sent here
+    // button[0]=!Port.digitalRead(0);
+    // button[1]=!Port.digitalRead(1);
+    // button[2]=!Port.digitalRead(2);
+
+
+    for (int i = 0; i < 3; i++) {
+      if (button[i] && millis() - last_button[i] > 500) {
+        String type = "";
+        Serial.println("waiting for type input");
+        switch (i) {
+          case 0:
+            type = "clockin"; break;
+          case 1:
+            type = "clockout"; break;
+          case 2:
+            type = "workovertime"; break;
+        }
+        send_request("post", card_uid, type);
+        last_button[i] = millis();
+      }
+    }
+  }
 }
 
 
 
 void send_request(String methods, String carduid, String type) { //默認參數值不能放在定義這邊
-  int httpCode = 0;
-  DynamicJsonDocument doc(1024);
-
-//  WiFiClientSecure client;
-  WiFiClient client;
-  HTTPClient http;
-//  client.setInsecure();
-  Serial.print("[HTTP] begin...\n");
-  int timestart = millis();
-  http.setTimeout(5000);
-  if (methods == "post") {
-
-    http.begin(client,  SERVER_IP "/api/staff"); //HTTP
-    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-
-
-    if (connection_mode == "buttonless")
-      httpCode = http.POST(String("connection_mode=buttonless") + String("&key=cardid&value=") + carduid);
-    else
-      httpCode = http.POST(String("type=") + type + String("&key=cardid&value=") + carduid);
-
-  } else {
-    http.begin(client,  SERVER_IP "/api/manage"); //HTTP
-    httpCode = http.GET();
-  }
-
-
-  Serial.print("[HTTP] POST...\n");
-  Serial.println(millis() - timestart + String("ms"));
-
-  if (httpCode > 0) {
-    Serial.printf("[HTTP] POST... code: %d\n", httpCode);
-
-    if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
-      const String& payload = http.getString();
-      Serial.println("received payload:\n<<");
-      Serial.println(payload);
-      deserializeJson(doc, payload);
-      Serial.println(doc.as<String>());
-      String string_payload=doc.as<String>();
-
-      M5Dial.Display.clear();
-      M5Dial.Display.drawString(getValue(string_payload,',',0), M5Dial.Display.width() / 2, M5Dial.Display.height() / 2);
-      
-      M5Dial.Display.setTextSize(2);
-      M5Dial.Display.drawString("Report:", M5Dial.Display.width() / 2-30, M5Dial.Display.height() / 2-100);
-      M5Dial.Display.drawPngUrl( SERVER_IP "/static/"+getValue(string_payload,',',1)+".png"
-                                , 0    // X position
-                                , 0    // Y position
-                                , M5Dial.Display.width()  // Width
-                                , M5Dial.Display.height() // Height
-                                , 0    // X offset
-                                , 0    // Y offset
-                                , 0.5  // X magnification(default = 1.0 , 0 = fitsize , -1 = follow the Y magni)
-                                , 0.5  // Y magnification(default = 1.0 , 0 = fitsize , -1 = follow the X magni)
-                                , datum_t::middle_center
-                              );
-                          
-      delay(5000);
-      Serial.println(">>");
-      if (doc.as<String>() != "null") {
-        // digitalWrite(10,1);
-        // delay(100);
-        // digitalWrite(10,0);
-        // delay(50);
-        // digitalWrite(10,1);
-        // delay(100);
-        // digitalWrite(10,0);
-        // delay(50);
-      }
+    int httpCode = 0;
+    DynamicJsonDocument doc(1024);
+    
+    //  WiFiClientSecure client;
+    WiFiClient client;
+    HTTPClient http;
+    //  client.setInsecure();
+    Serial.print("[HTTP] begin...\n");
+    int timestart = millis();
+    http.setTimeout(5000);
+    if (methods == "post") {
+        
+        http.begin(client,  SERVER_IP "/api/staff"); //HTTP
+        http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+        
+        if (connection_mode == "buttonless")
+            httpCode = http.POST(String("connection_mode=buttonless") + String("&key=cardid&value=") + carduid);
+        else
+            httpCode = http.POST(String("type=") + type + String("&key=cardid&value=") + carduid);
+        
     } else {
-      const String& payload = http.getString();
-        Serial.println(payload);    
-      deserializeJson(doc, payload);
-      Serial.println(doc.as<String>());
-      Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
-
-      Serial.println("ERRRR");
-
-      //        display_unit("u8g2","Try Again",type+String(" Try Again!"));
-      M5Dial.Display.clear();
-      M5Dial.Display.drawString("Try Again", M5Dial.Display.width() / 2, M5Dial.Display.height() / 2);
-
-      delay(1000);
-      Serial.println(">>");
-      if (doc.as<String>() != "null") {
-        // digitalWrite(10,1);
-        // delay(500);
-        // digitalWrite(10,0);
-        // delay(50);
-        // digitalWrite(10,1);
-        // delay(500);
-        // digitalWrite(10,0);
-        // delay(50);
-      }
+        http.begin(client,  SERVER_IP "/api/manage"); //HTTP
+        httpCode = http.GET();
     }
-    card_uid = "";
-  }
-  http.end();
+    
+    Serial.print("[HTTP] POST...\n");
+    Serial.println(millis() - timestart + String("ms"));
+    
+    if (httpCode > 0) {
+        Serial.printf("[HTTP] POST... code: %d\n", httpCode);
+        
+        if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+            const String& payload = http.getString();
+            Serial.println("received payload:\n<<");
+            Serial.println(payload);
+            deserializeJson(doc, payload);
+            Serial.println(doc.as<String>());
+            String string_payload = doc.as<String>();
+            
+            M5Dial.Display.clear();
+            M5Dial.Display.setTextSize(1);
+            M5Dial.Display.setTextFont(&fonts::Orbitron_Light_24);
+            M5Dial.Display.drawString(getValue(string_payload, ',', 0), M5Dial.Display.width() / 2, M5Dial.Display.height() / 2);
+            delay(2000);
+            M5Dial.Display.clear();
+            M5Dial.Display.drawString("Report:", M5Dial.Display.width() / 2, M5Dial.Display.height() / 2 - 100);
+            M5Dial.Display.drawPngUrl( SERVER_IP "/static/" + getValue(string_payload, ',', 1) + ".png"
+                                     , 0    // X position
+                                     , 0    // Y position
+                                     , M5Dial.Display.width()  // Width
+                                     , M5Dial.Display.height() // Height
+                                     , 0    // X offset
+                                     , 0    // Y offset
+                                     , 0.5  // X magnification(default = 1.0 , 0 = fitsize , -1 = follow the Y magni)
+                                     , 0.5  // Y magnification(default = 1.0 , 0 = fitsize , -1 = follow the X magni)
+                                     , datum_t::middle_center
+                                   );
+            
+            delay(7000);
+            M5Dial.Display.clear();
+            Serial.println(">>");
+            if (doc.as<String>() != "null") {
+            // digitalWrite(10,1);
+            // delay(100);
+            // digitalWrite(10,0);
+            // delay(50);
+            // digitalWrite(10,1);
+            // delay(100);
+            // digitalWrite(10,0);
+            // delay(50);
+            }
+        } else {
+            const String& payload = http.getString();
+            Serial.println(payload);
+            deserializeJson(doc, payload);
+            Serial.println(doc.as<String>());
+            Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
+            
+            Serial.println("ERRRR");
+            
+            //        display_unit("u8g2","Try Again",type+String(" Try Again!"));
+            M5Dial.Display.clear();
+            M5Dial.Display.drawString("Try Again", M5Dial.Display.width() / 2, M5Dial.Display.height() / 2);
+            
+            delay(1000);
+            Serial.println(">>");
+            if (doc.as<String>() != "null") {
+                // digitalWrite(10,1);
+                // delay(500);
+                // digitalWrite(10,0);
+                // delay(50);
+                // digitalWrite(10,1);
+                // delay(500);
+                // digitalWrite(10,0);
+                // delay(50);
+            }
+        }
+        card_uid = "";
+    }
+    http.end();
 }
 
 void dump_byte_array(byte *buffer, byte bufferSize) {
@@ -365,7 +383,7 @@ void multi_wifi_setup() {
     wifiMulti.addAP("kofu", "0938126816");
     wifiMulti.addAP("22226677", "0927018776");
     wifiMulti.addAP("dsseven77777", "b00829ckkc");
-    wifiMulti.addAP("LouisaCoffee", "25112613");
+    wifiMulti.addAP("LouisaCoffee", "25988613");
     while (wifiMulti.run() != WL_CONNECTED) {
         delay(300);
         Serial.print(".");
@@ -378,48 +396,18 @@ void display_unit(String data1, String data2) {
     {
         M5Dial.Display.clear();
         M5Dial.Display.setTextSize(1);
-        M5Dial.Display.drawString(data1, M5Dial.Display.width() / 2, M5Dial.Display.height() / 2-30);
-        M5Dial.Display.drawString(data2, M5Dial.Display.width() / 2, M5Dial.Display.height() / 2+10);
-
+        M5Dial.Display.drawString(data1, M5Dial.Display.width() / 2, M5Dial.Display.height() / 2 - 30);
+        M5Dial.Display.drawString(data2, M5Dial.Display.width() / 2, M5Dial.Display.height() / 2 + 10);
+    
     }
-
-          // u8g2.setFontDirection(0);
-      // u8g2.firstPage();
-      // do {
-  
-      //     u8g2.setCursor(15, 15);
-      //     Serial.println(data1);
-      //     u8g2.print(data1);
-      //     u8g2.setCursor(15, 30);
-      //     u8g2.print(data2);
-      // } while ( u8g2.nextPage() );
 }
-
-
-//void display_unit_image(String type="m5",String img_type,pointer){
-//    if (type.equals("m5"))//#這邊可能有bug
-//    {
-//          display.drawJpg( pointer  // data_pointer
-//                         , ~0u  // data_length (~0u = auto)
-//                         , 0    // X position
-//                         , 0    // Y position
-//                         , display.width()  // Width
-//                         , display.height() // Height
-//                         , 0    // X offset
-//                         , 0    // Y offset
-//                         , 0  // X magnification(default = 1.0 , 0 = fitsize , -1 = follow the Y magni)
-//                         , 0  // Y magnification(default = 1.0 , 0 = fitsize , -1 = follow the X magni)
-//                         , datum_t::middle_center
-//                         );
-//    }
-//}
 
 void display_unit_setup() {
     if (_config.Display_type.equals("u8g2")) {
         u8g2.begin();
         u8g2.enableUTF8Print();        // enable UTF8 support for the Arduino print() function
         u8g2.setFont(u8g2_font_tenstamps_mf);
-    
+        
         do {
             u8g2.drawXBMP(0, 0, imgWidth, imgHeight, logo_bmp); //繪圖
         } while ( u8g2.nextPage() );
@@ -431,36 +419,36 @@ void display_unit_setup() {
         M5Dial.Display.setTextFont(&fonts::Orbitron_Light_32);
         M5Dial.Display.setTextSize(2);
         M5Dial.Display.drawJpg( logo  // data_pointer
-                            , ~0u  // data_length (~0u = auto)
-                            , 0    // X position
-                            , 0    // Y position
-                            , M5Dial.Display.width()  // Width
-                            , M5Dial.Display.height() // Height
-                            , 0    // X offset
-                            , 0    // Y offset
-                            , 0  // X magnification(default = 1.0 , 0 = fitsize , -1 = follow the Y magni)
-                            , 0  // Y magnification(default = 1.0 , 0 = fitsize , -1 = follow the X magni)
-                            , datum_t::middle_center
-                          );
+                                , ~0u  // data_length (~0u = auto)
+                                , 0    // X position
+                                , 0    // Y position
+                                , M5Dial.Display.width()  // Width
+                                , M5Dial.Display.height() // Height
+                                , 0    // X offset
+                                , 0    // Y offset
+                                , 0  // X magnification(default = 1.0 , 0 = fitsize , -1 = follow the Y magni)
+                                , 0  // Y magnification(default = 1.0 , 0 = fitsize , -1 = follow the X magni)
+                                , datum_t::middle_center
+                              );
         delay(1000);
-  }
+    }
 }
 
 void OTA_setup() {
-  ArduinoOTA.setHostname("Clockin-");
-  ArduinoOTA.setPassword("0000");
-  ArduinoOTA.begin();
-  Serial.println("[time_setup]done!");
+    ArduinoOTA.setHostname("Clockin-");
+    ArduinoOTA.setPassword("0000");
+    ArduinoOTA.begin();
+    Serial.println("[time_setup]done!");
 }
-void time_setup(){
+void time_setup() {
     configTime(utcOffset, daylightOffset, ntpServer);//setting
     while (!getLocalTime(&now));//get the real time
     Serial.println("[time_setup]done!");
 }
-void output_configuration(){
-    //
+void output_configuration() {
+  //
 }
-String getValue(String data, char separator, int index){
+String getValue(String data, char separator, int index) {
     int found = 0;
     int strIndex[] = { 0, -1 };
     int maxIndex = data.length() - 1;
@@ -468,7 +456,7 @@ String getValue(String data, char separator, int index){
         if (data.charAt(i) == separator || i == maxIndex) {
             found++;
             strIndex[0] = strIndex[1] + 1;
-            strIndex[1] = (i == maxIndex) ? i+1 : i;
+            strIndex[1] = (i == maxIndex) ? i + 1 : i;
         }
     }
     return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
