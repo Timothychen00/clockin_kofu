@@ -48,7 +48,7 @@ struct CONFIG {
 // 闪烁时间间隔(秒)
 #define I2C_ADD 0x20      //I2C address of the PCF8574
 //#define SERVER_IP "https://bao7clockinsys.azurewebsites.net"
-#define SERVER_IP "http://10.0.0.220:8000/" 
+#define SERVER_IP "http://192.168.0.18:8000" 
 #define ntpServer "pool.ntp.org" //NTP伺服器
 #define utcOffset 28800          //UTC偏移量 (此為UTC+8的秒數，即：8*60*60)
 #define daylightOffset 0
@@ -154,6 +154,10 @@ void setup() {
     LINE.setToken(LINE_TOKEN);
     // 先換行再顯示
     LINE.notify("系統已經上線");
+    display_unit("OTA-V",0,0,&fonts::Orbitron_Light_24,1,WHITE);
+    delay(2000);
+    M5Dial.Display.clear();
+    
 }
 
 void loop() {
@@ -280,18 +284,19 @@ void send_request(String methods, String carduid, String type) { //默認參數�
                 delay(2000);
                 
                 M5Dial.Display.clear();
-                display_unit("Report",0,- 100,&fonts::Orbitron_Light_24,1,WHITE);
-                M5Dial.Display.drawPngUrl( SERVER_IP "/static/" + getValue(string_payload, ',', 1) + ".png"
-                                         , 0    // X position
-                                         , 0    // Y position
-                                         , M5Dial.Display.width()  // Width
-                                         , M5Dial.Display.height() // Height
-                                         , 0    // X offset
-                                         , 0    // Y offset
-                                         , 0.5  // X magnification(default = 1.0 , 0 = fitsize , -1 = follow the Y magni)
-                                         , 0.5  // Y magnification(default = 1.0 , 0 = fitsize , -1 = follow the X magni)
-                                         , datum_t::middle_center
-                                       );
+                display_unit("Report",0,- 90,&fonts::Orbitron_Light_24,1,WHITE);
+//                M5Dial.Display.drawPngUrl( SERVER_IP "/static/" + getValue(string_payload, ',', 1) + ".png"
+//                                         , 0    // X position
+//                                         , 0    // Y position
+//                                         , M5Dial.Display.width()  // Width
+//                                         , M5Dial.Display.height() // Height
+//                                         , 0    // X offset
+//                                         , 0    // Y offset
+//                                         , 0.5  // X magnification(default = 1.0 , 0 = fitsize , -1 = follow the Y magni)
+//                                         , 0.5  // Y magnification(default = 1.0 , 0 = fitsize , -1 = follow the X magni)
+//                                         , datum_t::middle_center
+//                                       );
+                M5Dial.Display.qrcode(SERVER_IP "/preview/"+getValue(string_payload, ',', 1),50,50,190-50,6);
             }
             delay(7000);
             M5Dial.Display.clear();
@@ -423,9 +428,11 @@ void time_setup() {
     while (!getLocalTime(&now));//get the real time
     Serial.println("[time_setup]done!");
 }
+
 void output_configuration() {
   //
 }
+
 String getValue(String data, char separator, int index) {
     int found = 0;
     int strIndex[] = { 0, -1 };
