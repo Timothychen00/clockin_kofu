@@ -5,3 +5,4 @@
 
 - frtizing檔案：
 - BOM：<img width="412" alt="CleanShot 2024-06-12 at 14 38 48@2x" src="https://github.com/Timothychen00/clockin_kofu/assets/52665482/281463ea-d02b-4d0f-a982-1448d4b75658">
+3
