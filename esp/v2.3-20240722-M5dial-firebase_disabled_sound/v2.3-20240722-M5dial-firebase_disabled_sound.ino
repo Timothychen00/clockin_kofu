@@ -5,7 +5,7 @@
 #define RFID_TYPE_m5 1
 #define RFID_TYPE RFID_TYPE_m5
 //#define DEVICE_ID "Kofu-02"
-#define DEVICE_ID "Test-01"
+#define DEVICE_ID "Kofu-02"
 #define Version "V2.3"
 
 struct CONFIG {
@@ -226,7 +226,7 @@ void loop() {
     //rfid detecting
     if (M5Dial.Rfid.PICC_IsNewCardPresent() && M5Dial.Rfid.PICC_ReadCardSerial()) {
         
-        tone(G3,3000,1000);
+        tone(G3,3000,700);
         uint8_t piccType = M5Dial.Rfid.PICC_GetType(M5Dial.Rfid.uid.sak);
         // 顯示卡片內容
         //get now time
@@ -240,7 +240,7 @@ void loop() {
         
         display_unit("card id:",0,- 30,&fonts::Orbitron_Light_32,1,WHITE);
         display_unit(card_uid,0, + 10,&fonts::Orbitron_Light_32,1,WHITE);
-        LINE.notify(DEVICE_ID "打卡紀錄："+String("card_uid")+" "+Date);
+        LINE.notify(DEVICE_ID "打卡紀錄："+String("card_uid:")+card_uid+" "+Date);
 //        firebase_send("cardid:"+String(card_uid));
         M5Dial.Rfid.PICC_HaltA();  // 卡片進入停止模式
         delay(800);
@@ -318,6 +318,7 @@ void send_request(String methods, String carduid, String type) { //默認參數�
                 delay(1500);
                 
                 M5Dial.Display.clear();
+
                 display_unit("Report",0,- 90,&fonts::Orbitron_Light_24,1,WHITE);
 //                M5Dial.Display.drawPngUrl( SERVER_IP "/static/" + getValue(string_payload, ',', 1) + ".png"
 //                                         , 0    // X position
@@ -331,8 +332,12 @@ void send_request(String methods, String carduid, String type) { //默認參數�
 //                                         , datum_t::middle_center
 //                                       );
                 M5Dial.Display.qrcode(SERVER_IP "/preview/"+getValue(string_payload, ',', 1),50,50,190-50,6);
+                tone(G3,3000,300);
+                delay(100);
+                tone(G3,3000,300);
+                delay(6700);
             }
-            delay(7000);
+
             M5Dial.Display.clear();
             display_time();
             
