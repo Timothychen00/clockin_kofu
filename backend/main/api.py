@@ -100,6 +100,7 @@ class staff(Resource):
         if args['connection_mode']=='buttonless':
             ic('configing connection_mode into buttonless')
             now_time=datetime.datetime.strptime(get_date(None,'clockin')[2],"%H:%M:%S")
+            ic(now_time)# format 之後的時間
             if today_manage.check_inside(args['value'],'clockin')==False:
                 ic('set mode to clockin')
                 args['type']='clockin'
@@ -107,13 +108,13 @@ class staff(Resource):
             elif today_manage.check_inside(args['value'],'clockout')==False:
                 ic('set mode to clockout')
                 clockin_time=datetime.datetime.strptime(today_manage.check_inside(args['value'],'clockin'),"%H:%M:%S")
-                if now_time-clockin_time>datetime.timedelta(minutes=60):
+                if now_time-clockin_time>datetime.timedelta(minutes=5):
                     args['type']='clockout'
                 else:
-                    ic('60分鐘內重複打卡clockin->clockout')
+                    ic('5分鐘內重複打卡clockin->clockout')
                     return f"already done!,{data.get('hash_id',' ')}" 
             else:
-                ic('60分鐘內重複打卡clockout->clockout')
+                ic('5分鐘內重複打卡clockout->clockout')
                 return f"already done!,{data.get('hash_id',' ')}" 
                 
         
