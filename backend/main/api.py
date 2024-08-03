@@ -81,7 +81,7 @@ class staff(Resource):
         
         if args['connection_mode']=='buttonless':
             ic('configing connection_mode into buttonless')
-            now_time=datetime.datetime.strptime(get_date(None,'clockin')[2],"%H:%M:%S")
+            now_time=datetime.datetime.strptime(get_date(None)[2],"%H:%M:%S")
             if today_manage.check_inside(args['value'],'clockin')==False:
                 ic('set mode to clockin')
                 args['type']='clockin'
@@ -111,7 +111,7 @@ class staff(Resource):
             work=data['work']
             workover=data['workover']
             
-            month,date,time=ic(get_date(args['time'],'clockin'))
+            month,date,time=ic(get_date(args['time']))
             
             
             work[month]=[0,0]

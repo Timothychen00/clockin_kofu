@@ -1,24 +1,31 @@
 import os, pymongo
-from dotenv import load_dotenv
-import pandas as pd
 from icecream import ic
+from termcolor import colored
 from main.tools import get_date
+import pandas as pd
 
 
-load_dotenv()
+# load_dotenv()
 
 class DB():
     def __init__(self):
+        print(os.environ['DB_MODE'])
         if os.environ['DB_MODE']=='test':
+            self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
             try:
-                self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
-            except:
-                print('【本地】測試伺服器連線失敗 local failed')
+                self.client.admin.command('ping')
+                print(colored('【本地】測試伺服器連線成功 local success','green'))
+            except Exception as e:
+                print(colored('【本地】測試伺服器連線失敗 local failed','red'))
         else:
+            self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
             try:
-                self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
-            except:
-                print('【雲端】伺服器連線失敗 cloud failed')
+                self.client.admin.command('ping')
+                print(colored('【雲端】測試伺服器連線成功 remote success','green'))
+            except Exception as e:
+                print(colored('【雲端】測試伺服器連線失敗 remote failed','red'))
+        
+        
         
         
         # self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
@@ -49,23 +56,27 @@ class Today_Manage():
     def check_out_of_date(self):
         '''check if the date is out of date
         '''
-        result=self.dbp.find({'type':'today_manage'})
-        if result.count()!=0:
+        result=list(self.dbp.find({'type':'today_manage'}))
+        result_len=len(result)
+        if result_len!=0:
             data=result[0]['data']
             if data['date']!=get_date()[1]:
                 ic("out of date")
                 self.reset()
+        else:
+            self.reset()
         
         
     def reset(self):
-        result=self.dbp.find({'type':'today_manage'})
+        result=list(self.dbp.find({'type':'today_manage'}))
+        result_len=len(result)
         data={
             'date':get_date()[1],#get now date
             'clockin':{},
             'workovertime':{},
             'clockout':{},
         }
-        if result.count()==0:
+        if result_len==0:
             ic('today建立')
             self.dbp.insert_one({'type':'today_manage','data':data})
         else:
@@ -79,9 +90,6 @@ class Today_Manage():
         '''
         self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
-        # if result.count()==0:
-        #     self.reset()
-        #     result=self.dbp.find({'type':'today_manage'})
         data=result[0]['data']
         if cardid in data[mode]:
             return data[mode][cardid]
@@ -91,9 +99,7 @@ class Today_Manage():
     def add(self,type,cardid,date):
         self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
-        # if result.count()==0:
-        #     self.reset()
-        #     result=self.dbp.find({'type':'today_manage'})
+        ic(result[0])
         data=result[0]['data']
         
         ic(cardid)
@@ -102,7 +108,7 @@ class Today_Manage():
         if date!=get_date()[1]:# only control today
             return True
         if (cardid not in data[type]) and cardid!=' ': 
-            data[type][cardid]=get_date(None,'clockin')[2]
+            data[type][cardid]=get_date(None)[2]
             ic('add',cardid,data[type][cardid])
             ic(data)
             self.dbp.update_one({'type':'today_manage'},{'$set':{'data':data}})
@@ -113,9 +119,6 @@ class Today_Manage():
     def remove(self,cardid,date):
         self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
-        # if result.count()==0:
-        #     self.reset()
-        #     result=self.dbp.find({'type':'today_manage'})
         data=result[0]['data']
         data=result[0]['data']
         

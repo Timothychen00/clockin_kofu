@@ -1,10 +1,20 @@
-from flask import Flask,request
-from main.routes import app_route
-from flask_restful import Api,Resource
-from main.api import staff_manage,staff,settings
 import os
+
+from flask import Flask,request
+from flask_restful import Api
+from flask_restful import Resource
 from dotenv import load_dotenv
-load_dotenv()
+from termcolor import colored
+path=f"main/{os.environ.get('ENV_TYPE','')}.env"
+print(os.getenv('ENV_TYPE'))
+print(os.getenv(''))
+print(colored("\n[Using ENV]->>>>>"+path+'\n',"green"))
+load_dotenv(path)
+
+from main.api import staff_manage
+from main.api import staff
+from main.api import settings
+from main.routes import app_route
 
 class CustomFlask(Flask):
     jinja_options = Flask.jinja_options.copy()
