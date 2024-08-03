@@ -105,6 +105,7 @@ class Today_Manage():
         ic(cardid)
         
         
+        
         if date!=get_date()[1]:# only control today
             return True
         if (cardid not in data[type]) and cardid!=' ': 
