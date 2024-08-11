@@ -99,6 +99,7 @@ class staff(Resource):
         
         if args['connection_mode']=='buttonless':
             ic('configing connection_mode into buttonless')
+
             now_time=datetime.datetime.strptime(get_date(None)[2],"%H:%M:%S")
             if today_manage.check_inside(args['value'],'clockin')==False:
                 ic('set mode to clockin')
