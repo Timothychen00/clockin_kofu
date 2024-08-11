@@ -97,6 +97,7 @@ class staff(Resource):
         ic(args)
         data=db_model.collection.find_one({args['key']:args['value']})
         
+        
         if args['connection_mode']=='buttonless':
             ic('configing connection_mode into buttonless')
 
