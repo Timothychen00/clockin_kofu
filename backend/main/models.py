@@ -111,7 +111,7 @@ class Today_Manage():
         if date!=get_date()[1]:# only control today
             return True
         if (cardid not in data[type]) and cardid!=' ': 
-            data[type][cardid]=get_date(None,'clockin')[2]
+            data[type][cardid]=get_date(None)[2]
             ic('add',cardid,data[type][cardid])
             ic(data)
             self.dbp.update_one({'type':'today_manage'},{'$set':{'data':data}})
