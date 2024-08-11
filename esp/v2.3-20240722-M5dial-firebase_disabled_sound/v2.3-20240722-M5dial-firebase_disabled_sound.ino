@@ -4,8 +4,9 @@
 #define RFID_TYPE_mfrc522 0
 #define RFID_TYPE_m5 1
 #define RFID_TYPE RFID_TYPE_m5
-#define DEVICE_ID "Fried-01"
-#define Version "V2.1"
+//#define DEVICE_ID "Kofu-02"
+#define DEVICE_ID "Test-01"
+#define Version "V2.3"
 
 struct CONFIG {
   bool Display = true;
@@ -32,7 +33,7 @@ struct CONFIG {
 #endif
 
 #define ARDUINOJSON_ENABLE_PROGMEM 0
-#define LINE_TOKEN "Q6scLDKfUjTrgp7XWW8nAsJkmeGvFPy2DKQrHoUgZkT"
+#define LINE_TOKEN "Q6scLDKfUjTrgp7XWW8nAsJkmeGvFPy2DKQrHoUgZkT" //for testting
 #include <ArduinoJson.h>
 #include <time.h>
 #include <SPI.h>
@@ -57,7 +58,8 @@ struct CONFIG {
 // 闪烁时间间隔(秒)
 #define I2C_ADD 0x20      //I2C address of the PCF8574
 //#define SERVER_IP "https://bao7clockinsys.azurewebsites.net"
-#define SERVER_IP "http://192.168.0.18:8000" 
+#define SERVER_IP "https://clockinkofu.azurewebsites.net" 
+//https://friedclockin.azurewebsites.net
 #define ntpServer "pool.ntp.org" //NTP伺服器
 #define utcOffset 28800          //UTC偏移量 (此為UTC+8的秒數，即：8*60*60)
 #define daylightOffset 0
@@ -65,7 +67,7 @@ struct CONFIG {
 #define API_KEY "AIzaSyDYStX0RzBFxDCq54tkBfYRWgJINEgFKEE"
 
 // Insert RTDB URLefine the RTDB URL */
-#define DATABASE_URL "https://esp32-log-fried-default-rtdb.asia-southeast1.firebasedatabase.app/" 
+#define DATABASE_URL "https://esp32-log-fried-default-rtdb.asia-southeast1.firebasedatabase.app" 
 
 #if RFID_TYPE==RFID_TYPE_mfrc522
 #define RST_PIN         D0
@@ -103,7 +105,7 @@ WiFiMulti wifiMulti;
 FirebaseData fbdo;
 
 FirebaseAuth auth;
-FirebaseConfig config;
+FirebaseConfig config; 
 
 unsigned long sendDataPrevMillis = 0;
 bool signupOK = false;
@@ -179,11 +181,11 @@ void setup() {
     
     LINE.setToken(LINE_TOKEN);
     // 先換行再顯示
-    LINE.notify("系統已經上線");
+    LINE.notify(DEVICE_ID "系統已經上線 " Version);
     display_unit("Version=" Version,0,0,&fonts::Orbitron_Light_24,1,WHITE);
     delay(2000);
     M5Dial.Display.clear();
-    firebase_setup();
+//    firebase_setup();
     
 }
 
@@ -224,7 +226,7 @@ void loop() {
     //rfid detecting
     if (M5Dial.Rfid.PICC_IsNewCardPresent() && M5Dial.Rfid.PICC_ReadCardSerial()) {
         
-        //        tone(G3,3000,1000);
+        tone(G3,3000,1000);
         uint8_t piccType = M5Dial.Rfid.PICC_GetType(M5Dial.Rfid.uid.sak);
         // 顯示卡片內容
         //get now time
@@ -233,12 +235,13 @@ void loop() {
         Serial.print(F("Card UID:"));
         Serial.println(card_uid);
         
+        
         M5Dial.Display.clear();
         
         display_unit("card id:",0,- 30,&fonts::Orbitron_Light_32,1,WHITE);
         display_unit(card_uid,0, + 10,&fonts::Orbitron_Light_32,1,WHITE);
-        
-        firebase_send("cardid:"+String(card_uid));
+        LINE.notify(DEVICE_ID "打卡紀錄："+String("card_uid")+" "+Date);
+//        firebase_send("cardid:"+String(card_uid));
         M5Dial.Rfid.PICC_HaltA();  // 卡片進入停止模式
         delay(800);
         
@@ -273,10 +276,10 @@ void send_request(String methods, String carduid, String type) { //默認參數�
     int httpCode = 0;
     DynamicJsonDocument doc(1024);
     
-    //  WiFiClientSecure client;
-    WiFiClient client;
+    WiFiClientSecure client;
+//    WiFiClient client;
     HTTPClient http;
-    //  client.setInsecure();
+    client.setInsecure();
     Serial.print("[HTTP] begin...\n");
     int timestart = millis();
     http.setTimeout(5000);
@@ -312,7 +315,7 @@ void send_request(String methods, String carduid, String type) { //默認參數�
             if (!getValue(string_payload, ',', 0).equals("Not Found")){
                 M5Dial.Display.clear();
                 display_unit(getValue(string_payload, ',', 0),0,0,&fonts::Orbitron_Light_24,1,WHITE);
-                delay(2000);
+                delay(1500);
                 
                 M5Dial.Display.clear();
                 display_unit("Report",0,- 90,&fonts::Orbitron_Light_24,1,WHITE);
@@ -387,6 +390,7 @@ void dump_byte_array(byte *buffer, byte bufferSize) {
 }
 
 void multi_wifi_setup() {
+//    display_unit("connecting \n to Wi-Fi" Version,0,0,&fonts::Orbitron_Light_24,1,WHITE);
     wifiMulti.addAP("cksh111", "124124124");
     wifiMulti.addAP("asas", "123123123");
     wifiMulti.addAP("paulina", "28053457");
@@ -459,6 +463,7 @@ void time_setup() {
     configTime(utcOffset, daylightOffset, ntpServer);//setting
     while (!getLocalTime(&now));//get the real time
     Serial.println("[time_setup]done!");
+   
 }
 
 void output_configuration() {

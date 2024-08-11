@@ -57,7 +57,7 @@ struct CONFIG {
 // 闪烁时间间隔(秒)
 #define I2C_ADD 0x20      //I2C address of the PCF8574
 //#define SERVER_IP "https://bao7clockinsys.azurewebsites.net"
-#define SERVER_IP "http://192.168.0.18:8000" 
+#define SERVER_IP "https://friedclockin.azurewebsites.net" 
 #define ntpServer "pool.ntp.org" //NTP伺服器
 #define utcOffset 28800          //UTC偏移量 (此為UTC+8的秒數，即：8*60*60)
 #define daylightOffset 0
@@ -65,7 +65,7 @@ struct CONFIG {
 #define API_KEY "AIzaSyDYStX0RzBFxDCq54tkBfYRWgJINEgFKEE"
 
 // Insert RTDB URLefine the RTDB URL */
-#define DATABASE_URL "https://esp32-log-fried-default-rtdb.asia-southeast1.firebasedatabase.app/" 
+#define DATABASE_URL "https://esp32-log-fried-default-rtdb.asia-southeast1.firebasedatabase.app" 
 
 #if RFID_TYPE==RFID_TYPE_mfrc522
 #define RST_PIN         D0
@@ -273,10 +273,10 @@ void send_request(String methods, String carduid, String type) { //默認參數�
     int httpCode = 0;
     DynamicJsonDocument doc(1024);
     
-    //  WiFiClientSecure client;
-    WiFiClient client;
+    WiFiClientSecure client;
+//    WiFiClient client;
     HTTPClient http;
-    //  client.setInsecure();
+    client.setInsecure();
     Serial.print("[HTTP] begin...\n");
     int timestart = millis();
     http.setTimeout(5000);
@@ -312,7 +312,7 @@ void send_request(String methods, String carduid, String type) { //默認參數�
             if (!getValue(string_payload, ',', 0).equals("Not Found")){
                 M5Dial.Display.clear();
                 display_unit(getValue(string_payload, ',', 0),0,0,&fonts::Orbitron_Light_24,1,WHITE);
-                delay(2000);
+                delay(1500);
                 
                 M5Dial.Display.clear();
                 display_unit("Report",0,- 90,&fonts::Orbitron_Light_24,1,WHITE);
@@ -387,6 +387,7 @@ void dump_byte_array(byte *buffer, byte bufferSize) {
 }
 
 void multi_wifi_setup() {
+//    display_unit("connecting \n to Wi-Fi" Version,0,0,&fonts::Orbitron_Light_24,1,WHITE);
     wifiMulti.addAP("cksh111", "124124124");
     wifiMulti.addAP("asas", "123123123");
     wifiMulti.addAP("paulina", "28053457");
@@ -459,6 +460,7 @@ void time_setup() {
     configTime(utcOffset, daylightOffset, ntpServer);//setting
     while (!getLocalTime(&now));//get the real time
     Serial.println("[time_setup]done!");
+   
 }
 
 void output_configuration() {
