@@ -3,7 +3,7 @@ import pymongo
 import certifi
 
 from dotenv import load_dotenv
-import pandas as pd
+# import pandas as pd
 from icecream import ic
 from termcolor import colored
 
@@ -40,9 +40,9 @@ class DB():
         except:
             return 1
     
-    def save(self):
-        df = pd.DataFrame(list(self.collection.find()))
-        df.to_csv('data.csv',index=False)
+    # def save(self):
+    #     df = pd.DataFrame(list(self.collection.find()))
+    #     df.to_csv('data.csv',index=False)
     
 db_model=DB()
 
