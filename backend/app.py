@@ -13,6 +13,7 @@ load_dotenv(path)
 
 from main.api import staff_manage
 from main.api import staff
+from main.api import notifications
 from main.api import settings
 from main.routes import app_route
 
@@ -33,6 +34,7 @@ app.register_blueprint(app_route)
 api.add_resource(staff_manage,'/api/manage')
 api.add_resource(staff,'/api/staff')
 api.add_resource(settings,'/api/settings')
+api.add_resource(notifications,'/api/notifications')
 
 app.secret_key = 'os.environ.get("SECRET") or os.urandom(24)'
 @app.before_request

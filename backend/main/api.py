@@ -1,9 +1,11 @@
-from main.models import db_model,today_manage
+from main.models import db_model,today_manage,Notification
 from flask_restful import Resource, reqparse
 from icecream import ic
 import os,sys
 from main.tools import get_date,send_notification,msg_gen,debug_info
 import datetime
+from flask import request
+
 class staff_manage(Resource):
     #define argument parser
     parser=reqparse.RequestParser()
@@ -239,3 +241,43 @@ class settings(Resource):
         print(result)
         db_model.db.settings.update_one({"type":'settings'},{'$set':{'data':result['data']}})
         return 'OK'
+    
+    
+class notifications(Resource):
+    parser=reqparse.RequestParser()
+    def get(self):   
+        parser=reqparse.RequestParser()
+        parser.add_argument('key',type=str,location=['values'])
+        parser.add_argument('value',type=str,location=['values'])
+        args=self.parser.parse_args()
+
+        key=args.get('key','')
+        value=args.get('value','')
+        filter={key:value}
+        if not key:
+            filter={}
+        
+        return Notification().find(filter)
+        
+
+    def post(self):
+        parser=reqparse.RequestParser()
+        parser.add_argument('tags',type=str,location=['values'])
+        parser.add_argument('title',type=str,location=['values'])
+        parser.add_argument('content',type=str,location=['values'])
+        parser.add_argument('status',type=str,location=['values'])
+        # parser.add_argument('timestamp',type=str,location=['values'])
+        parser.add_argument('publisher',type=str,location=['values'])
+        args=self.parser.parse_args()
+        
+        if args['tags'] and args['content'] and args['publisher']and args['title']:
+            return Notification().create(args)
+        return 'data missing'
+
+    def put(self):
+        self.parser.parse_args()
+        pass
+    def delete(self):
+        self.parser.parse_args()
+        pass
+    
