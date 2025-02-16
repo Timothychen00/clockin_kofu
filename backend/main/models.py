@@ -3,7 +3,7 @@ import pymongo
 import certifi
 
 from dotenv import load_dotenv
-import pandas as pd
+# import pandas as pd
 from icecream import ic
 from termcolor import colored
 
@@ -40,9 +40,9 @@ class DB():
         except:
             return 1
     
-    def save(self):
-        df = pd.DataFrame(list(self.collection.find()))
-        df.to_csv('data.csv',index=False)
+    # def save(self):
+    #     df = pd.DataFrame(list(self.collection.find()))
+    #     df.to_csv('data.csv',index=False)
     
 db_model=DB()
 
@@ -111,7 +111,7 @@ class Today_Manage():
         if date!=get_date()[1]:# only control today
             return True
         if (cardid not in data[type]) and cardid!=' ': 
-            data[type][cardid]=get_date(None,'clockin')[2]
+            data[type][cardid]=get_date(None)[2]
             ic('add',cardid,data[type][cardid])
             ic(data)
             self.dbp.update_one({'type':'today_manage'},{'$set':{'data':data}})

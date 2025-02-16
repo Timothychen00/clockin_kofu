@@ -101,7 +101,7 @@ function inject_html(data, month_type = 'this') {
 		//計算薪資時數
 		let salary_perhour = window.salary_data['unitpay'];
 		let salary_times=Math.floor((work[0]*60+work[1])/window.salary_data['duration']);
-		if (salary_times*window.salary_data['duration']>=window.salary_data['bias'])
+		if ((work[0]*60+work[1])-salary_times*window.salary_data['duration']>=window.salary_data['bias'])
 			salary_times += 1;
 		salary_data_html = '';
 		if(document.getElementById('salary').classList.contains('active'))

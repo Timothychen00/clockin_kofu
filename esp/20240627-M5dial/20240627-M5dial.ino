@@ -4,6 +4,8 @@
 #define RFID_TYPE_mfrc522 0
 #define RFID_TYPE_m5 1
 #define RFID_TYPE RFID_TYPE_m5
+#define DEVICE_ID "Fried-01"
+#define Version "V2.1"
 
 struct CONFIG {
   bool Display = true;
@@ -39,6 +41,13 @@ struct CONFIG {
 #include <Ticker.h>
 #include "M5Dial.h"
 #include "data.h"
+#include <Firebase_ESP_Client.h>
+
+//Provide the token generation process info.
+#include "addons/TokenHelper.h"
+//Provide the RTDB payload printing info and other helper functions.
+#include "addons/RTDBHelper.h"
+
 #if RFID_TYPE==RFID_TYPE_mfrc522
 #include <MFRC522.h>
 #endif
@@ -48,10 +57,15 @@ struct CONFIG {
 // 闪烁时间间隔(秒)
 #define I2C_ADD 0x20      //I2C address of the PCF8574
 //#define SERVER_IP "https://bao7clockinsys.azurewebsites.net"
-#define SERVER_IP "http://10.0.0.220:8000/" 
+#define SERVER_IP "http://192.168.0.18:8000" 
 #define ntpServer "pool.ntp.org" //NTP伺服器
 #define utcOffset 28800          //UTC偏移量 (此為UTC+8的秒數，即：8*60*60)
 #define daylightOffset 0
+// Insert Firebase project API Key
+#define API_KEY "AIzaSyDYStX0RzBFxDCq54tkBfYRWgJINEgFKEE"
+
+// Insert RTDB URLefine the RTDB URL */
+#define DATABASE_URL "https://esp32-log-fried-default-rtdb.asia-southeast1.firebasedatabase.app/" 
 
 #if RFID_TYPE==RFID_TYPE_mfrc522
 #define RST_PIN         D0
@@ -80,10 +94,19 @@ int button[3] = {0};
 String temp = "";
 String card_uid = "";
 String connection_mode = "buttonless";
+String Date="";
 
 struct tm now;
 // PCF8574 Port(I2C_ADD);
 WiFiMulti wifiMulti;
+//Define Firebase Data object
+FirebaseData fbdo;
+
+FirebaseAuth auth;
+FirebaseConfig config;
+
+unsigned long sendDataPrevMillis = 0;
+bool signupOK = false;
 
 //WiFiClient client;
 
@@ -117,12 +140,15 @@ void display_unit(String data1, String data2 = " ");
 void display_unit_setup();
 void OTA_setup();
 void time_setup();
+void firebase_setup();
 void output_configuration();
 void sound();
 String getValue(String data, char separator, int index);
 template<typename T, typename Tsize, typename Tcolor>
 void display_unit(const String& text,int x_offset,int y_offset,const T* font,Tsize fontsize,Tcolor color); 
 void display_time();
+void firebase_send(String data_firebase);
+
 
 void setup() {
     display_unit_setup();
@@ -154,6 +180,11 @@ void setup() {
     LINE.setToken(LINE_TOKEN);
     // 先換行再顯示
     LINE.notify("系統已經上線");
+    display_unit("Version=" Version,0,0,&fonts::Orbitron_Light_24,1,WHITE);
+    delay(2000);
+    M5Dial.Display.clear();
+    firebase_setup();
+    
 }
 
 void loop() {
@@ -185,11 +216,14 @@ void loop() {
     
     //get_time
     //output time to lcd
-    if (strcmp(formattedTime, old_formattedTime) != 0)
+    if (strcmp(formattedTime, old_formattedTime) != 0){
+        Date=String(now.tm_year+1900)+"-"+String(now.tm_mon+1)+"-"+String(now.tm_mday)+" "+formattedTime;
+        Serial.println("date:"+Date);
         display_time();
-    
+    }
     //rfid detecting
     if (M5Dial.Rfid.PICC_IsNewCardPresent() && M5Dial.Rfid.PICC_ReadCardSerial()) {
+        
         //        tone(G3,3000,1000);
         uint8_t piccType = M5Dial.Rfid.PICC_GetType(M5Dial.Rfid.uid.sak);
         // 顯示卡片內容
@@ -198,14 +232,15 @@ void loop() {
         dump_byte_array(M5Dial.Rfid.uid.uidByte, M5Dial.Rfid.uid.size); // 讀取卡片+顯示16進制
         Serial.print(F("Card UID:"));
         Serial.println(card_uid);
-
+        
         M5Dial.Display.clear();
         
         display_unit("card id:",0,- 30,&fonts::Orbitron_Light_32,1,WHITE);
         display_unit(card_uid,0, + 10,&fonts::Orbitron_Light_32,1,WHITE);
         
+        firebase_send("cardid:"+String(card_uid));
         M5Dial.Rfid.PICC_HaltA();  // 卡片進入停止模式
-        delay(1000);
+        delay(800);
         
         send_request("post", card_uid, "");
     }
@@ -280,18 +315,19 @@ void send_request(String methods, String carduid, String type) { //默認參數�
                 delay(2000);
                 
                 M5Dial.Display.clear();
-                display_unit("Report",0,- 100,&fonts::Orbitron_Light_24,1,WHITE);
-                M5Dial.Display.drawPngUrl( SERVER_IP "/static/" + getValue(string_payload, ',', 1) + ".png"
-                                         , 0    // X position
-                                         , 0    // Y position
-                                         , M5Dial.Display.width()  // Width
-                                         , M5Dial.Display.height() // Height
-                                         , 0    // X offset
-                                         , 0    // Y offset
-                                         , 0.5  // X magnification(default = 1.0 , 0 = fitsize , -1 = follow the Y magni)
-                                         , 0.5  // Y magnification(default = 1.0 , 0 = fitsize , -1 = follow the X magni)
-                                         , datum_t::middle_center
-                                       );
+                display_unit("Report",0,- 90,&fonts::Orbitron_Light_24,1,WHITE);
+//                M5Dial.Display.drawPngUrl( SERVER_IP "/static/" + getValue(string_payload, ',', 1) + ".png"
+//                                         , 0    // X position
+//                                         , 0    // Y position
+//                                         , M5Dial.Display.width()  // Width
+//                                         , M5Dial.Display.height() // Height
+//                                         , 0    // X offset
+//                                         , 0    // Y offset
+//                                         , 0.5  // X magnification(default = 1.0 , 0 = fitsize , -1 = follow the Y magni)
+//                                         , 0.5  // Y magnification(default = 1.0 , 0 = fitsize , -1 = follow the X magni)
+//                                         , datum_t::middle_center
+//                                       );
+                M5Dial.Display.qrcode(SERVER_IP "/preview/"+getValue(string_payload, ',', 1),50,50,190-50,6);
             }
             delay(7000);
             M5Dial.Display.clear();
@@ -358,6 +394,7 @@ void multi_wifi_setup() {
     wifiMulti.addAP("22226677", "0927018776");
     wifiMulti.addAP("dsseven77777", "b00829ckkc");
     wifiMulti.addAP("LouisaCoffee", "25988613");
+    wifiMulti.addAP("MetroTaipei x Louisa","25112613");
     while (wifiMulti.run() != WL_CONNECTED) {
         delay(300);
         Serial.print(".");
@@ -423,9 +460,11 @@ void time_setup() {
     while (!getLocalTime(&now));//get the real time
     Serial.println("[time_setup]done!");
 }
+
 void output_configuration() {
   //
 }
+
 String getValue(String data, char separator, int index) {
     int found = 0;
     int strIndex[] = { 0, -1 };
@@ -453,3 +492,54 @@ void display_time(){
     last_display = millis();
     strcpy(old_formattedTime, formattedTime);
  }
+
+void firebase_setup(){
+      config.api_key = API_KEY;
+      config.database_url = DATABASE_URL;
+    
+      /* Sign up */
+      if (Firebase.signUp(&config, &auth, "", "")){
+        Serial.println("ok");
+        signupOK = true;
+      }
+      else{
+        Serial.printf("%s\n", config.signer.signupError.message.c_str());
+      }
+    
+      /* Assign the callback function for the long running token generation task */
+      config.token_status_callback = tokenStatusCallback; //see addons/TokenHelper.h
+      Firebase.begin(&config, &auth);
+      Firebase.reconnectWiFi(true);    
+}
+
+void firebase_send(String data_firebase){
+   if (Firebase.ready() && signupOK ){
+    sendDataPrevMillis = millis();
+    // Write an Int number on the database path test/int
+    if (Firebase.RTDB.setString(&fbdo, DEVICE_ID "/"+String(Date), data_firebase)){
+      Serial.println("PASSED");
+    }
+    else {
+      Serial.println("FAILED");
+      Serial.println("REASON: " + fbdo.errorReason());
+    }
+    Serial.println("time:"+String(millis()-sendDataPrevMillis));
+  }
+}
+
+
+//
+//   if (Firebase.ready() && signupOK ){
+//    sendDataPrevMillis = millis();
+//    // Write an Int number on the database path test/int
+//    if (Firebase.RTDB.setString(&fbdo, DEVICE_ID+"/"+String(formattedTime), count)){
+//      Serial.println("PASSED");
+//    }
+//    else {
+//      Serial.println("FAILED");
+//      Serial.println("REASON: " + fbdo.errorReason());
+//    }
+//    Serial.println("time:"+String(millis()-sendDataPrevMillis));
+//    
+//    
+//  }
