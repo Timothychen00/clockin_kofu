@@ -16,3 +16,8 @@ backend/main/.env
 backend/data.csv
 backend/main/*.env
 container_ID.txt
+backend/main/__pycache__/tools.cpython-310.pyc
+backend/main/__pycache__/routes.cpython-310.pyc
+backend/main/__pycache__/models.cpython-310.pyc
+backend/main/__pycache__/decorators.cpython-310.pyc
+backend/main/__pycache__/api.cpython-310.pyc
