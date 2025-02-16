@@ -164,9 +164,9 @@ class Notification():
         result=list(self.collection.find(filter))
         for i in result:
             i['_id']=str(i['_id'])
-        ic(result)
+        # ic(result)
         counts=len(result)
-        ic(counts)
+        # ic(counts)
         return jsonify(result)
 
     def delete(self,filter,confirm):

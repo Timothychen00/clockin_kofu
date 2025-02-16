@@ -102,31 +102,31 @@
 
         <div class="row mt-3 ps-2 pe-lg-2 pe-0 " style="height: 85%;">
             <div class="col-2 px-lg-3 px-0 d-none d-md-block" id="dashboard">
-                <div class="function_button p-2 d-flex align-items-center justify-content-start ps-5 shadow"
+                <div class="function_button p-2 d-flex align-items-center justify-content-center shadow"
                     onclick="handle_mode('people')">
                     <ion-icon size="large" name="people-outline"></ion-icon>
-                    <b id="word">員工管理</b>
+                    <b id="word" class="none-select">員工管理</b>
                 </div>
-                <div class="function_button p-2 mt-3 d-flex align-items-center justify-content-start shadow ps-5"
+                <div class="function_button p-2 mt-3 d-flex align-items-center justify-content-center shadow"
                     onclick="handle_mode('notifications')">
                     <ion-icon size="large" name="notifications-outline"></ion-icon>
-                    <b id="word-3">通知中心</b>
+                    <b id="word-3" class="none-select">通知中心</b>
                 </div>
-                <div class="function_button p-2 mt-3 d-flex align-items-center justify-content-start shadow ps-5"
+                <div class="function_button p-2 mt-3 d-flex align-items-center justify-content-center shadow"
                     onclick="handle_mode('settings')">
                     <ion-icon size="large" name="cog-outline"></ion-icon>
-                    <b id="word-3" style="white-space: pre;">設定</b>
+                    <b id="word-3" style="white-space: pre;" class="none-select">設定</b>
                 </div>
-                <div class="function_button p-2 mt-3 d-flex align-items-center justify-content-start shadow ps-5"
+                <div class="function_button p-2 mt-3 d-flex align-items-center justify-content-center shadow"
                     onclick="handle_mode('contact')">
                     <ion-icon size="large" name="bookmark-outline"></ion-icon>
-                    <b id="word-3">回饋</b>
+                    <b id="word-3" class="none-select">回饋</b>
                 </div>
             </div>
 
 
 
-            <div id="people" class="col card px-0 shadow " style="height:100%;border-radius:0.9rem">
+            <div id="people" class="col card px-0 shadow  animation-floating" style="height:100%;border-radius:0.9rem">
                 <div class="card-header py-1" style="background-color: #f8f9fc;position:sticky">
                     <ul class="nav nav-pills card-header-pills text-center">
                         <li class="nav-item me-2 mt-1">
@@ -202,13 +202,46 @@
                     </ul>
                 </div>
 
-                <div class="div card-body" style="overflow:scroll;">
+                <div class="div card-body ps-3" style="overflow:scroll;"
+                    onclick="document.getElementById('settings-save-button').classList.remove('visually-hidden')">
+                    <div class="row ps-lg-4 ps-2 mt-3" style="color:gray;font: size 1.1rem;">
+                        <h5 class="mb-4 none-select">通知</h5>
+                        <div class="col-4 my-1 ps-lg-5 ps-2 none-select">
+                            綁定狀態
+                        </div>
+
+                        <div class="col-8 my-1 ps-4">
+                            <div class="btn ">立即綁定</div>
+                        </div>
+
+                        <div class="col-4  pt-4 my-1 ps-lg-5 ps-2 none-select">
+                            通知時間：
+                        </div>
+                        <div class="col-8 my-1 pt-1" style="font-size:1.1rem;font-weight:500;height: 40px !important;">
+
+                            <div id="notification-time" class="d-inline-flex pt-2">
+                            </div>
+                            <div class="d-inline-flex pt-4 flex-column">
+                                <ion-icon class="animation-scale" name="add-circle"
+                                    onclick="addNotificationTime()"></ion-icon>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row justify-content-end fixed-bottom mb-4">
+                        <div class="col-3 col-lg-1 align-self-end me-3">
+                            <button class="btn btn-primary visually-hidden" id="settings-save-button">
+                                Save
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
 
             <div id="notifications" class="col card px-0 shadow  visually-hidden"
                 style="height:100%;border-radius:0.9rem">
+
                 <div class="card-header py-1" style="background-color: #f8f9fc;position:sticky">
                     <ul class="nav nav-pills card-header-pills text-center">
                         <li class="nav-item me-2 mt-1">
@@ -218,24 +251,38 @@
                 </div>
 
                 <div class="div card-body" style="overflow:scroll;">
-                    <ul id="notification-box" class="row px-3">
-                        <div class="col-12 rounded border border-1 ps-4 py-2 d-flex flex-column " >
-                            <div style="width: 100px;"><h5>Version2</h5></div>
-                            <div style="width: 100px;"> <span class="badge rounded-pill text-bg-primary">update</span></div>
-                            <div style="width: 100px;">content</div>
-                            <div class="d-inline-flex justify-content-between">
-                                <div class="align-self-end flex-end" style="width: 100px;">me</div>
-                                <div style="width: 100px;" class="bold">2025-02-02</div>
+                    <div class="row h-100 pb-3">
+                        <div class="col-lg-2 " id="notification-class">
+                        </div>
+                        <div class="col">
+                            <ul id="notification-box" class="row px-3">
+                            </ul>
+                        </div>
+                        <div class="row justify-content-center fixed-bottom">
+                            <div class="col-12  col-lg-12  row justify-content-end  ms-4 pb-2">
+                                <div class="col-5  shadow row justify-content-center py-2 rounded me-0 mb-2"
+                                    style="background-color:white">
+                                    <p class="my-2 d-inline h5 ps-3" style="width: 80px;">日期</p>
+                                    <button class="btn pt-2" style="width:50px" onclick="offsetDate(-1)"><ion-icon
+                                            name="chevron-back-outline"></ion-icon></button>
+                                    <input type="date" class="form-control d-inline mx-2" id="date" style="width:150px">
+                                    <button class="btn pt-2" style="width:50px" onclick="offsetDate(1)"><ion-icon
+                                            name="chevron-forward-outline"></ion-icon></button>
+
+                                </div>
                             </div>
                         </div>
-                    </ul>
+                    </div>
                 </div>
+
             </div>
         </div>
 
     </div>
 
-
+    <footer class="fixed-bottom  text-center " style="color: gray;font-size:.9rem">
+        Copyright © Timothychen & Timhu 2022
+    </footer>
 
 
 

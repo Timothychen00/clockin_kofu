@@ -244,30 +244,38 @@ class settings(Resource):
     
     
 class notifications(Resource):
-    parser=reqparse.RequestParser()
+    # parser=reqparse.RequestParser()
     def get(self):   
-        parser=reqparse.RequestParser()
-        parser.add_argument('key',type=str,location=['values'])
-        parser.add_argument('value',type=str,location=['values'])
+        self.parser=reqparse.RequestParser()
+        self.parser.add_argument('key',type=str,location=['values'])
+        self.parser.add_argument('value',type=str,location=['values'])
+        self.parser.add_argument('date',type=str,location=['values'])
         args=self.parser.parse_args()
 
         key=args.get('key','')
         value=args.get('value','')
+        date=args.get('date','')
+        
         filter={key:value}
         if not key:
             filter={}
+        
+        ic(date)
+        if date:
+            filter['timestamp']={"$regex":date+'\w*'}
+        ic(filter)
         
         return Notification().find(filter)
         
 
     def post(self):
-        parser=reqparse.RequestParser()
-        parser.add_argument('tags',type=str,location=['values'])
-        parser.add_argument('title',type=str,location=['values'])
-        parser.add_argument('content',type=str,location=['values'])
-        parser.add_argument('status',type=str,location=['values'])
+        self.parser=reqparse.RequestParser()
+        self.parser.add_argument('tags',type=str,location=['values'])
+        self.parser.add_argument('title',type=str,location=['values'])
+        self.parser.add_argument('content',type=str,location=['values'])
+        self.parser.add_argument('status',type=str,location=['values'])
         # parser.add_argument('timestamp',type=str,location=['values'])
-        parser.add_argument('publisher',type=str,location=['values'])
+        self.parser.add_argument('publisher',type=str,location=['values'])
         args=self.parser.parse_args()
         
         if args['tags'] and args['content'] and args['publisher']and args['title']:
