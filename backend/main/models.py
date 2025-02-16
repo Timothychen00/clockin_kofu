@@ -2,11 +2,15 @@
 import os
 import pymongo
 import certifi
+import secrets
+import datetime
+import string
 
 from dotenv import load_dotenv
 # import pandas as pd
 from icecream import ic
 from termcolor import colored
+from flask import jsonify
 
 from main.tools import get_date
 
@@ -108,8 +112,6 @@ class Today_Manage():
         
         ic(cardid)
         
-        
-        
         if date!=get_date()[1]:# only control today
             return True
         if (cardid not in data[type]) and cardid!=' ': 
@@ -192,3 +194,125 @@ class Notification():
     #         msg=
             
 
+
+
+
+## 以下全部需要測試
+
+class Settings():
+    def __init__(self):
+        pass
+        self.collection=db_model.db.settings
+    
+    def create(self,args={}):
+        data={# default
+            'type':'settings',
+            'data':
+                {
+                    'unitpay':90,
+                    'duration':30,
+                    'bias':15,
+                    'notification-status':'None',
+                    'notification-bind-token':{},
+                    'notification-time':[],
+                    'notification-userid':[],
+                    'allow-multi':False,
+                }
+        }
+        
+        # 更新設定
+        if args:
+            for i in args:
+                data[i]=args[i]
+        
+        
+        result=self.collection.insert_one(data)
+        msg=f'settings id:{result.inserted_id} create successful'
+        ic(msg)
+        return {'msg':msg}
+    
+    def find(self):#要檢查遞回爆炸的問題
+        result=list(self.collection.find({'type':'settings'}))
+        if len(result)==1:
+            ic(result)
+            result=result[0]
+            result['_id']=str(result['_id'])
+            return result
+        elif len(result)==0:
+            self.create()
+            result=self.find()
+            ic(result)
+            return result
+
+    def bind(self,userid):# 通過linebot端進行綁定
+        result=self.find()
+        if result:
+            if result['data']['allow-multi']==True:# append
+                result['data']['notification-userid'].append(userid)
+                ic('line-token is allow-multi mode, userid inserted')
+            else:
+                result['data']['notification-userid']=[userid]
+                ic('line-token is not allow-multi mode, userid replaced')
+            return 'success'
+        return 'no data'
+            
+    
+    def generate_binding_token(self,length=30,valid_minutes=5):
+        characters = string.ascii_letters + string.digits  # ascii_letters: 所有英文字母；digits: 所有數字
+        token = ''.join(secrets.choice(characters) for _ in range(length))
+        
+        timestamp = datetime.datetime.now().isoformat()
+        data={
+            "token": token,
+            "timestamp": timestamp,
+            "valid_minutes": valid_minutes
+        }
+        
+        self.updateSettings({"notification-bind-token":data})
+        ic('已經生成token',data)
+        return data
+    
+    def unbind(self,unbindAll,userid=''):# 接觸綁定
+        result=self.find()
+        if result:
+            if result['data']['allow-multi']==True:# append
+                
+                if unbindAll==True:
+                    result['data']['notification-userid']=[]
+                    ic('unbound all users')
+                    'success'
+                else:
+                    if userid in result['data']['notification-userid'] and userid != '':
+                        result['data']['notification-userid'].remove(userid)
+                        ic('unbound the user'+ userid)
+                    else:
+                        ic('not bound!')
+                    return 'success'
+        return 'no data'
+    
+    def updateSettings(self,data):# from website
+        result=list(self.collection.find({'type':'settings'}))
+        result=result[0]
+        for i in data:
+            if i in ['unipay','bias','duration','notification-time','notification-bind-token']:
+                result['data'][i]=data[i]
+                
+        self.collection.update_one({'type':"settings"},{'$set':result})
+        return 'success'
+    
+
+    def delete(self,filter,confirm):
+        if not filter:
+            filter={}
+        result=self.collection.find(filter)
+        counts=len(list(result))
+        if counts>1:#needs confirm
+            if confirm==True:
+                self.collection.delete_many(filter)
+            else:
+                msg='many notifications found, needs confirm'
+        else:
+            self.collection.delete_one(filter)
+            msg='success'
+        ic(msg)
+        return {'msg':msg}

@@ -77,4 +77,3 @@ function addNotificationTime(){
         document.getElementById('notification-time').innerHTML+="<input class='btn mx-2 border border-1' style='width:120px'  type=\'time\'/> ";
 }
 
-load_notification()

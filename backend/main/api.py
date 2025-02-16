@@ -9,6 +9,7 @@ from flask_restful import Resource, reqparse
 from icecream import ic
 from termcolor import colored
 from flask import request
+from flask import jsonify
 
 from main.tools import get_date
 from main.tools import send_notification
@@ -17,8 +18,8 @@ from main.tools import debug_info
 from main.models import db_model
 from main.models import today_manage
 from main.models import Notification
+from main.models import Settings
 from main.tools import hasher
-from main.tools import qrcode_generator
 
 
 class staff_manage(Resource):
@@ -243,29 +244,34 @@ class staff(Resource):
 
 
 class settings(Resource):
-    parser=reqparse.RequestParser()
-    parser.add_argument('unitpay',type=int,location=['values'])
-    parser.add_argument('duration',type=int,location=['values'])
-    parser.add_argument('bias',type=int,location=['values'])
+
     def get(self):
-        result=db_model.db.settings.find_one({'type':'settings'})
-        if result:
-            return result['data']
-        else:
-            db_model.db.settings.insert_one({'type':'settings','data':{'unitpay':90,'duration':30,'bias':15}})
+        self.parser=reqparse.RequestParser()
+        #計算薪資的部分
+        self.parser.add_argument('key',type=str,location=['values'])
+        args=self.parser.parse_args()
+        
+        key=args.get('key',None)
+        if key:
+            if key=='token':
+                return Settings().generate_binding_token()
+        return jsonify(Settings().find())
             
     def put(self):
+        self.parser=reqparse.RequestParser()
+        #計算薪資的部分
+        self.parser.add_argument('unitpay',type=int,location=['values'])
+        self.parser.add_argument('duration',type=int,location=['values'])
+        self.parser.add_argument('bias',type=int,location=['values'])
+        
+        self.parser.add_argument('notification-time',type=str,location=['values'],action='append')# 最多三次
+        # self.parser.add_argument('notification-userid',type=str,location=['values'])# linebot綁定的用戶
+        # 
+        
         args=self.parser.parse_args()
-        result=db_model.db.settings.find_one({'type':'settings'})
-        if args['unitpay']:
-            result['data']['unitpay']=args['unitpay']
-        if args['duration']: 
-            result['data']['duration']=args['duration']
-        if args['bias']:    
-            result['data']['bias']=args['bias']
-        print(result)
-        db_model.db.settings.update_one({"type":'settings'},{'$set':{'data':result['data']}})
-        return 'OK'
+        
+        ic(args)
+        return Settings().updateSettings(args)
     
     
 class notifications(Resource):

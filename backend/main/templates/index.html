@@ -205,13 +205,26 @@
                 <div class="div card-body ps-3" style="overflow:scroll;"
                     onclick="document.getElementById('settings-save-button').classList.remove('visually-hidden')">
                     <div class="row ps-lg-4 ps-2 mt-3" style="color:gray;font: size 1.1rem;">
-                        <h5 class="mb-4 none-select">通知</h5>
-                        <div class="col-4 my-1 ps-lg-5 ps-2 none-select">
+                        <h5 class="mb-4 none-select">薪資試算</h5>
+
+                        <div class="col-4 my-1 ps-lg-5 ps-2 none-select">單位薪資</div>
+                        <div class="col-8 my-1 ps-4"><input type="text" class="form-control" id="settings_unitpay_element"></div>
+
+                        <div class="col-4 my-1 ps-lg-5 ps-2 none-select">計薪門檻</div>
+                        <div class="col-8 my-1 ps-4"><input type="text" class="form-control" id="settings_bias_element"></div>
+
+                        <div class="col-4 my-1 ps-lg-5 ps-2 none-select">單位時間</div>
+                        <div class="col-8 my-1 ps-4"><input type="text" class="form-control" id="settings_duration_element"></div>
+
+                        <br>
+
+                        <h5 class="my-4 none-select">通知</h5>
+                        <div class="col-4 my-1 ps-lg-5 ps-2 pt-2 none-select">
                             綁定狀態
                         </div>
 
-                        <div class="col-8 my-1 ps-4">
-                            <div class="btn ">立即綁定</div>
+                        <div class="col-8 my-1 ps-4" id="settings_bind_box">
+                            <!-- <div class="btn " >立即綁定</div> -->
                         </div>
 
                         <div class="col-4  pt-4 my-1 ps-lg-5 ps-2 none-select">
@@ -230,7 +243,7 @@
                     </div>
                     <div class="row justify-content-end fixed-bottom mb-4">
                         <div class="col-3 col-lg-1 align-self-end me-3">
-                            <button class="btn btn-primary visually-hidden" id="settings-save-button">
+                            <button class="btn btn-primary visually-hidden" id="settings-save-button" onclick="save_settings()">
                                 Save
                             </button>
                         </div>
@@ -290,6 +303,7 @@
     <!-- <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script> -->
     <script src="/static/js/salary.js"></script>
     <script src="/static/js/notification.js"></script>
+    <script src="/static/js/settings.js"></script>
     <!-- <script src="/static/js/vue_control.js"></script> -->
     <!-- Bootstrap JavaScript Libraries -->
   

@@ -12,6 +12,7 @@ function handle_mode(type){
         document.getElementById('contact').classList.remove('animation-floating');
 
     }else if(type=='notifications'){
+        load_notification()
         document.getElementById('notifications').classList.remove('visually-hidden');
         document.getElementById('notifications').classList.add('animation-floating');
         document.getElementById('people').classList.add('visually-hidden');
@@ -33,6 +34,7 @@ function handle_mode(type){
         document.getElementById('notifications').classList.remove('animation-floating');
     }  
     else if (type=='settings'){
+        load_settings()
         document.getElementById('settings').classList.remove('visually-hidden');
         document.getElementById('settings').classList.add('animation-floating');
         document.getElementById('notifications').classList.add('visually-hidden');
