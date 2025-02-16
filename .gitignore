@@ -17,3 +17,5 @@ backend/data.csv
 *.env
 container_ID.txt
 backend/Pipfile
+backend/main/*.env
+container_ID.txt

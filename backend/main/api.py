@@ -1,10 +1,25 @@
-from main.models import db_model,today_manage,Notification
+
+
+
+import os
+import sys
+import datetime
+
 from flask_restful import Resource, reqparse
 from icecream import ic
-import os,sys
-from main.tools import get_date,send_notification,msg_gen,debug_info
-import datetime
+from termcolor import colored
 from flask import request
+
+from main.tools import get_date
+from main.tools import send_notification
+from main.tools import msg_gen
+from main.tools import debug_info
+from main.models import db_model
+from main.models import today_manage
+from main.models import Notification
+from main.tools import hasher
+from main.tools import qrcode_generator
+
 
 class staff_manage(Resource):
     #define argument parser
@@ -31,8 +46,11 @@ class staff_manage(Resource):
     def post(self):
         args=self.parser.parse_args()
         print(args)
+        next_id=str(db_model.next_id())
+        hasher_id=hasher(next_id)
         data={
-            '_id':str(db_model.next_id()),
+            '_id':next_id,
+            'hash_id':hasher_id,
             'name':args['name'],
             'cardid':args['cardid'],
             'jointime':args['jointime'],
@@ -44,7 +62,11 @@ class staff_manage(Resource):
 
         print(data)
         db_model.collection.insert_one(data)
+        
+        #gen qrcode
+        # qrcode_generator(hasher_id)
         send_notification(ic(msg_gen(data,'加入成功')),mode='test')
+        
         
         return {'data':data,'msg':'data inserted!'},200
     
@@ -81,8 +103,10 @@ class staff(Resource):
         ic(args)
         data=db_model.collection.find_one({args['key']:args['value']})
         
+        
         if args['connection_mode']=='buttonless':
             ic('configing connection_mode into buttonless')
+
             now_time=datetime.datetime.strptime(get_date(None)[2],"%H:%M:%S")
             if today_manage.check_inside(args['value'],'clockin')==False:
                 ic('set mode to clockin')
@@ -91,14 +115,14 @@ class staff(Resource):
             elif today_manage.check_inside(args['value'],'clockout')==False:
                 ic('set mode to clockout')
                 clockin_time=datetime.datetime.strptime(today_manage.check_inside(args['value'],'clockin'),"%H:%M:%S")
-                if now_time-clockin_time>datetime.timedelta(minutes=60):
+                if now_time-clockin_time>datetime.timedelta(minutes=5):
                     args['type']='clockout'
                 else:
-                    ic('60分鐘內重複打卡clockin->clockout')
-                    return "already done!"
+                    ic('5分鐘內重複打卡clockin->clockout')
+                    return f"already done!,{data.get('hash_id',' ')}" 
             else:
-                ic('60分鐘內重複打卡clockout->clockout')
-                return "already done!"
+                ic('5分鐘內重複打卡clockout->clockout')
+                return f"already done!,{data.get('hash_id',' ')}" 
                 
         
     #暫時倒流
@@ -134,7 +158,7 @@ class staff(Resource):
                 ic(date)
                 if ic(today_manage.add(args['type'],data['cardid'],date))=='Already clocked':
                     send_notification(ic(msg_gen(data,'重複打卡 '+args['type'],args['time'])),'test')
-                    return '已經打卡'
+                    return f"already done!,{data.get('hash_id',' ')}" 
                 else:
                     log[month][date][args['type']]=time#紀錄打卡時間
                 
@@ -185,9 +209,10 @@ class staff(Resource):
                 send_notification(ic(msg_gen(data,dtype+'成功',args['time'])),mode=os.environ['MODE'])
                 
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
-            return 'OK'
+            return f'OK,{data.get("hash_id"," ")}'
         else:
-            return 'Failed'
+            print(colored("Card Not Found!",'red'))
+            return 'Not Found'
         # except Exception as e:
         #     debug_info(e)
         #     return 'Failed'

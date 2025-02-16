@@ -1,15 +1,14 @@
-from flask import jsonify
-import os, pymongo
+
+import os
+import pymongo
+import certifi
+
+from dotenv import load_dotenv
+# import pandas as pd
 from icecream import ic
 from termcolor import colored
+
 from main.tools import get_date
-import pandas as pd
-from dotenv import load_dotenv
-
-load_dotenv('main/bao7.env')
-
-
-
 
 class DB():
     def __init__(self):
@@ -22,7 +21,7 @@ class DB():
             except Exception as e:
                 print(colored('【本地】測試伺服器連線失敗 local failed','red'))
         else:
-            self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
+            self.client=pymongo.MongoClient(os.environ['DB_STRING'],tlsCAFile=certifi.where())
             try:
                 self.client.admin.command('ping')
                 print(colored('【雲端】測試伺服器連線成功 remote success','green'))
@@ -30,12 +29,9 @@ class DB():
                 print(colored('【雲端】測試伺服器連線失敗 remote failed','red'))
         
         
-        
-        
         # self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
         self.db=self.client.staff
         self.collection=self.db.clockin
-
         # date
         # 
         
@@ -45,11 +41,9 @@ class DB():
         except:
             return 1
     
-    def save(self):
-        df = pd.DataFrame(list(self.collection.find()))
-        df.to_csv('data.csv',index=False)
-        
-        
+    # def save(self):
+    #     df = pd.DataFrame(list(self.collection.find()))
+    #     df.to_csv('data.csv',index=False)
     
 db_model=DB()
 
@@ -60,9 +54,10 @@ class Today_Manage():
     def check_out_of_date(self):
         '''check if the date is out of date
         '''
-        result=list(self.dbp.find({'type':'today_manage'}))
-        result_len=len(result)
-        if result_len!=0:
+        result=list(self.dbp.find({'type':'today_manage'}))# mongodb>4 deprecates the cursor.count()
+        doc_count=len(result)
+        print("est:::::",doc_count)
+        if doc_count!=0:
             data=result[0]['data']
             if data['date']!=get_date()[1]:
                 ic("out of date")
@@ -73,14 +68,14 @@ class Today_Manage():
         
     def reset(self):
         result=list(self.dbp.find({'type':'today_manage'}))
-        result_len=len(result)
+        doc_count=len(result)
         data={
             'date':get_date()[1],#get now date
             'clockin':{},
             'workovertime':{},
             'clockout':{},
         }
-        if result_len==0:
+        if doc_count==0:
             ic('today建立')
             self.dbp.insert_one({'type':'today_manage','data':data})
         else:
@@ -93,7 +88,12 @@ class Today_Manage():
         '''check if the cardid is inside the today_manage
         '''
         self.check_out_of_date()
-        result=self.dbp.find({'type':'today_manage'})
+        result=list(self.dbp.find({'type':'today_manage'}))
+        doc_count=len(result)
+        print("count:",doc_count)
+        if doc_count==0:
+            self.reset()
+            result=list(self.dbp.find({'type':'today_manage'}))
         data=result[0]['data']
         if cardid in data[mode]:
             return data[mode][cardid]
@@ -134,7 +134,7 @@ class Today_Manage():
                     self.dbp.update_one({'type':'today_manage'},{'$set':{'data':data}})
                     ic(cardid+'removed from today_manage')
             return True
-        
+
 today_manage=Today_Manage()
 
 class Notification():
