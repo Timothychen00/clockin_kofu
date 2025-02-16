@@ -1,3 +1,4 @@
+
 import os
 import pymongo
 import certifi
@@ -61,6 +62,8 @@ class Today_Manage():
             if data['date']!=get_date()[1]:
                 ic("out of date")
                 self.reset()
+        else:
+            self.reset()
         
         
     def reset(self):
@@ -100,12 +103,11 @@ class Today_Manage():
     def add(self,type,cardid,date):
         self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
-        # if result.count()==0:
-        #     self.reset()
-        #     result=self.dbp.find({'type':'today_manage'})
+        ic(result[0])
         data=result[0]['data']
         
         ic(cardid)
+        
         
         
         if date!=get_date()[1]:# only control today
@@ -122,9 +124,6 @@ class Today_Manage():
     def remove(self,cardid,date):
         self.check_out_of_date()
         result=self.dbp.find({'type':'today_manage'})
-        # if result.count()==0:
-        #     self.reset()
-        #     result=self.dbp.find({'type':'today_manage'})
         data=result[0]['data']
         data=result[0]['data']
         
@@ -137,3 +136,59 @@ class Today_Manage():
             return True
 
 today_manage=Today_Manage()
+
+class Notification():
+    def __init__(self):
+        pass
+        self.collection=db_model.db.notification
+    
+    def create(self,args):
+        data={
+            'tags':args['tags'],
+            'title':args['title'],
+            'content':args['content'],
+            'timestamp':get_date()[1]+ ' ' + get_date()[2],
+            'publisher':args['publisher'],
+            'status':args['status'],
+        }
+        
+        result=self.collection.insert_one(data)
+        msg=f'notification id:{result.inserted_id} create successful'
+        ic(msg)
+        return {'msg':msg}
+    
+    def find(self,filter):
+        if not filter:
+            filter={}
+        ic(filter)
+        result=list(self.collection.find(filter))
+        for i in result:
+            i['_id']=str(i['_id'])
+        # ic(result)
+        counts=len(result)
+        # ic(counts)
+        return jsonify(result)
+
+    def delete(self,filter,confirm):
+        if not filter:
+            filter={}
+        result=self.collection.find(filter)
+        counts=len(list(result))
+        if counts>1:#needs confirm
+            if confirm==True:
+                self.collection.delete_many(filter)
+            else:
+                msg='many notifications found, needs confirm'
+        else:
+            self.collection.delete_one(filter)
+            msg='success'
+        ic(msg)
+        return {'msg':msg}
+
+        
+    
+    # def edit(self,filter,data):
+    #     if not filter:
+    #         msg=
+            
+
