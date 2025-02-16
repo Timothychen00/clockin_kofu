@@ -1,3 +1,6 @@
+
+
+
 import os
 import sys
 import datetime
@@ -5,6 +8,7 @@ import datetime
 from flask_restful import Resource, reqparse
 from icecream import ic
 from termcolor import colored
+from flask import request
 
 from main.tools import get_date
 from main.tools import send_notification
@@ -12,8 +16,10 @@ from main.tools import msg_gen
 from main.tools import debug_info
 from main.models import db_model
 from main.models import today_manage
+from main.models import Notification
 from main.tools import hasher
 from main.tools import qrcode_generator
+
 
 class staff_manage(Resource):
     #define argument parser
@@ -260,3 +266,51 @@ class settings(Resource):
         print(result)
         db_model.db.settings.update_one({"type":'settings'},{'$set':{'data':result['data']}})
         return 'OK'
+    
+    
+class notifications(Resource):
+    # parser=reqparse.RequestParser()
+    def get(self):   
+        self.parser=reqparse.RequestParser()
+        self.parser.add_argument('key',type=str,location=['values'])
+        self.parser.add_argument('value',type=str,location=['values'])
+        self.parser.add_argument('date',type=str,location=['values'])
+        args=self.parser.parse_args()
+
+        key=args.get('key','')
+        value=args.get('value','')
+        date=args.get('date','')
+        
+        filter={key:value}
+        if not key:
+            filter={}
+        
+        ic(date)
+        if date:
+            filter['timestamp']={"$regex":date+'\w*'}
+        ic(filter)
+        
+        return Notification().find(filter)
+        
+
+    def post(self):
+        self.parser=reqparse.RequestParser()
+        self.parser.add_argument('tags',type=str,location=['values'])
+        self.parser.add_argument('title',type=str,location=['values'])
+        self.parser.add_argument('content',type=str,location=['values'])
+        self.parser.add_argument('status',type=str,location=['values'])
+        # parser.add_argument('timestamp',type=str,location=['values'])
+        self.parser.add_argument('publisher',type=str,location=['values'])
+        args=self.parser.parse_args()
+        
+        if args['tags'] and args['content'] and args['publisher']and args['title']:
+            return Notification().create(args)
+        return 'data missing'
+
+    def put(self):
+        self.parser.parse_args()
+        pass
+    def delete(self):
+        self.parser.parse_args()
+        pass
+    

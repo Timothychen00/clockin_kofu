@@ -1,17 +1,47 @@
 
 function handle_mode(type){
-    if (type=='data'){
-        document.getElementById('data').classList.remove('visually-hidden');
-        document.getElementById('calculate').classList.add('visually-hidden');
+    if (type=='people'){
+        document.getElementById('people').classList.remove('visually-hidden');
+        document.getElementById('people').classList.add('animation-floating');
+        document.getElementById('notifications').classList.add('visually-hidden');
+        document.getElementById('settings').classList.add('visually-hidden');
         document.getElementById('contact').classList.add('visually-hidden');
-    }else if(type=='calculate'){
-        document.getElementById('calculate').classList.remove('visually-hidden');
-        document.getElementById('data').classList.add('visually-hidden');
+
+        document.getElementById('notifications').classList.remove('animation-floating');
+        document.getElementById('settings').classList.remove('animation-floating');
+        document.getElementById('contact').classList.remove('animation-floating');
+
+    }else if(type=='notifications'){
+        document.getElementById('notifications').classList.remove('visually-hidden');
+        document.getElementById('notifications').classList.add('animation-floating');
+        document.getElementById('people').classList.add('visually-hidden');
+        document.getElementById('settings').classList.add('visually-hidden');
         document.getElementById('contact').classList.add('visually-hidden');
-    }else{
+
+        document.getElementById('people').classList.remove('animation-floating');
+        document.getElementById('settings').classList.remove('animation-floating');
+        document.getElementById('contact').classList.remove('animation-floating');
+    }else if (type=='contact'){
         document.getElementById('contact').classList.remove('visually-hidden');
-        document.getElementById('calculate').classList.add('visually-hidden');
-        document.getElementById('data').classList.add('visually-hidden');
+        document.getElementById('contact').classList.add('animation-floating');
+        document.getElementById('notifications').classList.add('visually-hidden');
+        document.getElementById('settings').classList.add('visually-hidden');
+        document.getElementById('people').classList.add('visually-hidden');
+
+        document.getElementById('people').classList.remove('animation-floating');
+        document.getElementById('settings').classList.remove('animation-floating');
+        document.getElementById('notifications').classList.remove('animation-floating');
+    }  
+    else if (type=='settings'){
+        document.getElementById('settings').classList.remove('visually-hidden');
+        document.getElementById('settings').classList.add('animation-floating');
+        document.getElementById('notifications').classList.add('visually-hidden');
+        document.getElementById('contact').classList.add('visually-hidden');
+        document.getElementById('people').classList.add('visually-hidden');
+
+        document.getElementById('notifications').classList.remove('animation-floating');
+        document.getElementById('people').classList.remove('animation-floating');
+        document.getElementById('contact').classList.remove('animation-floating');
     }  
 }
 function salary(){
