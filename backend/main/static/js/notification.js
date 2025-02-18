@@ -6,13 +6,7 @@ function load_notification_class(classes){
         console.log(i);
         notification_class_box.innerHTML+="<button class=\"badge pill-btn rounded-pill\">"+i+"</button>"
     }
-//     <div class="col-2" id="notification-class">
-//     <button class="badge pill-btn rounded-pill">Clockin</button>
-//     <button class="badge pill-btn rounded-pill">Primary</button>
-//     <button class="badge pill-btn rounded-pill">Primary</button>
-//     <button class="badge pill-btn rounded-pill">Primary</button>
-    
-// </div>
+
 }
 
 function offsetDate(offset){
@@ -72,8 +66,8 @@ function load_notification(){
 // headers: { 'content-type': 'application/json' },
 // credentials: 'include'
 
-function addNotificationTime(){
+function addNotificationTime(data=''){
     if (document.getElementById('notification-time').childElementCount<3)
-        document.getElementById('notification-time').innerHTML+="<input class='btn mx-2 border border-1' style='width:120px'  type=\'time\'/> ";
+        document.getElementById('notification-time').innerHTML+="<input class='btn mx-2 border border-1' style='width:145px'  type=\'time\' value="+data+" /> ";
 }
 

@@ -264,12 +264,18 @@ class settings(Resource):
         self.parser.add_argument('duration',type=int,location=['values'])
         self.parser.add_argument('bias',type=int,location=['values'])
         
-        self.parser.add_argument('notification-time',type=str,location=['values'],action='append')# 最多三次
+        self.parser.add_argument('notification-time',type=str,location=['values'])# 最多三次
         # self.parser.add_argument('notification-userid',type=str,location=['values'])# linebot綁定的用戶
-        # 
-        
+        # extract array
+
         args=self.parser.parse_args()
-        
+        if args['notification-time']:
+            if ',' in args['notification-time']:
+                args['notification-time']=args['notification-time'].split(',')
+            else:
+                args['notification-time']=[args['notification-time']]
+        else:
+            args['notification-time']=[]
         ic(args)
         return Settings().updateSettings(args)
     
@@ -316,7 +322,19 @@ class notifications(Resource):
     def put(self):
         self.parser.parse_args()
         pass
+    
     def delete(self):
-        self.parser.parse_args()
-        pass
+        self.parser=reqparse.RequestParser()
+        self.parser.add_argument('unbindAll',type=int,location=['values'])
+        self.parser.add_argument('userid',type=str,location=['values'])
+        args=self.parser.parse_args()
+        unbindAll=args.get('unbindAll',0)
+        userid=args.get('userid',None)
+        if unbindAll:
+            print(unbindAll)
+            print('[Api][Notification]準備刪除全部綁定')
+            return Settings().unbind(unbindAll=unbindAll)
+        else:
+            print('[Api][Notification]準備刪除特定綁定')
+            return Settings().unbind(unbindAll=unbindAll,userid=userid)
     

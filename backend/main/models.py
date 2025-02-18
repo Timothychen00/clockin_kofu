@@ -246,15 +246,40 @@ class Settings():
 
     def bind(self,userid):# 通過linebot端進行綁定
         result=self.find()
+        
         if result:
             if result['data']['allow-multi']==True:# append
                 result['data']['notification-userid'].append(userid)
+                result['data']['notification-status']='bound'
                 ic('line-token is allow-multi mode, userid inserted')
             else:
                 result['data']['notification-userid']=[userid]
+                result['data']['notification-status']='bound'
                 ic('line-token is not allow-multi mode, userid replaced')
+            self.updateSettings({'notification-status':result['data']['notification-status'],"notification-userid":result['data']['notification-userid']})
             return 'success'
         return 'no data'
+    
+    def check_binding_token(self,token):
+        #要檢查時間有沒有符合
+        result=self.find()
+        ic(result)
+        if result:
+            if 'notification-bind-token' in result['data']:
+                if 'token' in result['data']['notification-bind-token']:#token存在
+                    if result['data']['notification-bind-token']['token']==token:
+                        print("correct")
+                        return "correct"
+                    else:
+                        print("incorrect")
+                        return 'incorrect'
+                else:
+                    print('token not generated')
+                    return 'token not generated'
+            else:
+                print('key does not exist')
+                return 'key does not exist'
+                    
             
     
     def generate_binding_token(self,length=30,valid_minutes=5):
@@ -270,32 +295,39 @@ class Settings():
         
         self.updateSettings({"notification-bind-token":data})
         ic('已經生成token',data)
+        
         return data
     
     def unbind(self,unbindAll,userid=''):# 接觸綁定
         result=self.find()
         if result:
-            if result['data']['allow-multi']==True:# append
-                
-                if unbindAll==True:
-                    result['data']['notification-userid']=[]
-                    ic('unbound all users')
-                    'success'
-                else:
-                    if userid in result['data']['notification-userid'] and userid != '':
-                        result['data']['notification-userid'].remove(userid)
-                        ic('unbound the user'+ userid)
-                    else:
-                        ic('not bound!')
+            if unbindAll:
+                result['data']['notification-userid']=[]
+                ic('unbound all users')
+                self.updateSettings({'notification-status':'None',"notification-userid":result['data']['notification-userid']})
+                return 'success'
+            else:
+                if userid in result['data']['notification-userid'] and userid != '':
+                    result['data']['notification-userid'].remove(userid)
+                    ic('unbound the user'+ userid)
+                    self.updateSettings({'notification-status':'None',"notification-userid":result['data']['notification-userid']})
                     return 'success'
+                else:
+                    ic('not bound!')
+                    return 'not bound'
+            
         return 'no data'
     
     def updateSettings(self,data):# from website
         result=list(self.collection.find({'type':'settings'}))
         result=result[0]
         for i in data:
-            if i in ['unipay','bias','duration','notification-time','notification-bind-token']:
+            if i in ['unitpay','bias','duration','notification-time','notification-bind-token','notification-status','notification-userid']:
                 result['data'][i]=data[i]
+                
+            else:
+                print('not able')
+                return 'err not able'
                 
         self.collection.update_one({'type':"settings"},{'$set':result})
         return 'success'

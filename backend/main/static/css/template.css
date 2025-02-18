@@ -187,3 +187,27 @@
     -webkit-user-select:none; /* for Chrome、Safari */
     -moz-user-select:none; /* for Mozilla、Firefox */
 }
+
+
+#countdown-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer; /* 鼠標移上去會變成小手，表示可以點擊 */
+    margin-bottom: .1rem;
+  }
+  /* token 顯示區塊的樣式 */
+  .token-block {
+    display: inline-block; /* 讓它與按鈕同行 */
+
+    height: 100%;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-radius: .5rem;
+    background-color: #f9f9f9;
+    cursor: pointer;       /* 鼠標移上去變小手，表示可以點擊 */
+    user-select: none;     /* 禁止文字被選取 */
+
+  }
+  .token-block:hover {
+    background-color: #e9e9e9;
+  }
