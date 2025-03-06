@@ -154,10 +154,11 @@ class Notification():
     
     def create(self,args):
         try:
-            id= str(int(self.collection.find().sort("_id",pymongo.DESCENDING).limit(1)[0]['_id'])+1)
+            id= (int(self.collection.find().sort("_id",pymongo.DESCENDING).limit(1)[0]['_id'])+1)
         except:
-            id=1
-            
+            id=(1)
+        # print(int(self.collection.find().sort("_id",pymongo.DESCENDING).limit(1)[0]['_id']))
+        print(id)
         data={
             'tags':'clockin',
             'title':'打卡紀錄',
@@ -183,8 +184,8 @@ class Notification():
             filter={}
         ic(filter)
         result=list(self.collection.find(filter))
-        for i in result:
-            i['_id']=str(i['_id'])
+        # for i in result:
+        #     i['_id']=str(i['_id'])
         # ic(result)
         counts=len(result)
         # ic(counts)
