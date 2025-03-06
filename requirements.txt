@@ -50,3 +50,4 @@ wtforms==2.3.3
 yarl==1.9.4; python_version >= '3.7'
 certifi
 line-bot-sdk
+Flask-APScheduler

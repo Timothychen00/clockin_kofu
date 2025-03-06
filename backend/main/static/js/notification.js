@@ -68,6 +68,6 @@ function load_notification(){
 
 function addNotificationTime(data=''){
     if (document.getElementById('notification-time').childElementCount<3)
-        document.getElementById('notification-time').innerHTML+="<input class='btn mx-2 border border-1' style='width:145px'  type=\'time\' value="+data+" /> ";
+        document.getElementById('notification-time').innerHTML+="<input class='btn mx-2 border border-1' style='width:145px'  type=\'time\' value="+data+" disabled /> ";
 }
 

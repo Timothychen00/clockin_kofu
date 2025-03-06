@@ -28,7 +28,6 @@ function settings_init() {
         tokenBlock.setAttribute("data-bs-placement", "top");
         tokenBlock.setAttribute("data-bs-title", "將token傳送給line官方帳號完成綁定（有效時間5分鐘）");
 
-
         // 當使用者點 token 區塊時，複製 token 到剪貼簿
         tokenContainer.addEventListener('click', function () {
             navigator.clipboard.writeText('bind-' + token).then(() => {
@@ -118,10 +117,6 @@ function save_settings() {
         .then((res)=>{
             console.log(res);
         })
-
-
-
-
 
 
 }

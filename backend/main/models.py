@@ -12,6 +12,14 @@ from icecream import ic
 from termcolor import colored
 from flask import jsonify
 
+
+path=f"main/{os.environ.get('ENV_TYPE','')}.env"
+print(os.getenv('ENV_TYPE'))
+print(os.getenv(''))
+
+print(colored("\n[Using ENV]->>>>>"+path+'\n',"green"))
+load_dotenv(path)
+
 from main.tools import get_date
 
 class DB():
@@ -145,14 +153,25 @@ class Notification():
         self.collection=db_model.db.notification
     
     def create(self,args):
+        try:
+            id= str(int(self.collection.find().sort("_id",pymongo.DESCENDING).limit(1)[0]['_id'])+1)
+        except:
+            id=1
+            
         data={
-            'tags':args['tags'],
-            'title':args['title'],
-            'content':args['content'],
+            'tags':'clockin',
+            'title':'打卡紀錄',
+            'content':'',
             'timestamp':get_date()[1]+ ' ' + get_date()[2],
-            'publisher':args['publisher'],
-            'status':args['status'],
+            'publisher':'',
+            'status':'inqueue',
+            '_id':id
         }
+        
+        #update the data
+        for arg in args:
+            if arg in ['tags','title','content','timestamp','publisher','status']:
+                data[arg]=args[arg]
         
         result=self.collection.insert_one(data)
         msg=f'notification id:{result.inserted_id} create successful'
@@ -169,7 +188,7 @@ class Notification():
         # ic(result)
         counts=len(result)
         # ic(counts)
-        return jsonify(result)
+        return result
 
     def delete(self,filter,confirm):
         if not filter:
@@ -189,10 +208,12 @@ class Notification():
 
         
     
-    # def edit(self,filter,data):
-    #     if not filter:
-    #         msg=
-            
+    def edit(self,filter,data):
+        if filter:
+            result=self.collection.update_one(filter,{'$set':data})
+            ic(result)
+            return 'success'
+        return 'error no filter'
 
 
 
