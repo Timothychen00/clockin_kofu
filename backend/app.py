@@ -51,6 +51,7 @@ def create_app():
 
     app=Flask(__name__,static_folder="main/static",template_folder="main/templates")
     api = Api(app)
+    scheduler.init_app(app)
     app.register_blueprint(app_route)
     api.add_resource(staff_manage,'/api/manage')
     api.add_resource(staff,'/api/staff')
@@ -71,31 +72,40 @@ def create_app():
             abort(400)
         return 'OK'
         
+        
+
+            
+            
     return app
 
 
 def start_scheduler():
     app = create_app()
-    with app.app_context():
-        # 定義一個任務函數
-        # 新增任務
-        current_setting=Settings().find()
-        notification_time=current_setting['data']['notification-time']
+    current_setting=Settings().find()
+    notification_time=current_setting['data']['notification-time']
 
-        if notification_time:
-            for i in notification_time:
-                if ':' in i :
-                    print("job created " + i)
-                    scheduler.add_job(id='通知時間'+i,func=send_bot_notifications,trigger='cron',day='*', hour=i.split(':')[0], minute=i.split(':')[1],misfire_grace_time=900,timezone='Asia/Taipei')
-                else:
-                    ic('格式錯誤')
-                # 啟動 APScheduler
-                scheduler.start()
-                print("APScheduler 已啟動！")
+    if notification_time:
+        for i in notification_time:
+            if ':' in i :
+                print("job created " + i)
+                scheduler.add_job(id='通知時間'+i,func=send_bot_notifications,trigger='cron',day='*', hour=i.split(':')[0], minute=i.split(':')[1],misfire_grace_time=900,timezone='Asia/Taipei')
+            else:
+                ic('格式錯誤')
+            # 啟動 APScheduler
+        scheduler.start()
+        print("APScheduler 已啟動！")
+
 
 
 # 供 gunicorn 匯入使用
 app=create_app()
+# with app.app_context():
+#     # 定義一個任務函數
+#     # 新增任務
+
+            
+            
+            
 
 if __name__=="__main__":# gunicorn 執行的時候根本不會從這邊執行所以會出一點點小問題
     scheduler.init_app(app)

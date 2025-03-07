@@ -74,7 +74,7 @@ class staff_manage(Resource):
             'content':'卡片id:'+data['cardid']+"|姓名："+data['name'],
             'tags':['api']
         }
-        Notification.create(msg_obj)
+        Notification().create(msg_obj)
         
         
         return {'data':data,'msg':'data inserted!'},200
@@ -96,7 +96,7 @@ class staff_manage(Resource):
             'content':'卡片id:'+data['cardid']+"|姓名："+data['name'],
             'tags':['api']
         }
-        Notification.create(msg_obj)
+        Notification().create(msg_obj)
         
     
 class staff(Resource):
@@ -180,7 +180,7 @@ class staff(Resource):
                         'content':'卡片id:'+data['cardid']+"|姓名："+data['name'],
                         'tags':['warn']
                     }
-                    Notification.create(msg_obj)
+                    Notification().create(msg_obj)
                     
                     send_notification(ic(msg_gen(data,'重複打卡 '+args['type'],args['time'])),'test')
                     return f"already done!,{data.get('hash_id',' ')}" 
@@ -234,20 +234,19 @@ class staff(Resource):
                 
                 
                 if args['time']:# 補打卡
-                
                     msg_obj={           
                         'title':'補打卡',
                         'content':'卡片id:'+data['cardid']+"|姓名："+data['name']+'|狀態：'+dtype,
                         'tags':['api']
                     }
-                Notification.create(msg_obj)
+                    Notification().create(msg_obj)
                 
                 msg_obj={
                     'title':dtype,
                     'content':'卡片id:'+data['cardid']+"|姓名："+data['name']+"|狀態："+dtype,
                     'tags':['clockin']
                 }
-                Notification.create(msg_obj)
+                Notification().create(msg_obj)
                 send_notification(ic(msg_gen(data,dtype+'成功',args['time'])),mode=os.environ['MODE'])
                 
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
@@ -287,7 +286,7 @@ class staff(Resource):
                     'content':'卡片id:'+data['cardid']+"|姓名："+data['name'],
                     'tags':['api']
                 }
-            Notification.create(msg_obj)
+            Notification().create(msg_obj)
             send_notification(ic(msg_gen(data,'刪除'+day+'打卡記錄',args['time'])),mode='test')
             return {'msg':'log '+day+' delete!'}
 
