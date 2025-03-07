@@ -11,6 +11,17 @@ from dotenv import load_dotenv
 from icecream import ic
 from termcolor import colored
 from flask import jsonify
+from linebot.v3 import WebhookHandler
+from linebot.v3.exceptions import InvalidSignatureError
+from linebot.v3.webhooks import MessageEvent, TextMessageContent
+from linebot.v3.messaging import (
+    Configuration,
+    ApiClient,
+    MessagingApi,	
+    ReplyMessageRequest,
+    PushMessageRequest,  # 用來構造推播訊息的資料結構
+    TextMessage
+)
 
 
 path=f"main/{os.environ.get('ENV_TYPE','')}.env"
@@ -44,6 +55,7 @@ class DB():
         # self.client=pymongo.MongoClient(os.environ['DB_STRING_TEST'])
         self.db=self.client.staff
         self.collection=self.db.clockin
+    
         # date
         # 
         
@@ -58,6 +70,23 @@ class DB():
     #     df.to_csv('data.csv',index=False)
     
 db_model=DB()
+
+class LINEBOT():
+    def __init__(self):
+        try:
+            self.channel_secret = os.getenv('Channel_secret', None)
+            self.channel_access_token = os.getenv('Channel_access_token', None)
+            self.handler = WebhookHandler(self.channel_secret)
+            self.configuration = Configuration(
+                access_token=self.channel_access_token
+            )
+        except Exception as e:
+            ic("Bot init err")
+            print(e)
+            
+            
+        
+linebot_model=LINEBOT()
 
 class Today_Manage():
     def __init__(self):
