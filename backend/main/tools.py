@@ -6,7 +6,6 @@ import hashlib
 import requests
 from icecream import ic
 
-from main.models import Notification
 
 def send_notification(message,mode='test'):
     if mode=='production':
@@ -88,6 +87,8 @@ def hasher(data):
     print(digested)
     return digested
 
+
+from main.models import Notification
 
 #notification
 def get_available_notifications(tag):
