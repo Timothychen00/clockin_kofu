@@ -1,3 +1,6 @@
+
+
+
 import os
 import sys
 import datetime
@@ -5,6 +8,8 @@ import datetime
 from flask_restful import Resource, reqparse
 from icecream import ic
 from termcolor import colored
+from flask import request
+from flask import jsonify
 
 from main.tools import get_date
 from main.tools import send_notification
@@ -12,8 +17,10 @@ from main.tools import msg_gen
 from main.tools import debug_info
 from main.models import db_model
 from main.models import today_manage
+from main.models import Notification
+from main.models import Settings
 from main.tools import hasher
-from main.tools import qrcode_generator
+
 
 class staff_manage(Resource):
     #define argument parser
@@ -59,7 +66,15 @@ class staff_manage(Resource):
         
         #gen qrcode
         # qrcode_generator(hasher_id)
+        
         send_notification(ic(msg_gen(data,'加入成功')),mode='test')
+        
+        msg_obj={
+            'title':'新增員工',
+            'content':'卡片id:'+data['cardid']+"|姓名："+data['name'],
+            'tags':['api']
+        }
+        Notification.create(msg_obj)
         
         
         return {'data':data,'msg':'data inserted!'},200
@@ -75,6 +90,13 @@ class staff_manage(Resource):
         data=db_model.collection.find_one({args['key']:args['value']})
         db_model.collection.delete_one({args['key']:args['value']})
         send_notification(ic(msg_gen(data,'刪除成功')),mode='test')
+        
+        msg_obj={
+            'title':'刪除成功',
+            'content':'卡片id:'+data['cardid']+"|姓名："+data['name'],
+            'tags':['api']
+        }
+        Notification.create(msg_obj)
         
     
 class staff(Resource):
@@ -132,6 +154,7 @@ class staff(Resource):
             workover=data['workover']
             
             month,date,time=ic(get_date(args['time']))
+
             
             
             work[month]=[0,0]
@@ -151,6 +174,14 @@ class staff(Resource):
                 ic(data['cardid'])
                 ic(date)
                 if ic(today_manage.add(args['type'],data['cardid'],date))=='Already clocked':
+                    
+                    msg_obj={           
+                        'title':'重複打卡',
+                        'content':'卡片id:'+data['cardid']+"|姓名："+data['name'],
+                        'tags':['warn']
+                    }
+                    Notification.create(msg_obj)
+                    
                     send_notification(ic(msg_gen(data,'重複打卡 '+args['type'],args['time'])),'test')
                     return f"already done!,{data.get('hash_id',' ')}" 
                 else:
@@ -200,6 +231,23 @@ class staff(Resource):
                     dtype='下班打卡'
                 elif args['type']=='workovertime':
                     dtype='加班加班'
+                
+                
+                if args['time']:# 補打卡
+                
+                    msg_obj={           
+                        'title':'補打卡',
+                        'content':'卡片id:'+data['cardid']+"|姓名："+data['name']+'|狀態：'+dtype,
+                        'tags':['api']
+                    }
+                Notification.create(msg_obj)
+                
+                msg_obj={
+                    'title':dtype,
+                    'content':'卡片id:'+data['cardid']+"|姓名："+data['name']+"|狀態："+dtype,
+                    'tags':['clockin']
+                }
+                Notification.create(msg_obj)
                 send_notification(ic(msg_gen(data,dtype+'成功',args['time'])),mode=os.environ['MODE'])
                 
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
@@ -232,31 +280,110 @@ class staff(Resource):
 
             del log[month][day]
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log}})
+            
+            
+            msg_obj={
+                    'title':'刪除打卡紀錄',
+                    'content':'卡片id:'+data['cardid']+"|姓名："+data['name'],
+                    'tags':['api']
+                }
+            Notification.create(msg_obj)
             send_notification(ic(msg_gen(data,'刪除'+day+'打卡記錄',args['time'])),mode='test')
             return {'msg':'log '+day+' delete!'}
 
 
 class settings(Resource):
-    parser=reqparse.RequestParser()
-    parser.add_argument('unitpay',type=int,location=['values'])
-    parser.add_argument('duration',type=int,location=['values'])
-    parser.add_argument('bias',type=int,location=['values'])
+
     def get(self):
-        result=db_model.db.settings.find_one({'type':'settings'})
-        if result:
-            return result['data']
-        else:
-            db_model.db.settings.insert_one({'type':'settings','data':{'unitpay':90,'duration':30,'bias':15}})
+        self.parser=reqparse.RequestParser()
+        #計算薪資的部分
+        self.parser.add_argument('key',type=str,location=['values'])
+        args=self.parser.parse_args()
+        
+        key=args.get('key',None)
+        if key:
+            if key=='token':
+                return Settings().generate_binding_token()
+        return jsonify(Settings().find())
             
     def put(self):
+        self.parser=reqparse.RequestParser()
+        #計算薪資的部分
+        self.parser.add_argument('unitpay',type=int,location=['values'])
+        self.parser.add_argument('duration',type=int,location=['values'])
+        self.parser.add_argument('bias',type=int,location=['values'])
+        
+        # self.parser.add_argument('notification-time',type=str,location=['values'])# 最多三次
+        # self.parser.add_argument('notification-userid',type=str,location=['values'])# linebot綁定的用戶
+        # extract array
+
         args=self.parser.parse_args()
-        result=db_model.db.settings.find_one({'type':'settings'})
-        if args['unitpay']:
-            result['data']['unitpay']=args['unitpay']
-        if args['duration']: 
-            result['data']['duration']=args['duration']
-        if args['bias']:    
-            result['data']['bias']=args['bias']
-        print(result)
-        db_model.db.settings.update_one({"type":'settings'},{'$set':{'data':result['data']}})
-        return 'OK'
+        if 'notification-time' in args:
+            if args['notification-time']:
+                if ',' in args['notification-time']:
+                    args['notification-time']=args['notification-time'].split(',')
+                else:
+                    args['notification-time']=[args['notification-time']]
+            else:
+                args['notification-time']=[]
+        ic(args)
+        return Settings().updateSettings(args)
+    
+    
+class notifications(Resource):
+    # parser=reqparse.RequestParser()
+    def get(self):   
+        self.parser=reqparse.RequestParser()
+        self.parser.add_argument('key',type=str,location=['values'])
+        self.parser.add_argument('value',type=str,location=['values'])
+        self.parser.add_argument('date',type=str,location=['values'])
+        args=self.parser.parse_args()
+
+        key=args.get('key','')
+        value=args.get('value','')
+        date=args.get('date','')
+        
+        filter={key:value}
+        if not key:
+            filter={}
+        
+        ic(date)
+        if date:
+            filter['timestamp']={"$regex":date+'\w*'}
+        ic(filter)
+        
+        return Notification().find(filter)
+        
+
+    def post(self):
+        self.parser=reqparse.RequestParser()
+        self.parser.add_argument('tags',type=str,location=['values'])
+        self.parser.add_argument('title',type=str,location=['values'])
+        self.parser.add_argument('content',type=str,location=['values'])
+        self.parser.add_argument('status',type=str,location=['values'])
+        self.parser.add_argument('publisher',type=str,location=['values'])
+        args=self.parser.parse_args()
+        
+        if args['tags'] and args['content'] and args['publisher']and args['title']:
+            return Notification().create(args)
+        return 'data missing'
+
+    def put(self):
+        self.parser.parse_args()
+        pass
+    
+    def delete(self):
+        self.parser=reqparse.RequestParser()
+        self.parser.add_argument('unbindAll',type=int,location=['values'])
+        self.parser.add_argument('userid',type=str,location=['values'])
+        args=self.parser.parse_args()
+        unbindAll=args.get('unbindAll',0)
+        userid=args.get('userid',None)
+        if unbindAll:
+            print(unbindAll)
+            print('[Api][Notification]準備刪除全部綁定')
+            return Settings().unbind(unbindAll=unbindAll)
+        else:
+            print('[Api][Notification]準備刪除特定綁定')
+            return Settings().unbind(unbindAll=unbindAll,userid=userid)
+    

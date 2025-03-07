@@ -3,11 +3,10 @@ import datetime
 import sys
 import hashlib
 
-import qrcode
-from qrcode.image.styledpil import StyledPilImage
-from qrcode.image.styles.moduledrawers import RoundedModuleDrawer
 import requests
 from icecream import ic
+
+from main.models import Notification
 
 def send_notification(message,mode='test'):
     if mode=='production':
@@ -31,8 +30,9 @@ def get_date(date=None,time_type=''):
         # ic('[打卡]')
         date=date_object.strftime("%Y-%m-%d %H:%M:%S")
     else:
+        pass
         # ic('[補打卡]')
-        send_notification('補打卡','test')
+        # send_notification('補打卡','test')
     
     
     ic("get : day",date)
@@ -88,16 +88,16 @@ def hasher(data):
     print(digested)
     return digested
 
-def qrcode_generator(data):
-    qr = qrcode.QRCode(
-        version=2,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=8,
-        border=1
-    )
-    qr.add_data(f'https://friedclockin.azurewebsites.net/preview/{data}')   # 要轉換成 QRCode 的文字
-    qr.make(fit=True)          # 根據參數製作為 QRCode 物件
 
-    img = qr.make_image(image_factory=StyledPilImage, module_drawer=RoundedModuleDrawer())      # 產生 QRCode 圖片
-    # img.show()                 # 顯示圖片 ( Colab 不適用 )
-    img.save(f'main/static/{data}.png')     # 儲存圖片
+#notification
+def get_available_notifications(tag):
+    processed_result=[]
+    results=Notification().find({'status':"inqueue"})
+    for result in results:
+        if tag in result['tags']:
+            ic(tag)
+            ic()
+            if get_date()[1]==result['timestamp'].split(' ')[0]:
+                processed_result.append(result)
+
+    return processed_result
