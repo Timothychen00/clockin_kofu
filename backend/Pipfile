@@ -9,7 +9,7 @@ markupsafe = "==2.1.0"
 jinja2 = "==3.0.3"
 itsdangerous = "==2.1.0"
 werkzeug = "==2.0.3"
-flask = "==2.0.3"
+flask = "*"
 python-dotenv = "*"
 line-bot-sdk = "==2.0.1"
 flask-apscheduler = "==1.12.3"
@@ -25,6 +25,7 @@ icecream = "*"
 termcolor = "*"
 pymongo = "*"
 numpy = "*"
+falsk = "*"
 
 [dev-packages]
 
