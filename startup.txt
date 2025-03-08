@@ -1,1 +1,1 @@
-gunicorn -c gunicorn_config.py --chdir backend app:app
+cd backend;gunicorn -c gunicorn_config.py app:app
