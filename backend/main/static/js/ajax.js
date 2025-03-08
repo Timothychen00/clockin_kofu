@@ -117,7 +117,7 @@ function inject_html(data, month_type = 'this') {
 		<td>\
 		<button type="button" class="btn btn-danger" data-bs-toggle="modal"\
 			data-bs-target="#exampleModal'+ data[i]['_id'] + '">刪除</button>\
-		<div class="modal fade" id="exampleModal'+ data[i]['_id'] + '" tabindex="-1"\
+		<div class="modal fade" style="z-index:1070!important" id="exampleModal'+ data[i]['_id'] + '" tabindex="-1"\
 			aria-labelledby="exampleModalLabel" aria-hidden="true">\
 			<div class="modal-dialog">\
 				<div class="modal-content">\
@@ -139,6 +139,7 @@ function inject_html(data, month_type = 'this') {
 			</div>\
 		</div>\
 		</td></tr>';
+
 	}
 }
 

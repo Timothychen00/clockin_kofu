@@ -48,10 +48,14 @@ def create_app():
     class Config(object):
         SCHEDULER_TIMEZONE = 'Asia/Taipei'  # 配置时区
         SCHEDULER_API_ENABLED = True  # 添加API
+        
 
     app=Flask(__name__,static_folder="main/static",template_folder="main/templates")
     api = Api(app)
     scheduler.init_app(app)
+    app.config.update({
+        'SCHEDULER_API_ENABLED': True,
+    })
     app.register_blueprint(app_route)
     api.add_resource(staff_manage,'/api/manage')
     api.add_resource(staff,'/api/staff')
