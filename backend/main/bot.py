@@ -13,7 +13,7 @@ from icecream import ic
 
 from main.models import linebot_model
 from main.models import Notification,Settings
-from main.tools import get_available_notifications
+from main.models import get_available_notifications
 
 def send_bot_notifications():
     print('send_notification')

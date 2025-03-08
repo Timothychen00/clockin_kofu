@@ -246,7 +246,18 @@ class Notification():
         return 'error no filter'
 
 
+#notification
+def get_available_notifications(tag):
+    processed_result=[]
+    results=Notification().find({'status':"inqueue"})
+    for result in results:
+        if tag in result['tags']:
+            ic(tag)
+            ic()
+            if get_date()[1]==result['timestamp'].split(' ')[0]:
+                processed_result.append(result)
 
+    return processed_result
 
 ## 以下全部需要測試
 

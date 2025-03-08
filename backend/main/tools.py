@@ -88,17 +88,3 @@ def hasher(data):
     return digested
 
 
-from main.models import Notification
-
-#notification
-def get_available_notifications(tag):
-    processed_result=[]
-    results=Notification().find({'status':"inqueue"})
-    for result in results:
-        if tag in result['tags']:
-            ic(tag)
-            ic()
-            if get_date()[1]==result['timestamp'].split(' ')[0]:
-                processed_result.append(result)
-
-    return processed_result

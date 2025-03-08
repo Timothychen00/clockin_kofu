@@ -37,6 +37,8 @@ class staff_manage(Resource):
         filters={}
         # print('filters',filters)
         print(args['key'],args['value'])
+        if args['key']=='_id':
+            args['value']=int(args['value'])
         if args['key']:
             filters={args['key']:args['value']}
 
@@ -47,8 +49,8 @@ class staff_manage(Resource):
     def post(self):
         args=self.parser.parse_args()
         print(args)
-        next_id=str(db_model.next_id())
-        hasher_id=hasher(next_id)
+        next_id=(db_model.next_id())
+        hasher_id=hasher(str(next_id))
         data={
             '_id':next_id,
             'hash_id':hasher_id,
@@ -81,11 +83,16 @@ class staff_manage(Resource):
     
     def put(self):#進行（上班、下班、加班）的操作
         args=self.parser.parse_args()
+        if args['key']=='_id':
+            args['value']=int(args['value'])
         print(args)
         db_model.collection.update_one({args['key']:args['value']},{'$set':{'name':args['name'],'place':args['place'],'cardid':args['cardid'],'jointime':args['jointime']}})
     
     def delete(self):
         args=self.parser.parse_args()
+        if args['key']=='_id':
+            args['value']=int(args['value'])
+            
         print(args)
         data=db_model.collection.find_one({args['key']:args['value']})
         db_model.collection.delete_one({args['key']:args['value']})
@@ -109,12 +116,17 @@ class staff(Resource):
     
     def get(self):#獲取用戶的打卡狀況（當天&當月）
         args=self.parser.parse_args()
+        if args['key']=='_id':
+            args['value']=int(args['value'])
         result=db_model.collection.find_one({args['key']:args['value']})
         return result,200
 
     def post(self):#進行（上班、下班、加班）的操作
         # try:
         args=self.parser.parse_args()
+        if args['key']=='_id':
+            args['value']=int(args['value'])
+            
         ic('[post]')
         ic(args)
         data=db_model.collection.find_one({args['key']:args['value']})
@@ -262,6 +274,8 @@ class staff(Resource):
     def delete(self):#刪除記錄
         ic('delete')
         args=self.parser.parse_args()
+        if args['key']=='_id':
+            args['value']=int(args['value'])
         data=db_model.collection.find_one({args['key']:args['value']})
         log=data['log']
         
