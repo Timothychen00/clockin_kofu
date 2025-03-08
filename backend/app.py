@@ -86,7 +86,7 @@ def start_scheduler():
     if notification_time:
         for i in notification_time:
             if ':' in i :
-                print("job created " + i)
+                ic("job created " + i)
                 scheduler.add_job(id='通知時間'+i,func=send_bot_notifications,trigger='cron',day='*', hour=i.split(':')[0], minute=i.split(':')[1],misfire_grace_time=900,timezone='Asia/Taipei')
             else:
                 ic('格式錯誤')
