@@ -4,8 +4,10 @@ from scheduler_lock import acquire_lock
 
 # Gunicorn 的基本設定
 bind = "0.0.0.0:8000"  # 監聽位址與埠號
-workers = 3            # 啟動 3 個 worker
+workers = 3          # 啟動 3 個 worker
 loglevel = "info"
+
+
 
 def post_fork(server, worker):
     """
