@@ -70,7 +70,16 @@ def message_text(event):
             ic(recv_token)
             result=Settings().check_binding_token(recv_token)
             if result=='correct':
-                Settings().bind(event.source.user_id)
+                ic(event.source)
+                ic(dict(event.source))
+                target=event.source.user_id
+                if 'group_id' in dict(event.source):
+                    print('group_id',event.source.group_id)
+                    target=event.source.group_id
+                
+                ic(target)
+                # print(event.source.group_id)
+                Settings().bind(target)
                 reply_message(event.reply_token,[TextMessage(text='綁定成功！確認網站上的推送時間正確後，就可以等待時間到的推送咯～')])
                 return 0
             else:
