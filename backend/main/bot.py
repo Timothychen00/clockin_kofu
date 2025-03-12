@@ -30,7 +30,7 @@ def send_bot_notifications():
     msgs_ids=[]
     for i in msgs:
         msgs_ids.append(i['_id'])
-        msg_str+=i['content']+"|"+i['timestamp']+"\n"
+        msg_str+=i['content']+" | "+i['timestamp']+"\n"
     
     ic(msg_str)
     try:

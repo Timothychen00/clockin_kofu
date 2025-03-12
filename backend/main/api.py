@@ -73,7 +73,7 @@ class staff_manage(Resource):
         
         msg_obj={
             'title':'新增員工',
-            'content':'卡片id:'+data['cardid']+"|姓名："+data['name'],
+            'content':'卡片id:'+data['cardid']+" | 姓名："+data['name'],
             'tags':['api']
         }
         Notification().create(msg_obj)
@@ -100,7 +100,7 @@ class staff_manage(Resource):
         
         msg_obj={
             'title':'刪除成功',
-            'content':'卡片id:'+data['cardid']+"|姓名："+data['name'],
+            'content':'卡片id:'+data['cardid']+" | 姓名："+data['name'],
             'tags':['api']
         }
         Notification().create(msg_obj)
@@ -189,7 +189,7 @@ class staff(Resource):
                     
                     msg_obj={           
                         'title':'重複打卡',
-                        'content':'卡片id:'+data['cardid']+"|姓名："+data['name'],
+                        'content':'卡片id:'+data['cardid']+" | 姓名："+data['name'],
                         'tags':['warn']
                     }
                     Notification().create(msg_obj)
@@ -248,14 +248,14 @@ class staff(Resource):
                 if args['time']:# 補打卡
                     msg_obj={           
                         'title':'補打卡',
-                        'content':'卡片id:'+data['cardid']+"|姓名："+data['name']+'|狀態：'+dtype,
+                        'content':'卡片id:'+data['cardid']+" | 姓名："+data['name']+' | 狀態：'+dtype,
                         'tags':['api']
                     }
                     Notification().create(msg_obj)
                 
                 msg_obj={
                     'title':dtype,
-                    'content':'卡片id:'+data['cardid']+"|姓名："+data['name']+"|狀態："+dtype,
+                    'content':'卡片id:'+data['cardid']+" | 姓名："+data['name']+" | 狀態："+dtype,
                     'tags':['clockin']
                 }
                 Notification().create(msg_obj)
@@ -297,7 +297,7 @@ class staff(Resource):
             
             msg_obj={
                     'title':'刪除打卡紀錄',
-                    'content':'卡片id:'+data['cardid']+"|姓名："+data['name'],
+                    'content':'卡片id:'+data['cardid']+" | 姓名："+data['name'],
                     'tags':['api']
                 }
             Notification().create(msg_obj)
