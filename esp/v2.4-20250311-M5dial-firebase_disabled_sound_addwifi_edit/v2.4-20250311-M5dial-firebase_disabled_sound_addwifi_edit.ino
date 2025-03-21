@@ -4,7 +4,7 @@
 #define RFID_TYPE_mfrc522 0
 #define RFID_TYPE_m5 1
 #define RFID_TYPE RFID_TYPE_m5
-#define DEVICE_ID "Kofu-02"
+#define DEVICE_ID "Test-03"
 //#define DEVICE_ID "Test-01"
 #define Version "V2.4"
 
@@ -43,10 +43,10 @@ struct CONFIG {
 #include "M5Dial.h"
 #include "data.h"
 
-//Provide the token generation process info.
-#include "addons/TokenHelper.h"
-//Provide the RTDB payload printing info and other helper functions.
-#include "addons/RTDBHelper.h"
+////Provide the token generation process info.
+//#include "addons/TokenHelper.h"
+////Provide the RTDB payload printing info and other helper functions.
+//#include "addons/RTDBHelper.h"
 
 #if RFID_TYPE==RFID_TYPE_mfrc522
 #include <MFRC522.h>
@@ -56,8 +56,8 @@ struct CONFIG {
 // #include <PCF8574.h>    //Include the HCPCF8574 library
 // 闪烁时间间隔(秒)
 #define I2C_ADD 0x20      //I2C address of the PCF8574
-//#define SERVER_IP "https://bao7clockinsys.azurewebsites.net"
-#define SERVER_IP "https://clockinkofu.azurewebsites.net" 
+#define SERVER_IP "https://bao7clockinsys.azurewebsites.net"
+//#define SERVER_IP "https://clockinkofu.azurewebsites.net" 
 //https://friedclockin.azurewebsites.net
 #define ntpServer "pool.ntp.org" //NTP伺服器
 #define utcOffset 28800          //UTC偏移量 (此為UTC+8的秒數，即：8*60*60)
@@ -387,6 +387,7 @@ void multi_wifi_setup() {
     wifiMulti.addAP("dsseven77777", "b00829ckkc");
     wifiMulti.addAP("LouisaCoffee", "25988613");
     wifiMulti.addAP("MetroTaipei x Louisa","25112613");
+    wifiMulti.addAP("Dorm0307","D123123123");
     while (wifiMulti.run() != WL_CONNECTED) {
         delay(300);
         Serial.print(".");
