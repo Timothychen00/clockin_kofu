@@ -98,10 +98,13 @@ function inject_html(data, month_type = 'this') {
 		console.log(data[i].length)
 
 
+		// console.log('salarydata:');
+		// console.log(salary_data['data']['unitpay']);
+
 		//計算薪資時數
-		let salary_perhour = window.salary_data['unitpay'];
-		let salary_times=Math.floor((work[0]*60+work[1])/window.salary_data['duration']);
-		if (salary_times*window.salary_data['duration']>=window.salary_data['bias'])
+		let salary_perhour = salary_data['data']['unitpay'];
+		let salary_times=Math.floor((work[0]*60+work[1])/salary_data['data']['duration']);
+		if ((work[0]*60+work[1])-salary_times*salary_data['data']['duration']>=salary_data['data']['bias'])
 			salary_times += 1;
 		salary_data_html = '';
 		if(document.getElementById('salary').classList.contains('active'))
@@ -114,7 +117,7 @@ function inject_html(data, month_type = 'this') {
 		<td>\
 		<button type="button" class="btn btn-danger" data-bs-toggle="modal"\
 			data-bs-target="#exampleModal'+ data[i]['_id'] + '">刪除</button>\
-		<div class="modal fade" id="exampleModal'+ data[i]['_id'] + '" tabindex="-1"\
+		<div class="modal fade" style="z-index:1070!important" id="exampleModal'+ data[i]['_id'] + '" tabindex="-1"\
 			aria-labelledby="exampleModalLabel" aria-hidden="true">\
 			<div class="modal-dialog">\
 				<div class="modal-content">\
@@ -136,6 +139,7 @@ function inject_html(data, month_type = 'this') {
 			</div>\
 		</div>\
 		</td></tr>';
+
 	}
 }
 

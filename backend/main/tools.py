@@ -1,4 +1,9 @@
-import os,requests,datetime,sys
+import os
+import datetime
+import sys
+import hashlib
+
+import requests
 from icecream import ic
 
 
@@ -24,8 +29,9 @@ def get_date(date=None,time_type=''):
         # ic('[打卡]')
         date=date_object.strftime("%Y-%m-%d %H:%M:%S")
     else:
+        pass
         # ic('[補打卡]')
-        send_notification('補打卡','test')
+        # send_notification('補打卡','test')
     
     
     ic("get : day",date)
@@ -73,3 +79,12 @@ def debug_info(e):
     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     ic(exc_type, fname, exc_tb.tb_lineno)
     ic('----[ERROR]----')
+    
+def hasher(data):
+    hashed_data=hashlib.md5()
+    hashed_data.update(data.encode())#convert string to byte
+    digested=hashed_data.hexdigest()
+    print(digested)
+    return digested
+
+
