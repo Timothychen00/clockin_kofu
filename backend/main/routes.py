@@ -18,7 +18,7 @@ GOOGLE_CLIENT_ID=os.environ['GOOGLE_CLIENT_ID']
 GOOGLE_CLIENT_SECRET=os.environ['SECRET']
 
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
-available_emails=['timothychenpc@gmail.com','tim20060112@gmail.com','cutelucyyyy@gmail.com','a101852003@gmail.com','roryrory960526@gmail.com']
+available_emails=['timothychenpc@gmail.com','tim20060112@gmail.com','cutelucyyyy@gmail.com','a101852003@gmail.com','roryrory960526@gmail.com','dsseven777823@gmail.com','dsseven777113@gmail.com','dsseven111238@gmail.com','dsseven7776792@gmail.com','dsseven777qwer@gmail.com']
 
 @app_route.before_request
 def show_begin():
