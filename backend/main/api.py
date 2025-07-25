@@ -12,7 +12,7 @@ from flask import request
 from flask import jsonify
 
 from main.tools import get_date
-from main.tools import send_notification
+# from main.tools import send_notification
 from main.tools import msg_gen
 from main.tools import debug_info
 from main.models import db_model
@@ -69,7 +69,7 @@ class staff_manage(Resource):
         #gen qrcode
         # qrcode_generator(hasher_id)
         
-        send_notification(ic(msg_gen(data,'加入成功')),mode='test')
+        # send_notification(ic(msg_gen(data,'加入成功')),mode='test')
         
         msg_obj={
             'title':'新增員工',
@@ -96,7 +96,7 @@ class staff_manage(Resource):
         print(args)
         data=db_model.collection.find_one({args['key']:args['value']})
         db_model.collection.delete_one({args['key']:args['value']})
-        send_notification(ic(msg_gen(data,'刪除成功')),mode='test')
+        # send_notification(ic(msg_gen(data,'刪除成功')),mode='test')
         
         msg_obj={
             'title':'刪除成功',
@@ -194,7 +194,7 @@ class staff(Resource):
                     }
                     Notification().create(msg_obj)
                     
-                    send_notification(ic(msg_gen(data,'重複打卡 '+args['type'],args['time'])),'test')
+                    # send_notification(ic(msg_gen(data,'重複打卡 '+args['type'],args['time'])),'test')
                     return f"already done!,{data.get('hash_id',' ')}" 
                 else:
                     log[month][date][args['type']]=time#紀錄打卡時間
@@ -259,7 +259,7 @@ class staff(Resource):
                     'tags':['clockin']
                 }
                 Notification().create(msg_obj)
-                send_notification(ic(msg_gen(data,dtype+'成功',args['time'])),mode=os.environ['MODE'])
+                # send_notification(ic(msg_gen(data,dtype+'成功',args['time'])),mode=os.environ['MODE'])
                 
             db_model.collection.update_one({args['key']:args['value']},{'$set':{'log':log,'work':work,'workover':workover}})
             return f'OK,{data.get("hash_id"," ")}'
@@ -301,7 +301,7 @@ class staff(Resource):
                     'tags':['api']
                 }
             Notification().create(msg_obj)
-            send_notification(ic(msg_gen(data,'刪除'+day+'打卡記錄',args['time'])),mode='test')
+            # send_notification(ic(msg_gen(data,'刪除'+day+'打卡記錄',args['time'])),mode='test')
             return {'msg':'log '+day+' delete!'}
 
 
