@@ -117,29 +117,27 @@ function inject_html(data, month_type = 'this') {
 		<td>\
 		<button type="button" class="btn btn-danger" data-bs-toggle="modal"\
 			data-bs-target="#exampleModal'+ data[i]['_id'] + '">刪除</button>\
-		<div class="modal fade" style="z-index:1070!important" id="exampleModal'+ data[i]['_id'] + '" tabindex="-1"\
-			aria-labelledby="exampleModalLabel" aria-hidden="true">\
-			<div class="modal-dialog">\
-				<div class="modal-content">\
-					<div class="modal-header">\
-						<h5 class="modal-title" id="exampleModalLabel">確認刪除？</h5>\
-						<button type="button" class="btn-close" data-bs-dismiss="modal"\
-							aria-label="Close"></button>\
-					</div>\
-					<div class="modal-body">\
-						<p class="fw-bold">請注意！刪除後將無法復原！</p>\
-					</div>\
-					<div class="modal-footer">\
-						<button type="button" class="btn btn-secondary"\
-							data-bs-dismiss="modal">取消</button>\
-						<button type="button" class="btn btn-danger"\
-							onclick="delete_user('+ data[i]['_id'] + ')" >確認刪除</button>\
-					</div>\
-				</div>\
-			</div>\
-		</div>\
 		</td></tr>';
 
+		document.body.insertAdjacentHTML('beforeend', `
+			<div class="modal fade" id="exampleModal${data[i]['_id']}" tabindex="-1" aria-labelledby="exampleModalLabel${data[i]['_id']}" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel${data[i]['_id']}">確認刪除？</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p class="fw-bold">請注意！刪除後將無法復原！</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+							<button type="button" class="btn btn-danger" onclick="delete_user(${data[i]['_id']})">確認刪除</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		`);
 	}
 }
 
